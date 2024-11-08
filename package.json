@@ -8,16 +8,25 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start main",
+    "start": "nest start main-gateway",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main/main",
+    "start:prod": "node dist/main-gateway/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config apps/main/test/jest-e2e.json"
+    "test:e2e": "jest --config apps/main-gateway/test/jest-e2e.json",
+    "build:main-gateway": "nest build main-gateway",
+    "build:files-microservice": "nest build files-microservice",
+    "build:payments-microservice": "nest build payments-microservice",
+    "start:main-gateway": "node dist/apps/main-gateway",
+    "start:files-microservice": "node dist/apps/files-microservice",
+    "start:payments-microservice": "node dist/apps/payments-microservice",
+    "start:dev:main-gateway": "nest start main-gateway --watch",
+    "start:dev:files-microservice": "nest start files-microservice --watch",
+    "start:dev:payments-microservice": "nest start payments-microservice --watch"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
