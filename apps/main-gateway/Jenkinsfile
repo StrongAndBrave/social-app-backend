@@ -3,7 +3,7 @@ pipeline {
     agent any
     environment {
         ENV_TYPE = "production"
-        PORT = 3623
+        PORT = 3630
         NAMESPACE = "snapfolio-ru"
         REGISTRY_HOSTNAME = "strongandbrave"
         PROJECT = "main-gateway"
