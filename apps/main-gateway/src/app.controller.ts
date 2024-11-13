@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { firstValueFrom } from "rxjs";
 import { AppService } from "./app.service";
+import { firstValueFrom } from "rxjs";
 
 @Controller()
 export class AppController {
@@ -13,7 +13,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello(); // Используем метод из AppService
+    return this.appService.getHello();
   }
 
   @Get('get-file-data')
