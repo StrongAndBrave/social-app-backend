@@ -21,3 +21,24 @@ spec:
            ports:
              - containerPort: PORT_CONTAINER
 
+           env:
+             - name: FILES_SERVICE_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: FILES_SERVICE_PORT
+             - name: PAYMENTS_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: PAYMENTS_SERVICE_HOST
+             - name: PAYMENTS_SERVICE_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: PAYMENTS_SERVICE_PORT
+             - name: FILES_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: FILES_SERVICE_HOST
