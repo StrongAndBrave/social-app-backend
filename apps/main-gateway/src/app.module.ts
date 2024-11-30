@@ -6,13 +6,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    // Регистрация ConfigModule
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.development', '.env'],
     }),
 
-    // Регистрация ClientsModule с использованием ConfigService
     ClientsModule.registerAsync([
       {
         name: 'FILES_SERVICE',
@@ -24,9 +22,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             port: configService.get<number>('FILES_SERVICE_PORT', 3630),
           },
         }),
-        inject: [ConfigService], // Внедрение ConfigService
+        inject: [ConfigService],
       },
-      // Пример для второго сервиса
       // {
       //   name: 'PAYMENTS_SERVICE',
       //   imports: [ConfigModule],
