@@ -1,15 +1,17 @@
-import { Environments } from "./configuration";
-import { IsEnum } from "class-validator";
+// import { Environments } from "./configuration";
+// import { IsEnum } from "class-validator";
 
-export class EnvironmentSettings {
-  @IsEnum(Environments)
-  ENV!: Environments;
+// export class EnvironmentSettings {
+//   @IsEnum(Environments)
+//   ENV!: Environments;
 
-  get isProduction() {
-    return this.ENV === Environments.PRODUCTION;
-  }
+//   get isProduction() {
+//     return this.ENV === Environments.PRODUCTION;
+//   }
 
-  get isDevelopment() {
-    return this.ENV === Environments.DEVELOPMENT;
-  }
-}
+//   get isDevelopment() {
+//     return this.ENV === Environments.DEVELOPMENT.;
+//   }
+// }
+
+// Не понял, зачем это нужно, если в конфиге уже есть ENV
