@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development', '.env'],
+      envFilePath: ['.env.development.local', '.env'],
     }),
 
     ClientsModule.registerAsync([

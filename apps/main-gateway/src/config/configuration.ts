@@ -1,6 +1,10 @@
 import { IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { validateSync } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { pipesSetup } from './pipes.setup';
+import { INestApplication } from '@nestjs/common';
+import { exceptionFilterSetup } from './exception-filter.setup';
+import { validationConstraintSetup } from './validation-constraint.setup';
 
 export enum Environments {
   DEVELOPMENT = 'DEVELOPMENT',
@@ -98,4 +102,12 @@ export class Configuration {
 
     return config;
   }
+}
+
+
+
+export function configApp(app: INestApplication) {
+  pipesSetup(app);
+  exceptionFilterSetup(app);
+  validationConstraintSetup(app);
 }
