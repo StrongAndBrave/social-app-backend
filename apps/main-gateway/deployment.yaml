@@ -37,6 +37,11 @@ spec:
                  secretKeyRef:
                    name: main-gateway-production-config-secret
                    key: PAYMENTS_SERVICE_PORT
+             - name: DATABASE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: DATABASE_URL
              - name: FILES_SERVICE_HOST
                valueFrom:
                  secretKeyRef:
