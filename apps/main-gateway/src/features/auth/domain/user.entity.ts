@@ -2,16 +2,16 @@ import { BaseEntity } from "apps/main-gateway/src/core/entities/base.entity";
 
 export class UserEntity extends BaseEntity {
   email: string;
-  login: string;
+  username: string;
   passwordHash: string;
   confirmationCode: string | null = null;
   codeExpirationDate: Date | null = null;
   isConfirmed: boolean = false;
 
-  constructor(email: string, login: string, passwordHash: string, ) {
+  constructor(email: string, username: string, passwordHash: string, ) {
     super();
     this.email = email;
-    this.login = login;
+    this.username = username;
     this.passwordHash = passwordHash;
   }
 
