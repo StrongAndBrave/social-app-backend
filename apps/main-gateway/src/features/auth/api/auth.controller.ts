@@ -1,4 +1,7 @@
 import { Body, Controller, Get, HttpCode, Inject, Post, UseGuards } from "@nestjs/common";
+import { UserInputModel } from "./models/input/user.input";
+import { CommandBus } from "@nestjs/cqrs";
+import { CurrentUserId } from "apps/main-gateway/src/core/transform/current-user-id.param.decorator";
 
 @Controller('auth')
 export class AuthController {

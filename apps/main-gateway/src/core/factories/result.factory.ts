@@ -10,7 +10,7 @@ export class ResultFactory {
       };
    }
 
-   static createSuccess<G>(message?: string, data?: G): ResultObjectModel<G> {
+   static createSuccess<G>(data?: G): ResultObjectModel<G> {
       return {
          data: data,
          status: ResultStatus.SUCCESS,

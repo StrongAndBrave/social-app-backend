@@ -3,12 +3,46 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration, {
+  ConfigurationType,
+  validate,
+} from './config/env/configuration';
+import { Environments } from './config/env/env-settings';
 
 @Module({
   imports: [
+    // Для примера конфига БД
+    // MongooseModule.forRootAsync({
+    //   useFactory: (configService: ConfigService<ConfigurationType, true>) => {
+    //     const databaseSettings = configService.get('databaseSettings', {
+    //       infer: true,
+    //     });
+
+    //     const uri = databaseSettings.DB_URL;
+    //     console.log('DB_URI', uri);
+
+    //     return {
+    //       uri: uri,
+    //     };
+    //   },
+    //   inject: [ConfigService],
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development.local', '.env'],
+      load: [configuration],
+      validate: validate,
+      //игнорируем файлы конфигурации в production и staging
+      ignoreEnvFile:
+        process.env.ENV !== Environments.DEVELOPMENT &&
+        process.env.ENV !== Environments.TEST,
+      //указывает откуда брать конфигурации (приоритет справа налево)
+      //.env.testing самый приоритетный в тестовой среде
+      envFilePath: [
+        process.env.ENV === Environments.TEST ? '.env.testing' : '',
+        '.env.development.local',
+        '.env.development',
+        '.env',
+      ],
     }),
 
     ClientsModule.registerAsync([
