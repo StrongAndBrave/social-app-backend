@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { useContainer } from 'class-validator';
-import { AppModule } from '../app.module';
+import { AppModule } from '../../app.module';
 
 /**
  * Для внедрения зависимостей в validator constraint decorator

@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import { UserRepository } from "../../infrastructure/user.repository";
 import { UserCreateModel, UserInputModel } from "../../api/models/input/user.input";
 import { UserEntity } from "../../domain/user.entity";
+import { BadRequestDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
 
 export class UserCreateCommand {
   constructor(public userData: UserInputModel,
@@ -18,14 +19,14 @@ export class UserCreateUseCase implements ICommandHandler<UserCreateCommand> {
   
   async execute(command: UserCreateCommand): Promise<string> {
 
-    const userNameIsExist = await this.userRepository.getByUsernameOrEmail(command.userData.login)
+    const userNameIsExist = await this.userRepository.getByUsernameOrEmail(command.userData.username)
     if (userNameIsExist) {
-      throw new BadRequestException('User with this login already exist')
+      throw BadRequestDomainException.create('Username with this login already exist')
     }
 
     const userEmailIsExist = await this.userRepository.getByUsernameOrEmail(command.userData.email)
     if (userEmailIsExist) {
-      throw new BadRequestException('User with this email already exist')
+      throw BadRequestDomainException.create('Email with this email already exist')
     }
 
     const passwordHash = await bcrypt.hash(command.userData.password, 10);

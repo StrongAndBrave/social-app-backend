@@ -1,81 +1,79 @@
+import { configModule } from './config/config-dynamic-module';  // must be first
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration, {
-  ConfigurationType,
-  validate,
-} from './config/env/configuration';
-import { Environments } from './config/env/env-settings';
+import { MailModule } from './core/adapters/mailer/mail.module';
+import { CoreModule } from './core/core.module';
+import { CoreConfig } from './config/env/configuration';
 
 @Module({
   imports: [
+    CoreModule,
+    
     // Для примера конфига БД
     // MongooseModule.forRootAsync({
-    //   useFactory: (configService: ConfigService<ConfigurationType, true>) => {
-    //     const databaseSettings = configService.get('databaseSettings', {
-    //       infer: true,
-    //     });
+      //   // если CoreModule не глобальный, то явно импортируем в монгусовский модуль, иначе CoreConfig не заинджектится
+      //   imports: [CoreModule],
+      //   useFactory: (coreConfig: CoreConfig) => {
+        //     // используем DI чтобы достать mongoURI контролируемо
+        //     return {
+          //       uri: coreConfig.mongoURI,
+          //     };
+          //   },
+          //   inject: [CoreConfig],
+          // }),
+          
+          MailModule,
+          ClientsModule.registerAsync([
+            {
+              name: 'FILES_SERVICE',
+              imports: [CoreModule],
+              useFactory: (coreConfig: CoreConfig) => ({
+                transport: Transport.TCP,
+                options: {
+                  host: coreConfig.filesServiceHost,
+                  port: coreConfig.filesServicePort,
+                },
+              }),
+             // inject: [CoreConfig],
+            },
+            // {
+              //   name: 'PAYMENTS_SERVICE',
+              //   imports: [ConfigModule],
+              //   useFactory: (configService: ConfigService) => ({
+                //     transport: Transport.RMQ,
+                //     options: {
+                  //       urls: [configService.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
+                  //       queue: configService.get<string>('PAYMENTS_QUEUE', 'payments_queue'),
+                  //       queueOptions: {
+                    //         durable: false,
+                    //       },
+                    //     },
+                    //   }),
+                    //   inject: [ConfigService],
+                    // },
+                  ]),
 
-    //     const uri = databaseSettings.DB_URL;
-    //     console.log('DB_URI', uri);
-
-    //     return {
-    //       uri: uri,
-    //     };
-    //   },
-    //   inject: [ConfigService],
-    // }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      validate: validate,
-      //игнорируем файлы конфигурации в production и staging
-      ignoreEnvFile:
-        process.env.ENV !== Environments.DEVELOPMENT &&
-        process.env.ENV !== Environments.TEST,
-      //указывает откуда брать конфигурации (приоритет справа налево)
-      //.env.testing самый приоритетный в тестовой среде
-      envFilePath: [
-        process.env.ENV === Environments.TEST ? '.env.testing' : '',
-        '.env.development.local',
-        '.env.development',
-        '.env',
-      ],
-    }),
-
-    ClientsModule.registerAsync([
-      {
-        name: 'FILES_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get<string>('FILES_SERVICE_HOST', 'localhost'),
-            port: configService.get<number>('FILES_SERVICE_PORT', 3630),
-          },
-        }),
-        inject: [ConfigService],
-      },
-      // {
-      //   name: 'PAYMENTS_SERVICE',
-      //   imports: [ConfigModule],
-      //   useFactory: (configService: ConfigService) => ({
-      //     transport: Transport.RMQ,
-      //     options: {
-      //       urls: [configService.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
-      //       queue: configService.get<string>('PAYMENTS_QUEUE', 'payments_queue'),
-      //       queueOptions: {
-      //         durable: false,
-      //       },
-      //     },
-      //   }),
-      //   inject: [ConfigService],
-      // },
-    ]),
-  ],
+                  configModule,
+                ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+// export class AppModule {
+//   static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
+//     // такой мудрёный способ мы используем, чтобы добавить к основным модулям необязательный модуль.
+//     // чтобы не обращаться в декораторе к переменной окружения через process.env в декораторе, потому что
+//     // запуск декораторов происходит на этапе склейки всех модулей до старта жизненного цикла самого NestJS
+//     const testingModule = [];
+//     if (coreConfig.includeTestingModule) {
+//       testingModule.push(TestingModule);
+//     }
+
+//     return {
+//       module: AppModule,
+//       imports: testingModule, // Add dynamic modules here
+//     };
+//   }
+// }

@@ -15,8 +15,6 @@ import { RefreshTokensUseCase } from './application/use-cases/refresh-token.use-
 import { SessionsModule } from '../security/session.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { RecoveryPasswordDataRepository } from '../user/infrastructure/recovery.password.data.repository';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { PasswordResetData } from '../user/domain/recovery.password.data.entity';
 import { RegistrationConfirmationUseCase } from './application/use-cases/registration-confirmation.use-case';
 
 // const guards = [BasicAuthGuard, LocalAuthGuard, JwtAuthGuard, JwtCookieGuard]
@@ -26,7 +24,7 @@ const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
 @Module({
   imports: [ MailModule, PassportModule, SessionsModule,
     JwtModule,
-    TypeOrmModule.forFeature([PasswordResetData]),
+
     ThrottlerModule.forRoot([
       {
         ttl: 10000,

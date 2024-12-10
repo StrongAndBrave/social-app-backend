@@ -1,52 +1,55 @@
-import { ValidateNested, validateSync } from 'class-validator';
-import { EnvironmentSettings } from './env-settings';
-import { ApiSettings } from './api-settings';
-import { DatabaseSettings } from './database-settings';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { configValidationUtility } from '../config-validation.utility';
 
-export type EnvironmentVariable = { [key: string]: string };
-export type ConfigurationType = Configuration;
-export type ApiSettingsType = ConfigurationType['apiSettings'];
-export type DatabaseSettingsType = ConfigurationType['databaseSettings'];
-export type EnvironmentSettingsType = ConfigurationType['environmentSettings'];
 
-export class Configuration {
-  @ValidateNested()
-  apiSettings: ApiSettings;
-  @ValidateNested()
-  databaseSettings: DatabaseSettings;
-  // Другие настройки...
-  @ValidateNested()
-  environmentSettings: EnvironmentSettings;
-
-  private constructor(configuration: Configuration) {
-    Object.assign(this, configuration);
-  }
-
-  static createConfig(
-    environmentVariables: Record<string, string>,
-  ): Configuration {
-    return new this({
-      // Инициализация настроек
-      apiSettings: new ApiSettings(environmentVariables),
-      databaseSettings: new DatabaseSettings(environmentVariables),
-      environmentSettings: new EnvironmentSettings(environmentVariables),
-      // Другие настройки...
-    });
-  }
+export enum Environments {
+  DEVELOPMENT = 'development',
+  STAGING = 'staging',
+  PRODUCTION = 'production',
+  TESTING = 'testing',
 }
 
-export function validate(environmentVariables: Record<string, string>) {
-  const config = Configuration.createConfig(environmentVariables);
-  //skipMissingProperties: false - для сбора всех ошибок, а не только первой
-  const errors = validateSync(config, { skipMissingProperties: false });
-  if (errors.length > 0) {
-    throw new Error(errors.toString());
-  }
-  return config;
-}
+// each module has it's own *.config.ts
 
-export default () => {
-  const environmentVariables = process.env as EnvironmentVariable;
-  console.log('process.env.ENV =', environmentVariables.ENV);
-  return Configuration.createConfig(environmentVariables);
-};
+@Injectable()
+export class CoreConfig {
+  @IsNumber(
+    {},
+    {
+      message: 'Set Env variable PORT, example: 3000',
+    },
+  )
+  port: number = Number(this.configService.get('PORT'));
+
+  @IsNotEmpty()
+  postgresGatewayURI: string = String(this.configService.get('POSTGRES_GATEWAY_URI'));
+
+  @IsEnum(Environments, {
+    message:
+      'Set correct NODE_ENV value, available values: ' +
+      configValidationUtility.getEnumValues(Environments).join(', '),
+  })
+  env: string;
+
+  @IsNotEmpty()
+  filesServiceHost: string = String(this.configService.get('FILES_SERVICE_HOST'));
+
+  @IsNumber(
+    {},
+    {
+      message: 'Set Env variable FILES_SERVICE_PORT, example: 3630',
+    },
+  )
+  filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
+
+  constructor(private configService: ConfigService) {
+    const nodeEnv = this.configService.get('NODE_ENV');
+    if (nodeEnv === undefined) {
+      throw new Error('NODE_ENV is not defined');
+    }
+    this.env = nodeEnv;
+    configValidationUtility.validateConfig(this);
+  }
+}
