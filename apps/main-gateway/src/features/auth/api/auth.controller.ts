@@ -1,7 +1,8 @@
-import { Body, Controller, Get, HttpCode, Inject, Post, UseGuards } from "@nestjs/common";
-import { UserInputModel } from "./models/input/user.input";
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Inject, Post, UseGuards } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { CurrentUserId } from "apps/main-gateway/src/core/transform/current-user-id.param.decorator";
+import { UserRegistrationCommand } from "../application/use-cases/registration-user.use-case";
+import { UserInputModel } from "../../user/api/models/input/user.input";
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +29,7 @@ export class AuthController {
    @HttpCode(204)
    async registration(@Body() newUser: UserInputModel): Promise<void> {
       const res = await this.commandBus.execute(new UserRegistrationCommand(newUser));
-      if (!res) throw new HttpException(res.message, HttpStatus.BAD_REQUEST)
+      if (!res) throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR)
       return
    }
 

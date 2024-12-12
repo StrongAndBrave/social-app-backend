@@ -3,25 +3,24 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
-import { ConfigService } from '@nestjs/config';
+import { MailConfig } from './mail.config';
 
 
 
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (mailConfig: MailConfig) => ({
         transport: {
-          service: 'Mail.ru',
+          service: mailConfig.MAILER_SERVICE,
           secure: false,
           auth: {
-            user: configService.get<string>('MAILER_LOGIN'),
-            pass: configService.get<string>('MAILER_PASSWORD'),
+            user: mailConfig.MAILER_LOGIN,
+            pass: mailConfig.MAILER_PASSWORD,
           },
         },
         defaults: {
-          from: `Snapfolio <${configService.get<string>('MAILER_LOGIN')}>`,
+          from: `Snapfolio <${mailConfig.MAILER_LOGIN}>`,
         },
         template: {
           dir: join(__dirname, 'templates'),
@@ -33,7 +32,7 @@ import { ConfigService } from '@nestjs/config';
       }),
     })
   ],
-  providers: [MailService],
+  providers: [MailConfig, MailService],
   exports: [MailService],
 })
 export class MailModule {

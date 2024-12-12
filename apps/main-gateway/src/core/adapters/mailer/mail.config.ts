@@ -4,7 +4,7 @@ import { configValidationUtility } from 'apps/main-gateway/src/config/config-val
 import { IsString } from 'class-validator';
 
 @Injectable()
-export class UsersConfig {
+export class MailConfig {
 	@IsString()
 	MAILER_LOGIN: string;
 

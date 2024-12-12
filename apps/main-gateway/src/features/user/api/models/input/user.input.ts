@@ -1,20 +1,42 @@
-import { IsEmail, Length, Matches } from "class-validator";
-import { NameIsExist } from "apps/main-gateway/src/core/validate/user-is-exist.decorator";
+import { IsEmail, IsString, Length, Matches } from "class-validator";
 import { Trim } from "apps/main-gateway/src/core/transform/trim.decorator";
 
 
 export class UserInputModel {
+  // @ApiProperty({
+  //   required: true,
+  //   description: 'User name',
+  //   minLength: 6,
+  //   maxLength: 15,
+  //   pattern: '^[a-zA-Z0-9_-]*$',
+  // })
   @Trim()
-  @Length(3, 10)
+  @Length(6, 30)
   @Matches(/^[a-zA-Z0-9_-]*$/)
-  @NameIsExist()
   username: string;
+
+  // @ApiProperty({
+  //   required: true,
+  //   description: 'Password',
+  //   minLength: 6,
+  //   maxLength: 20,
+  //   example: 'string',
+  //   pattern:
+  //     '^(?=.*[0-9])(?=.*[A-Z])(?=.*[! "#$%&\'()*+,-./:;<=>?@[\\\\\\]^_`{|}~]).*$',
+  // })
   @Trim()
   @Length(6, 20)
   password: string;
+
+  // @ApiProperty({
+  //   required: true,
+  //   description: 'Email',
+  //   example: 'example@example.com',
+  //   pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+  // })
   @Trim()
-  @IsEmail()
-  @NameIsExist()
+  @IsString()
+  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   email: string;
 }
 

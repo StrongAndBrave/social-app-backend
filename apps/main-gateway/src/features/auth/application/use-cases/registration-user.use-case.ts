@@ -1,11 +1,11 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
-import { MailService } from '../../../../infrastructure/adapters/mailer/mail.service';
 import { add } from 'date-fns';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../../user/infrastructure/user.repository';
 import { UserInputModel } from '../../../user/api/models/input/user.input';
 import { UserCreateCommand } from '../../../user/application/use-cases/user.create.use-case';
+import { MailService } from '../../../../core/adapters/mailer/mail.service';
 
 export class UserRegistrationCommand {
   constructor(public userData: UserInputModel) { }

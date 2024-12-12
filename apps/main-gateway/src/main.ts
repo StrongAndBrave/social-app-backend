@@ -14,12 +14,9 @@ async function bootstrap() {
   // // и уже потом создаём на основе донастроенного модуля наше приложение
 
 
-
   const app = await NestFactory.create(AppModule);
   const coreConfig = app.get<CoreConfig>(CoreConfig);
-  configApp(app); //глобальные настройки приложения
-
-  // нужно ли всегда писать так много для получаения настроек?
+  configApp(app); 
 
   await app.listen(coreConfig.port, () => {
     console.log('App starting listen port: ', coreConfig.port);

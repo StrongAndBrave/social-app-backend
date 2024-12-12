@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BadRequestException, Inject } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 import bcrypt from 'bcrypt'
 import { UserRepository } from "../../infrastructure/user.repository";
 import { UserCreateModel, UserInputModel } from "../../api/models/input/user.input";
