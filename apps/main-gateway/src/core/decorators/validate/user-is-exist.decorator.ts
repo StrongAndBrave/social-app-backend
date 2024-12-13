@@ -7,7 +7,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { UserRepository } from '../../features/user/infrastructure/user.repository';
+import { UserRepository } from '../../../features/user/infrastructure/user.repository';
 
 
 export function NameIsExist(property?: string, validationOptions?: ValidationOptions) {

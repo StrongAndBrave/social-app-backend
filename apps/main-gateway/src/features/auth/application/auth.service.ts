@@ -3,12 +3,12 @@ import bcrypt from 'bcrypt'
 import { JwtService } from "@nestjs/jwt";
 import { v4 as uuidv4 } from 'uuid';
 import { add } from "date-fns";
-import { MailService } from "../../../infrastructure/adapters/mailer/mail.service";
-import { ResultObjectModel } from "../../../base/models/result.object.type";
-import { ResultStatus } from "../../../base/models/enums/enums";
-import { jwtConstants } from "../../../infrastructure/constants/constants";
 import { SessionRepository } from "../../security/infrastructure/session.typeOrm.repository";
 import { UserRepository } from "../../user/infrastructure/user.repository";
+import { MailService } from "apps/main-gateway/src/core/adapters/mailer/mail.service";
+import { UnauthorizedDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
+import { AuthConfig } from "../auth.config";
+
 
 
 
@@ -19,7 +19,8 @@ export class AuthService {
       @Inject(UserRepository.name) protected readonly userRepository: UserRepository,
       protected readonly jwtService: JwtService,
       protected readonly mailService: MailService,
-      @Inject(SessionRepository.name) private readonly sessionRepository: SessionRepository
+      @Inject(SessionRepository.name) private readonly sessionRepository: SessionRepository,
+      @Inject(AuthConfig.name) private readonly authConfig: AuthConfig
    ) { }
 
    async resendEmail(email: string): Promise<boolean | null> {
@@ -36,9 +37,9 @@ export class AuthService {
 				hours: 1,
 			})
 
-         user.addConfirmData(token, date)
-         await this.userRepository.save(user)
-         await this.mailService.sendUserConfirmation(user.email, user.login, token)
+         await this.userRepository.update({ where: { id: user.id }, data: { confirmationCode: token, codeExpirationDate: date } })
+
+         await this.mailService.sendUserConfirmation(user.email, user.username, token)
          return true
 
       } catch (error) {
@@ -47,24 +48,13 @@ export class AuthService {
       }
    }
 
-   async validateUser(loginOrEmail: string, password: string): Promise<ResultObjectModel<{ userId: string }>> {
-      const user = await this.userRepository.getByLoginOrEmail(loginOrEmail);
-      if (!user) return {
-         data: null,
-         errorMessage: 'Login or email not found',
-         status: ResultStatus.UNAUTHORIZED
-      };
+   async validateUser(loginOrEmail: string, password: string): Promise<string> {
+      const user = await this.userRepository.getByUsernameOrEmail(loginOrEmail);
+      if (!user) throw UnauthorizedDomainException.create('User or password not valid');
 
       const isPasswordEquals = await bcrypt.compare(password, user.passwordHash);
-      if (!isPasswordEquals) return {
-         data: null,
-         errorMessage: 'Wrong password',
-         status: ResultStatus.UNAUTHORIZED
-      };
-      return {
-         data: { userId: user.id },
-         status: ResultStatus.SUCCESS 
-      };
+      if (!isPasswordEquals) throw UnauthorizedDomainException.create('User or password not valid');
+      return user.id
    }
 
    async generateTokens(userId: string, deviceId: string, issuedAt: string): Promise<{
@@ -75,16 +65,16 @@ export class AuthService {
       const accessToken = await this.jwtService.signAsync({
          userId
       }, {
-         expiresIn: jwtConstants.accessExpiresIn,
-         secret: jwtConstants.secretAccess
+         expiresIn: this.authConfig.accessExpiresIn,
+         secret: this.authConfig.secretAccess
       });
       const refreshToken = await this.jwtService.signAsync({
          userId,
          deviceId,
          issuedAt
       }, {
-         expiresIn: jwtConstants.refreshExpiresIn,
-         secret: jwtConstants.secretRefresh
+         expiresIn: this.authConfig.refreshExpiresIn,
+         secret: this.authConfig.secretRefresh
       })
       
       return {
@@ -93,7 +83,7 @@ export class AuthService {
       }
    }
 
-   async sessionIsValid(userId: string, deviceId: string, issuedAt: string): Promise<boolean> {
+   async sessionIsValid(deviceId: string, issuedAt: string): Promise<boolean> {
       const session = await this.sessionRepository.getById(deviceId);
       if (!session) return false;
       if (session.id !== deviceId) return false;
