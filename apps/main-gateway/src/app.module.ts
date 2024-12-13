@@ -1,28 +1,43 @@
+import { configModule } from './config/config-dynamic-module';  // must be first
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailModule } from './core/adapters/mailer/mail.module';
+import { CoreModule } from './core/core.module';
+import { CoreConfig } from './config/env/configuration';
+import { UserModule } from './features/user/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env.development.local', '.env'],
-    }),
+    CoreModule,
 
+    // Для примера конфига БД
+    // MongooseModule.forRootAsync({
+    //   // если CoreModule не глобальный, то явно импортируем в монгусовский модуль, иначе CoreConfig не заинджектится
+    //   imports: [CoreModule],
+    //   useFactory: (coreConfig: CoreConfig) => {
+    //     // используем DI чтобы достать mongoURI контролируемо
+    //     return {
+    //       uri: coreConfig.mongoURI,
+    //     };
+    //   },
+    //   inject: [CoreConfig],
+    // }),
+
+    MailModule,
     ClientsModule.registerAsync([
       {
         name: 'FILES_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
+        imports: [CoreModule],
+        useFactory: (coreConfig: CoreConfig) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get<string>('FILES_SERVICE_HOST', 'localhost'),
-            port: configService.get<number>('FILES_SERVICE_PORT', 3630),
+            host: coreConfig.filesServiceHost,
+            port: coreConfig.filesServicePort,
           },
         }),
-        inject: [ConfigService],
+        // inject: [CoreConfig],
       },
       // {
       //   name: 'PAYMENTS_SERVICE',
@@ -40,8 +55,27 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       //   inject: [ConfigService],
       // },
     ]),
+
+    configModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
+// export class AppModule {
+//   static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
+//     // такой мудрёный способ мы используем, чтобы добавить к основным модулям необязательный модуль.
+//     // чтобы не обращаться в декораторе к переменной окружения через process.env в декораторе, потому что
+//     // запуск декораторов происходит на этапе склейки всех модулей до старта жизненного цикла самого NestJS
+//     const testingModule = [];
+//     if (coreConfig.includeTestingModule) {
+//       testingModule.push(TestingModule);
+//     }
+
+//     return {
+//       module: AppModule,
+//       imports: testingModule, // Add dynamic modules here
+//     };
+//   }
+// }

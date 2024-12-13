@@ -32,7 +32,7 @@ export class DomainExceptionsFilter extends BaseExceptionFilter {
         return HttpStatus.UNAUTHORIZED;
       }
       default: {
-        return HttpStatus.I_AM_A_TEAPOT;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
       }
     }
   }

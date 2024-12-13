@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/.prisma/main-gateway"
+  output   = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -15,8 +15,40 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
+  id                 String             @id @default(uuid())
+  email              String             @unique
+  username           String             @unique
+  passwordHash       String
+  confirmationCode   String?            @unique
+  codeExpirationDate DateTime?
+  isConfirmed        Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  deletedAt          DateTime?
+  sessions           Session[]
+  passwordResetData  PasswordResetData[]
+}
+
+model Session {
+  id             String    @id @default(uuid())
+  userId         String
+  ip             String
+  deviceName     String
+  expirationDate DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetData {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  recoveryCode   String    @unique
+  expirationDate DateTime  
+  isConfirmed    Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
