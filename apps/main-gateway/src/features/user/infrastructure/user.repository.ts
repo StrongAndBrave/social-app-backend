@@ -21,28 +21,34 @@ export class UserRepository {
     const { where, data } = params;
     return this.prisma.user.update({
       data,
-      where,
+      where: {
+        ...where,
+        deletedAt: null,
+      },
     });
   }
 
   async getByUnique(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+    dataWhereUniqueInput: Prisma.UserWhereUniqueInput,
   ): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+      where: {
+        ...dataWhereUniqueInput,
+        deletedAt: null,
+      },
     });
   }
 
   async getByUsernameOrEmail(loginOrEmail: string): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
-        OR: [{ username: loginOrEmail }, { email: loginOrEmail }],
+        OR: [{ username: loginOrEmail, deletedAt: null }, { email: loginOrEmail, deletedAt: null }],
       },
     });
   }
 
   async findOrNotFoundFail(id: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id, deletedAt: null } });
 
     if (!user) {
       throw NotFoundDomainException.create('User not found');

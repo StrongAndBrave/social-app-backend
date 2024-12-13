@@ -3,14 +3,11 @@ import bcrypt from 'bcrypt'
 import { JwtService } from "@nestjs/jwt";
 import { v4 as uuidv4 } from 'uuid';
 import { add } from "date-fns";
-import { SessionRepository } from "../../security/infrastructure/session.typeOrm.repository";
 import { UserRepository } from "../../user/infrastructure/user.repository";
 import { MailService } from "apps/main-gateway/src/core/adapters/mailer/mail.service";
 import { UnauthorizedDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
 import { AuthConfig } from "../auth.config";
-
-
-
+import { SessionRepository } from "../../session/infrastructure/session.repository";
 
 @Injectable()
 export class AuthService {
@@ -84,7 +81,7 @@ export class AuthService {
    }
 
    async sessionIsValid(deviceId: string, issuedAt: string): Promise<boolean> {
-      const session = await this.sessionRepository.getById(deviceId);
+      const session = await this.sessionRepository.getByUnique({id: deviceId});
       if (!session) return false;
       if (session.id !== deviceId) return false;
       // Check version as issued at

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Inject, Ip, Post, Res, UseGuards } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
+import { Response } from "express";
 import { CurrentUserId } from "apps/main-gateway/src/core/decorators/transform/current-user-id.param.decorator";
 import { UserRegistrationCommand } from "../application/use-cases/registration-user.use-case";
 import { UserInputModel } from "../../user/api/models/input/user.input";
@@ -15,6 +16,7 @@ import { PasswordRecoveryCommand } from "../application/use-cases/password-recov
 import { SetNewPasswordCommand } from "../application/use-cases/set-new-password.use-case";
 import { JwtCookieGuard } from "apps/main-gateway/src/core/guards/jwt-cookie.guard";
 import { RefreshTokensCommand } from "../application/use-cases/refresh-token.use-case";
+import { RefreshCookieInputModel } from "../../session/api/models/input/refresh.cookie.model";
 
 @Controller('auth')
 export class AuthController {
@@ -68,23 +70,22 @@ export class AuthController {
     @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,): Promise<{ accessToken: string }> {
 
-    const result = await this.commandBus.execute(new UserLoginCommand(userId, deviceName, ip));
-    if (result.status === ResultStatus.NOT_FOUND) throw new HttpException(`User not found`, HttpStatus.BAD_REQUEST)
-    res.cookie('refreshToken', result.data.refreshToken, { httpOnly: true, secure: true });
-    return { accessToken: result.data.accessToken }
+    const tokens = await this.commandBus.execute(new UserLoginCommand(userId, deviceName, ip));
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+    return { accessToken: tokens.accessToken }
   }
 
   @Post('password-recovery')
   @HttpCode(204)
   async passwordRecovery(@Body() body: EmailResendingModel): Promise<void> {
     await this.commandBus.execute(new PasswordRecoveryCommand(body.email))
+    return
   }
 
   @Post('new-password')
   @HttpCode(204)
   async setNewPassword(@Body() body: NewPasswordModel): Promise<void> {
-    const res = await this.commandBus.execute(new SetNewPasswordCommand(body.newPassword, body.recoveryCode))
-    if (res.status !== ResultStatus.SUCCESS) throw new HttpException(`InputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired`, HttpStatus.BAD_REQUEST)
+    await this.commandBus.execute(new SetNewPasswordCommand(body.newPassword, body.recoveryCode))
     return
   }
 
@@ -99,13 +100,12 @@ export class AuthController {
     throw new HttpException(`Something went wrong`, HttpStatus.INTERNAL_SERVER_ERROR)
   }
 
-  @Post('refresh-token')
+  @Post('update-tokens')
   @UseGuards(JwtCookieGuard)
   @HttpCode(200)
   async refreshToken(@Res({ passthrough: true }) res: Response, @CurrentUserId() cookie: RefreshCookieInputModel): Promise<{ accessToken: string }> {
     const result = await this.commandBus.execute(new RefreshTokensCommand(cookie.deviceId));
-    if (result.status !== ResultStatus.SUCCESS) throw new HttpException(`Server error`, HttpStatus.INTERNAL_SERVER_ERROR)
-    res.cookie('refreshToken', result.data.refreshToken, { httpOnly: true, secure: true });
-    return { accessToken: result.data.accessToken }
+    res.cookie('refreshToken', result.refreshToken, { httpOnly: true, secure: true });
+    return { accessToken: result.accessToken }
   }
 }
