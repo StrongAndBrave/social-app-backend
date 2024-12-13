@@ -17,6 +17,7 @@ import { SetNewPasswordCommand } from "../application/use-cases/set-new-password
 import { JwtCookieGuard } from "apps/main-gateway/src/core/guards/jwt-cookie.guard";
 import { RefreshTokensCommand } from "../application/use-cases/refresh-token.use-case";
 import { RefreshCookieInputModel } from "../../session/api/models/input/refresh.cookie.model";
+import { DeviceDeleteCommand } from "../../session/application/use-cases/delete.device.use-case";
 
 @Controller('auth')
 export class AuthController {
@@ -93,11 +94,8 @@ export class AuthController {
   @UseGuards(JwtCookieGuard)
   @HttpCode(204)
   async logout(@CurrentUserId() cookie: RefreshCookieInputModel): Promise<void> {
-    const result = await this.commandBus.execute(new DeviceDeleteCommand(cookie.userId, cookie.deviceId))
-    if (result.status === ResultStatus.NOT_FOUND) throw new HttpException(`User or session not found`, HttpStatus.NOT_FOUND)
-    if (result.status === ResultStatus.FORBIDDEN) throw new HttpException(`Forbidden`, HttpStatus.FORBIDDEN)
-    if (result.status === ResultStatus.SUCCESS) return
-    throw new HttpException(`Something went wrong`, HttpStatus.INTERNAL_SERVER_ERROR)
+    await this.commandBus.execute(new DeviceDeleteCommand(cookie.userId, cookie.deviceId))
+    return
   }
 
   @Post('update-tokens')

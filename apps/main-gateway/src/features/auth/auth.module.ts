@@ -14,12 +14,13 @@ import { LocalStrategy } from '../../core/strategies/local.strategy';
 import { JwtStrategy } from '../../core/strategies/jwt.strategy';
 import { JwtCookieStrategy } from '../../core/strategies/jwt.cookie.strategy';
 import { UserRegistrationUseCase } from './application/use-cases/registration-user.use-case';
-import { RecoveryPasswordDataRepository } from '../user/infrastructure/recovery.password.data.repository';
+import { SessionModule } from '../session/session.module';
+import { RecoveryPasswordDataRepository } from './infrastructure/recovery.password.data.repository';
 
 const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
 
 @Module({
-  imports: [ MailModule, PassportModule, SessionsModule,
+  imports: [ MailModule, PassportModule, SessionModule,
     JwtModule,
 
     ThrottlerModule.forRoot([

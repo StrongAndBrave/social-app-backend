@@ -47,4 +47,11 @@ export class SessionRepository {
     });
   }
 
+  async softDeleteSessionsExcludeId(deviceId: string, userId: string) {
+    return this.prisma.session.updateMany({
+      where: { id: { not: deviceId }, userId },
+      data: { deletedAt: new Date() },
+    });
+  }
+
 }
