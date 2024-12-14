@@ -82,6 +82,16 @@ spec:
                  secretKeyRef:
                    name: main-gateway-production-config-secret
                    key: REFRESH_TOKEN_LIVE_TIME
+             - name: RECAPTCHA_EXTERNAL_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: RECAPTCHA_EXTERNAL_KEY
+             - name: RECAPTCHA_SECRET_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: RECAPTCHA_SECRET_KEY
              - name: FILES_SERVICE_HOST
                valueFrom:
                  secretKeyRef:
