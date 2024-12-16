@@ -7,14 +7,13 @@ export class SessionQueryRepository {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async findAllActiveSessions(userId: string): Promise<SessionOutputModel[]> {
-		const activeSessions = await this.prisma.session.findAll({
-			where: { userId: userId },
-			deletedAt: null,
+		const activeSessions = await this.prisma.session.findMany({
+			where: { userId: userId, deletedAt: null },
 		});
 		return activeSessions.map((session) => ({
 			deviceName: session.deviceName,
 			ip: session.ip,
-			lastVisit: session.createdAt,
+			lastVisit: session.createdAt.toISOString(),
 		}));
 	}
 }
