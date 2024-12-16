@@ -1,6 +1,5 @@
 export interface SessionOutputModel {
-   ip: string;
-   title: string;
-   lastActiveDate: string;
-   deviceId: string
+	deviceName: string;
+	ip: string;
+	lastVisit: string;
 }
