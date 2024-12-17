@@ -7,11 +7,14 @@ import { MailModule } from './core/adapters/mailer/mail.module';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './config/env/configuration';
 import { UserModule } from './features/user/user.module';
-import { RecaptchaGuard } from './core/guards/recaptcha.guard';
+import { AuthModule } from './features/auth/auth.module';
+//import { Session } from 'inspector/promises';
+import { SessionModule } from './features/session/session.module';
 
 @Module({
 	imports: [
 		CoreModule,
+		configModule,
 
 		// Для примера конфига БД
 		// MongooseModule.forRootAsync({
@@ -57,9 +60,9 @@ import { RecaptchaGuard } from './core/guards/recaptcha.guard';
 			// },
 		]),
 
-		configModule,
 		UserModule,
-		RecaptchaGuard,
+		AuthModule,
+		SessionModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

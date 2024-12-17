@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
 import { configValidationUtility } from '../config-validation.utility';
 
 export enum Environments {
@@ -23,7 +23,7 @@ export class CoreConfig {
 	port: number = Number(this.configService.get('PORT'));
 
 	@IsNotEmpty()
-	postgresGatewayURI: string = String(this.configService.get('POSTGRES_GATEWAY_URI'));
+	postgresGatewayURI: string = String(this.configService.get('DATABASE_URL'));
 
 	@IsEnum(Environments, {
 		message:
@@ -43,12 +43,7 @@ export class CoreConfig {
 	)
 	filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
 
-	constructor(private configService: ConfigService) {
-		const nodeEnv = this.configService.get('NODE_ENV');
-		if (nodeEnv === undefined) {
-			throw new Error('NODE_ENV is not defined');
-		}
-		this.env = nodeEnv;
+	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
 	}
 }

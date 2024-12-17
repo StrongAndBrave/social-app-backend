@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
-import { JwtModule} from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserLoginUseCase } from './application/use-cases/login-user.use-case';
 import { PasswordRecoveryUseCase } from './application/use-cases/password-recovery.use-case';
@@ -16,11 +16,13 @@ import { JwtCookieStrategy } from '../../core/strategies/jwt.cookie.strategy';
 import { UserRegistrationUseCase } from './application/use-cases/registration-user.use-case';
 import { SessionModule } from '../session/session.module';
 import { RecoveryPasswordDataRepository } from './infrastructure/recovery.password.data.repository';
+import { AuthConfig } from './auth.config';
+import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
 
 const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
 
 @Module({
-  imports: [ MailModule, PassportModule, SessionModule,
+  imports: [MailModule, PassportModule, SessionModule,
     JwtModule,
 
     ThrottlerModule.forRoot([
@@ -31,16 +33,21 @@ const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
     ]),
   ],
   controllers: [AuthController],
-  providers: [ {
+  providers: [{
     provide: AuthService.name,
     useClass: AuthService
   },
   {
     provide: RecoveryPasswordDataRepository.name,
     useClass: RecoveryPasswordDataRepository
- }, 
-  ...strategies, PasswordRecoveryUseCase, UserRegistrationUseCase, UserLoginUseCase, SetNewPasswordUseCase, RefreshTokensUseCase, RegistrationConfirmationUseCase],
-   exports: [AuthService.name]
+  },
+  {
+    provide: AuthConfig.name,
+    useClass: AuthConfig
+  },
+  ...strategies, RecaptchaGuard, PasswordRecoveryUseCase, UserRegistrationUseCase,
+    UserLoginUseCase, SetNewPasswordUseCase, RefreshTokensUseCase, RegistrationConfirmationUseCase],
+  exports: [AuthService.name]
 })
 export class AuthModule {
 }

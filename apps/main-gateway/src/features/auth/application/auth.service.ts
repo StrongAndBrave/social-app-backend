@@ -15,7 +15,7 @@ export class AuthService {
       
       @Inject(UserRepository.name) protected readonly userRepository: UserRepository,
       protected readonly jwtService: JwtService,
-      protected readonly mailService: MailService,
+      @Inject(MailService.name) private readonly mailService: MailService,
       @Inject(SessionRepository.name) private readonly sessionRepository: SessionRepository,
       @Inject(AuthConfig.name) private readonly authConfig: AuthConfig
    ) { }

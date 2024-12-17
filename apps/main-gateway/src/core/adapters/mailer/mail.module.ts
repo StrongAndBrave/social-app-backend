@@ -1,26 +1,25 @@
 import { Module } from '@nestjs/common';
+import { MailConfig } from './mail.config';
+import { ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
-import { MailConfig } from './mail.config';
-
-
 
 @Module({
   imports: [
     MailerModule.forRootAsync({
       useFactory: (mailConfig: MailConfig) => ({
         transport: {
-          service: mailConfig.MAILER_SERVICE,
+          service: new MailConfig(new ConfigService()).mailerService,
           secure: false,
           auth: {
-            user: mailConfig.MAILER_LOGIN,
-            pass: mailConfig.MAILER_PASSWORD,
+            user: new MailConfig(new ConfigService()).mailerLogin,
+            pass: new MailConfig(new ConfigService()).mailerPassword,
           },
         },
         defaults: {
-          from: `Snapfolio <${mailConfig.MAILER_LOGIN}>`,
+          from: `Snapfolio <${mailConfig.mailerLogin}>`,
         },
         template: {
           dir: join(__dirname, 'templates'),
@@ -32,7 +31,17 @@ import { MailConfig } from './mail.config';
       }),
     })
   ],
-  providers: [MailConfig, MailService],
+  providers: [
+    {
+      provide: MailConfig.name,
+      useClass: MailConfig,
+    },
+    MailService,
+    // {
+    //   provide: MailService.name,
+    //   useClass: MailService,
+    // },
+  ],
   exports: [MailService],
 })
 export class MailModule {
