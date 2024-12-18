@@ -14,6 +14,9 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { DeviceDeleteCommand } from '../application/use-cases/delete.device.use-case';
 import { DevicesDeleteCommand } from '../application/use-cases/delete.devices.use-case';
+import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
+import { RefreshCookieInputModel } from './models/input/refresh.cookie.model';
+import { CurrentSession } from '../../../core/decorators/transform/session.data.cookie.decorator';
 
 @Controller('sessions')
 export class SessionController {
@@ -23,21 +26,24 @@ export class SessionController {
 		private readonly sessionQueryRepository: SessionQueryRepository,
 	) {}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtCookieGuard)
 	@HttpCode(200)
 	@Get()
-	async findAllSessions(@CurrentUserId() userId: string) {
-		return this.sessionQueryRepository.findAllActiveSessions(userId);
+	async findAllSessions(
+		@CurrentUserId() userId: string,
+		@CurrentSession() cookie: RefreshCookieInputModel,
+	) {
+		return this.sessionQueryRepository.findAllActiveSessions(userId, cookie.deviceId);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtCookieGuard)
 	@HttpCode(204)
 	@Delete('terminate-all')
 	async terminateAllSessionsExcludeCurrent(
 		@CurrentUserId() userId: string,
-		@CurrentUserId() deviceId: string,
+		@CurrentUserId() cookie: RefreshCookieInputModel,
 	) {
-		await this.commandBus.execute(new DevicesDeleteCommand(userId, deviceId));
+		await this.commandBus.execute(new DevicesDeleteCommand(userId, cookie.deviceId));
 	}
 
 	@UseGuards(JwtAuthGuard)
