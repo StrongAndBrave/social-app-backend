@@ -19,36 +19,48 @@ import { RecoveryPasswordDataRepository } from './infrastructure/recovery.passwo
 import { AuthConfig } from './auth.config';
 import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
 import { UserModule } from '../user/user.module';
+import { OAuth2Controller } from './api/OAuth2.controller';
 
-const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
+const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy];
 
 @Module({
-  imports: [MailModule, PassportModule, SessionModule,
-    JwtModule, UserModule,
+	imports: [
+		MailModule,
+		PassportModule,
+		SessionModule,
+		JwtModule,
+		UserModule,
 
-    ThrottlerModule.forRoot([
-      {
-        ttl: 10000,
-        limit: 500,
-      },
-    ]),
-  ],
-  controllers: [AuthController],
-  providers: [{
-    provide: AuthService.name,
-    useClass: AuthService
-  },
-  {
-    provide: RecoveryPasswordDataRepository.name,
-    useClass: RecoveryPasswordDataRepository
-  },
-  {
-    provide: AuthConfig.name,
-    useClass: AuthConfig
-  },
-  ...strategies, RecaptchaGuard, PasswordRecoveryUseCase, UserRegistrationUseCase,
-    UserLoginUseCase, SetNewPasswordUseCase, RefreshTokensUseCase, RegistrationConfirmationUseCase],
-  exports: [AuthService.name]
+		ThrottlerModule.forRoot([
+			{
+				ttl: 10000,
+				limit: 500,
+			},
+		]),
+	],
+	controllers: [AuthController, OAuth2Controller],
+	providers: [
+		{
+			provide: AuthService.name,
+			useClass: AuthService,
+		},
+		{
+			provide: RecoveryPasswordDataRepository.name,
+			useClass: RecoveryPasswordDataRepository,
+		},
+		{
+			provide: AuthConfig.name,
+			useClass: AuthConfig,
+		},
+		...strategies,
+		RecaptchaGuard,
+		PasswordRecoveryUseCase,
+		UserRegistrationUseCase,
+		UserLoginUseCase,
+		SetNewPasswordUseCase,
+		RefreshTokensUseCase,
+		RegistrationConfirmationUseCase,
+	],
+	exports: [AuthService.name],
 })
-export class AuthModule {
-}
+export class AuthModule {}

@@ -44,8 +44,6 @@ export class CoreConfig {
 	filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
 
 	constructor(private configService: ConfigService<any, true>) {
-		console.log('ENV IS ', this.env);
 		configValidationUtility.validateConfig(this);
 	}
 }
-
