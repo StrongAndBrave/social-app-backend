@@ -13,7 +13,7 @@ export class OAuth2Controller {
 	@HttpCode(200)
 	async loginWithGithub() {}
 
-	@Post('google/register')
+	@Post('google/login')
 	@HttpCode(201)
 	async loginWithGoogle() {}
 }
