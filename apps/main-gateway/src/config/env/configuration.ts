@@ -43,6 +43,10 @@ export class CoreConfig {
 	)
 	filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
 
+	@IsString()
+	@IsNotEmpty()
+	dbUrl: string = String(this.configService.get('DATABASE_URL'));
+
 	constructor(private configService: ConfigService) {
 		const nodeEnv = this.configService.get('NODE_ENV');
 		if (nodeEnv === undefined) {
