@@ -7,7 +7,7 @@ import { MailModule } from './core/adapters/mailer/mail.module';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './config/env/configuration';
 import { UserModule } from './features/user/user.module';
-import { RecaptchaGuard } from './core/guards/recaptcha.guard';
+import { AuthModule } from './features/auth/auth.module';
 
 @Module({
 	imports: [
@@ -59,7 +59,7 @@ import { RecaptchaGuard } from './core/guards/recaptcha.guard';
 
 		configModule,
 		UserModule,
-		RecaptchaGuard,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
