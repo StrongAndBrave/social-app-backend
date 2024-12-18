@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
   constructor(private mailerService: MailerService,
-  ) { }
+  ) { 
+  }
 
   async sendUserConfirmation(userEmail: string, userName: string, token: string): Promise<void> {
     const url = `https://snapfolio.ru/confirm-email?code=${token}`;

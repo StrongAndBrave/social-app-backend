@@ -14,7 +14,7 @@ export class UserRegistrationCommand {
 @CommandHandler(UserRegistrationCommand)
 export class UserRegistrationUseCase implements ICommandHandler<UserRegistrationCommand> {
   constructor(
-    protected mailService: MailService,
+    @Inject(MailService.name) protected mailService: MailService,
     private readonly commandBus: CommandBus,
     @Inject(UserRepository.name) private readonly userRepository: UserRepository
   ) { }

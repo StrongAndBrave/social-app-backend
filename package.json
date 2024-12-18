@@ -15,7 +15,7 @@
     "start:debug": "cross-env NODE_ENV=DEVELOPMENT nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=PRODUCTION node dist/apps/main-gateway/main.js",
     "start:main-gateway": "nest start main-gateway",
-    "start:dev:main-gateway": "cross-env NODE_ENV=DEVELOPMENT nest start main-gateway --watch",
+    "start:dev:main-gateway": "cross-env NODE_ENV=development nest start main-gateway --watch",
     "start:prod:main-gateway": "cross-env NODE_ENV=PRODUCTION node dist/apps/main-gateway/main.js",
     "start:files-microservice": "nest start files-microservice",
     "start:payments-microservice": "cross-env NODE_ENV=PRODUCTION node dist/apps/payments-microservice/main.js",
@@ -31,8 +31,9 @@
     "test:debug": "cross-env NODE_ENV=DEVELOPMENT node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:files-microservice": "cross-env NODE_ENV=DEVELOPMENT jest --config apps/files-microservice/test/jest-e2e.json",
     "test:e2e:payments-microservice": "cross-env NODE_ENV=DEVELOPMENT jest --config apps/payments-microservice/test/jest-e2e.json",
-    "test:e2e": "cross-env NODE_ENV=DEVELOPMENT jest --config apps/main-gateway/test/jest-e2e.json",
-    "swagger:generate": "cross-env NODE_ENV=DEVELOPMENT nest build && node dist/apps/main-gateway/main.js --swagger"
+    "test:e2e": "dotenv -e .env.development.local --jest --config apps/main-gateway/test/jest-e2e.json",
+    "swagger:generate": "cross-env NODE_ENV=DEVELOPMENT nest build && node dist/apps/main-gateway/main.js --swagger",
+    "migrate:dev:main": "dotenv -e .env.development.local -- npx prisma migrate dev --schema=apps/main-gateway/prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

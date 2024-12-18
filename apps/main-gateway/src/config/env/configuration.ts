@@ -30,7 +30,7 @@ export class CoreConfig {
 			'Set correct NODE_ENV value, available values: ' +
 			configValidationUtility.getEnumValues(Environments).join(', '),
 	})
-	env: string;
+	env: string = this.configService.get('NODE_ENV');
 
 	@IsNotEmpty()
 	filesServiceHost: string = String(this.configService.get('FILES_SERVICE_HOST'));
@@ -44,6 +44,8 @@ export class CoreConfig {
 	filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
 
 	constructor(private configService: ConfigService<any, true>) {
+		console.log('ENV IS ', this.env);
 		configValidationUtility.validateConfig(this);
 	}
 }
+

@@ -3,9 +3,9 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MailModule } from './core/adapters/mailer/mail.module';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './config/env/configuration';
+import { MailModule } from './core/adapters/mailer/mail.module';
 import { UserModule } from './features/user/user.module';
 import { AuthModule } from './features/auth/auth.module';
 //import { Session } from 'inspector/promises';
@@ -15,6 +15,7 @@ import { SessionModule } from './features/session/session.module';
 	imports: [
 		CoreModule,
 		configModule,
+		MailModule,
 
 		// Для примера конфига БД
 		// MongooseModule.forRootAsync({
@@ -29,11 +30,11 @@ import { SessionModule } from './features/session/session.module';
 		//   inject: [CoreConfig],
 		// }),
 
-		MailModule,
 		ClientsModule.registerAsync([
 			{
 				name: 'FILES_SERVICE',
 				imports: [CoreModule],
+				inject: [CoreConfig],
 				useFactory: (coreConfig: CoreConfig) => ({
 					transport: Transport.TCP,
 					options: {
@@ -41,7 +42,6 @@ import { SessionModule } from './features/session/session.module';
 						port: coreConfig.filesServicePort,
 					},
 				}),
-				// inject: [CoreConfig],
 			},
 			// {
 			//   name: 'PAYMENTS_SERVICE',

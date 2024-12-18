@@ -18,7 +18,7 @@ export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecovery
   constructor(
     @Inject(UserRepository.name) private readonly userRepository: UserRepository,
     @Inject(RecoveryPasswordDataRepository.name) private readonly passwordRecoveryDataRepository: RecoveryPasswordDataRepository,
-    private readonly mailService: MailService,
+    @Inject(MailService.name) private readonly mailService: MailService,
 
   ) { }
 

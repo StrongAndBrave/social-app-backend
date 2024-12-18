@@ -18,12 +18,13 @@ import { SessionModule } from '../session/session.module';
 import { RecoveryPasswordDataRepository } from './infrastructure/recovery.password.data.repository';
 import { AuthConfig } from './auth.config';
 import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
+import { UserModule } from '../user/user.module';
 
 const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy]
 
 @Module({
   imports: [MailModule, PassportModule, SessionModule,
-    JwtModule,
+    JwtModule, UserModule,
 
     ThrottlerModule.forRoot([
       {

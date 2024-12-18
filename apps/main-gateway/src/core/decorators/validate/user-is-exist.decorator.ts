@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/ban-types */
 import { Inject, Injectable } from '@nestjs/common';
 import {
   registerDecorator,
@@ -8,7 +7,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { UserRepository } from '../../../features/user/infrastructure/user.repository';
-
 
 export function NameIsExist(property?: string, validationOptions?: ValidationOptions) {
   
@@ -29,10 +27,9 @@ export function NameIsExist(property?: string, validationOptions?: ValidationOpt
 export class NameIsExistConstraint implements ValidatorConstraintInterface {
   constructor(@Inject(UserRepository.name) private readonly userRepository: UserRepository) {}
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async validate(value: any, args: ValidationArguments) {
     const nameIsExist = await this.userRepository.getByUsernameOrEmail(value);
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
     return !!!nameIsExist;
   }
 

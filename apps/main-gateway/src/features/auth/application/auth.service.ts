@@ -12,7 +12,6 @@ import { SessionRepository } from "../../session/infrastructure/session.reposito
 @Injectable()
 export class AuthService {
    constructor(
-      
       @Inject(UserRepository.name) protected readonly userRepository: UserRepository,
       protected readonly jwtService: JwtService,
       @Inject(MailService.name) private readonly mailService: MailService,
