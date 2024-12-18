@@ -33,8 +33,11 @@ export class SessionController {
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(204)
 	@Delete('terminate-all')
-	async terminateAllSessionsExcludeCurrent(@CurrentUserId() userId: string) {
-		await this.commandBus.execute(new DevicesDeleteCommand(userId, 'deviceId')); //todo deviceId
+	async terminateAllSessionsExcludeCurrent(
+		@CurrentUserId() userId: string,
+		@CurrentUserId() deviceId: string,
+	) {
+		await this.commandBus.execute(new DevicesDeleteCommand(userId, deviceId));
 	}
 
 	@UseGuards(JwtAuthGuard)
