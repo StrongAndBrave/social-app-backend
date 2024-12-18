@@ -26,7 +26,7 @@ export class SessionQueryRepository {
 				activeSessions.map((session) => ({
 					deviceName: session.deviceName,
 					ip: session.ip,
-					lastVisit: session.createdAt.toISOString(),
+					lastVisit: session.updatedAt.toISOString() ?? session.createdAt.toISOString(),
 				})) || [],
 		};
 	}
