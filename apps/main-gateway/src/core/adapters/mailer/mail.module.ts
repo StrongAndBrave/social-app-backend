@@ -14,7 +14,6 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService<any, true>) => {
         const mailConfig = new EmailConfig(configService);
-        console.log(1)
         return {
         transport: {
           service: mailConfig.mailerService,
@@ -28,7 +27,7 @@ import { ConfigService } from '@nestjs/config';
           from: `Snapfolio <${mailConfig.mailerLogin}>`,
         },
         template: {
-          dir: join(__dirname, 'templates'),
+          dir: join(process.cwd(), 'apps/main-gateway/src/core/adapters/mailer/templates'),
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
@@ -38,7 +37,7 @@ import { ConfigService } from '@nestjs/config';
     })
   ],
   providers: [
-   //EmailConfig,
+   EmailConfig,
     {
       provide: MailService.name,
       useClass: MailService,

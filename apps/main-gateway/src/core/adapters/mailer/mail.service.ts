@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class MailService {
     await this.mailerService.sendMail({
       to: userEmail,
       subject: 'Welcome! Confirm your Email',
-      template: './confirmation',
+      template: 'confirmation',
       context: {
         name: userName,
         url,
