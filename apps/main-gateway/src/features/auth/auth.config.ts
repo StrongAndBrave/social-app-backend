@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { configValidationUtility } from 'apps/main-gateway/src/config/config-validation.utility';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 @Injectable()
 export class AuthConfig {
@@ -22,6 +22,15 @@ export class AuthConfig {
 
 	@IsNotEmpty()
 	recaptchaExternalKey: string = this.configService.get('RECAPTCHA_EXTERNAL_KEY');
+
+	@IsNotEmpty()
+	googleOAuthSecretKey: string = this.configService.get('GOOGLE_OAUTH_SECRET_KEY');
+
+	@IsNotEmpty()
+	googleOAuthClientId: string = this.configService.get('GOOGLE_OAUTH_CLIENT_ID');
+
+	@IsNotEmpty()
+	googleOAuthCallbackUrl: string = this.configService.get('GOOGLE_OAUTH_CALLBACK_URL');
 
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
