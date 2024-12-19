@@ -146,4 +146,12 @@ export class AuthController {
 		res.cookie('refreshToken', result.refreshToken, { httpOnly: true, secure: true });
 		return { accessToken: result.accessToken };
 	}
+
+	@Get('github/login')
+	@HttpCode(200)
+	async loginWithGithub() {}
+
+	@Get('google/login')
+	@HttpCode(200)
+	async loginWithGoogle() {}
 }
