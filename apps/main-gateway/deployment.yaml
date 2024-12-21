@@ -37,6 +37,61 @@ spec:
                  secretKeyRef:
                    name: main-gateway-production-config-secret
                    key: PAYMENTS_SERVICE_PORT
+             - name: DATABASE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: DATABASE_URL
+             - name: MAILER_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: MAILER_PASSWORD
+             - name: MAILER_LOGIN
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: MAILER_LOGIN
+             - name: MAILER_SERVICE
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: MAILER_SERVICE
+             - name: NODE_ENV
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: NODE_ENV
+             - name: SECRET_KEY_ACCESS_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: SECRET_KEY_ACCESS_TOKEN
+             - name: SECRET_KEY_REFRESH_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: SECRET_KEY_REFRESH_TOKEN
+             - name: ACCESS_TOKEN_LIVE_TIME
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: ACCESS_TOKEN_LIVE_TIME
+             - name: REFRESH_TOKEN_LIVE_TIME
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: REFRESH_TOKEN_LIVE_TIME
+             - name: RECAPTCHA_EXTERNAL_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: RECAPTCHA_EXTERNAL_KEY
+             - name: RECAPTCHA_SECRET_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: RECAPTCHA_SECRET_KEY
              - name: FILES_SERVICE_HOST
                valueFrom:
                  secretKeyRef:
