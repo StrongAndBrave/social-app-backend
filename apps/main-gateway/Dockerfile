@@ -32,4 +32,4 @@ RUN yarn build:${SERVICE}
 
 EXPOSE ${PORT}
 
-CMD ["yarn", "start:main-gateway"]
+CMD ["yarn", "start:main-gateway", "migrate:prod:main"]
