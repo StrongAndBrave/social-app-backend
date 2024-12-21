@@ -32,4 +32,4 @@ RUN yarn build:${SERVICE}
 
 EXPOSE ${PORT}
 
-CMD ["yarn", "start:main-gateway", "migrate:prod:main"]
+CMD ["sh", "-c", "yarn npx prisma generate && yarn migrate:prod:main && yarn start:main-gateway"]
