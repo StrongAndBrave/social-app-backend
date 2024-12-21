@@ -1,4 +1,4 @@
-import { BaseEntity } from "apps/main-gateway/src/core/entities/base.entity";
+import { BaseEntity } from "../../../core/entities/base.entity";
 import { PasswordResetDataCreateModel } from "../api/models/input/password.recovery.password.data.create.model";
 
 export class PasswordResetDataEntity extends BaseEntity {

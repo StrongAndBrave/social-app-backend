@@ -4,10 +4,11 @@ import { JwtService } from "@nestjs/jwt";
 import { v4 as uuidv4 } from 'uuid';
 import { add } from "date-fns";
 import { UserRepository } from "../../user/infrastructure/user.repository";
-import { MailService } from "apps/main-gateway/src/core/adapters/mailer/mail.service";
-import { UnauthorizedDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
 import { AuthConfig } from "../auth.config";
 import { SessionRepository } from "../../session/infrastructure/session.repository";
+import { MailService } from "../../../core/adapters/mailer/mail.service";
+import { UnauthorizedDomainException } from "../../../core/exceptions/domain-exceptions";
+
 
 @Injectable()
 export class AuthService {

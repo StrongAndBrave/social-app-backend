@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'libs/prisma/prisma.service';
 import { Prisma, PasswordResetData } from '@prisma/client';
 import { PasswordResetDataEntity } from '../domain/recovery.password.data.entity';
+import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
 
 @Injectable()
 export class RecoveryPasswordDataRepository {

@@ -1,7 +1,8 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Inject } from "@nestjs/common";
 import { SessionRepository } from "../../infrastructure/session.repository";
-import { NotFoundDomainException, UnauthorizedDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
+import { NotFoundDomainException, UnauthorizedDomainException } from "../../../../core/exceptions/domain-exceptions";
+
 
 export class DeviceDeleteCommand {
   constructor(public userId: string,

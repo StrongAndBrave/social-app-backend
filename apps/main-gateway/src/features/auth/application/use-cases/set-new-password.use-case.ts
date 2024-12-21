@@ -2,9 +2,8 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Inject } from "@nestjs/common";
 import { UserRepository } from "../../../user/infrastructure/user.repository";
 import { RecoveryPasswordDataRepository } from "../../infrastructure/recovery.password.data.repository";
-import { BadRequestDomainException, NotFoundDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
 import { AuthService } from "../auth.service";
-
+import { BadRequestDomainException } from "../../../../core/exceptions/domain-exceptions";
 
 export class SetNewPasswordCommand {
   constructor(public password: string,
@@ -21,16 +20,16 @@ export class SetNewPasswordUseCase implements ICommandHandler<SetNewPasswordComm
   ) { }
 
   async execute(command: SetNewPasswordCommand): Promise<boolean> {
-    const recoveryData = await this.passwordRecoveryDataRepository.getByUnique({recoveryCode: command.recoveryCode})
+    const recoveryData = await this.passwordRecoveryDataRepository.getByUnique({ recoveryCode: command.recoveryCode })
     if (!recoveryData) throw BadRequestDomainException.create('Recovery code is incorrect, expired or already been applied')
 
     if ((recoveryData.expirationDate < new Date()) || recoveryData.isConfirmed === true) throw BadRequestDomainException.create('Recovery code is incorrect, expired or already been applied')
 
-    const user = await this.userRepository.getByUnique({id: recoveryData.userId})
+    const user = await this.userRepository.getByUnique({ id: recoveryData.userId })
     const hash = await this.authService.generateHash(command.password)
 
-    await this.userRepository.update({where: {id: user!.id}, data: {passwordHash: hash}})
-    await this.passwordRecoveryDataRepository.update({where: {id: recoveryData.id}, data: {isConfirmed: true}})
+    await this.userRepository.update({ where: { id: user!.id }, data: { passwordHash: hash } })
+    await this.passwordRecoveryDataRepository.update({ where: { id: recoveryData.id }, data: { isConfirmed: true } })
     return true
   }
 }

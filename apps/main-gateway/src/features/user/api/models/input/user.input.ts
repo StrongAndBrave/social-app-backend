@@ -1,5 +1,5 @@
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
-import { Trim } from 'apps/main-gateway/src/core/decorators/transform/trim.decorator';
+import { Trim } from '../../../../../core/decorators/transform/trim.decorator';
 
 export class UserInputModel {
 	// @ApiProperty({

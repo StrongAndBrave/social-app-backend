@@ -4,10 +4,10 @@ import { Inject } from '@nestjs/common';
 import { add } from 'date-fns';
 import { UserRepository } from '../../../user/infrastructure/user.repository';
 import { SessionRepository } from '../../../session/infrastructure/session.repository';
-import { NotFoundDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
 import { AuthConfig } from '../../auth.config';
 import { SessionCreateModel } from '../../../session/api/models/input/create.session.model';
 import { SessionEntity } from '../../../session/domain/session.entity';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class UserLoginCommand {
   constructor(public userId: string,

@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Inject } from "@nestjs/common";
 import { UserRepository } from "../../../user/infrastructure/user.repository";
-import { NotFoundDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
+import { NotFoundDomainException } from "../../../../core/exceptions/domain-exceptions";
 
 
 export class RegistrationConfirmationCommand {

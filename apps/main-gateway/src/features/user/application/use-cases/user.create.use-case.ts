@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt'
 import { UserRepository } from "../../infrastructure/user.repository";
 import { UserCreateModel, UserInputModel } from "../../api/models/input/user.input";
 import { UserEntity } from "../../domain/user.entity";
-import { BadRequestDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
+import { BadRequestDomainException } from "../../../../core/exceptions/domain-exceptions";
+
 
 export class UserCreateCommand {
   constructor(public userData: UserInputModel,

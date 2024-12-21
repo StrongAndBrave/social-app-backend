@@ -1,4 +1,4 @@
-import { BaseEntity } from "apps/main-gateway/src/core/entities/base.entity";
+import { BaseEntity } from "../../../core/entities/base.entity";
 import { UserCreateModel } from "../api/models/input/user.input";
 
 export class UserEntity extends BaseEntity {
@@ -28,5 +28,4 @@ export class UserEntity extends BaseEntity {
   updatePassword(passwordHash: string) {
     this.passwordHash = passwordHash
   }
-
 }

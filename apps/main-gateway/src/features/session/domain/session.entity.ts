@@ -1,4 +1,4 @@
-import { BaseEntity } from "apps/main-gateway/src/core/entities/base.entity";
+import { BaseEntity } from "../../../core/entities/base.entity";
 import { SessionCreateModel } from "../api/models/input/create.session.model";
 
 export class SessionEntity extends BaseEntity {

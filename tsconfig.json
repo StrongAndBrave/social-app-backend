@@ -18,5 +18,13 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
+    "paths": {
+      "@app/libs": [
+        "libs/"
+      ],
+      "@app/libs/*": [
+        "libs/*"
+      ],
+    }
   }
 }

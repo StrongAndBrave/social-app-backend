@@ -1,8 +1,7 @@
 import { IsEmail, Length } from "class-validator";
-import { Trim } from "apps/main-gateway/src/core/decorators/transform/trim.decorator";
-import { ConfCodeIsValid } from "apps/main-gateway/src/core/decorators/validate/confirmation-code.decorator";
-import { EmailIsConfirmed } from "apps/main-gateway/src/core/decorators/validate/email-is-confirmed.decorator";
-
+import { Trim } from "../../../../../core/decorators/transform/trim.decorator";
+import { ConfCodeIsValid } from "../../../../../core/decorators/validate/confirmation-code.decorator";
+import { EmailIsConfirmed } from "../../../../../core/decorators/validate/email-is-confirmed.decorator";
 
 export class ValidationCodeModel {
   @Trim()
@@ -16,7 +15,6 @@ export class EmailResendingModel {
   @EmailIsConfirmed()
   email: string;
 }
-
 
 export class NewPasswordModel {
   @Trim()

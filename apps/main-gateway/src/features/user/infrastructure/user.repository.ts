@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
-import { PrismaService } from 'libs/prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
+import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UserRepository {

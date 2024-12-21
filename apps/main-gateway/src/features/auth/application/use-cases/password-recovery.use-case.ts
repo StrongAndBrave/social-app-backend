@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { add } from "date-fns";
 import { Inject } from "@nestjs/common";
 import { UserRepository } from "../../../user/infrastructure/user.repository";
-import { MailService } from "apps/main-gateway/src/core/adapters/mailer/mail.service";
 import { RecoveryPasswordDataRepository } from "../../infrastructure/recovery.password.data.repository";
-import { BadRequestDomainException } from "apps/main-gateway/src/core/exceptions/domain-exceptions";
 import { PasswordResetDataEntity } from "../../domain/recovery.password.data.entity";
+import { MailService } from "../../../../core/adapters/mailer/mail.service";
+import { BadRequestDomainException } from "../../../../core/exceptions/domain-exceptions";
 
 
 export class PasswordRecoveryCommand {

@@ -2,9 +2,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from '../auth.service';
 import { Inject } from '@nestjs/common';
 import { SessionRepository } from '../../../session/infrastructure/session.repository';
-import { UnauthorizedDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
 import { AuthConfig } from '../../auth.config';
 import { add } from 'date-fns';
+import { UnauthorizedDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 
 export class RefreshTokensCommand {
