@@ -27,9 +27,11 @@ RUN yarn install
 COPY --chown=node . .
 
 RUN yarn build:${SERVICE}
+RUN yarn 'generate:main'
+RUN yarn 'migrate:prod:main'
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 
 EXPOSE ${PORT}
 
-CMD ["sh", "-c", "yarn npx prisma generate && yarn migrate:prod:main && yarn start:main-gateway"]
+CMD ["yarn", "start:main-gateway"]
