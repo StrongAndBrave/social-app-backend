@@ -64,6 +64,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "handlebars": "^4.7.8",
+    "node": "^23.5.0",
     "nodemailer": "^6.9.16",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
