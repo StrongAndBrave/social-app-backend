@@ -16,9 +16,9 @@ export class EmailConfig {
 
 	constructor(
 		private configService: ConfigService<any, true>,
-		//private readonly logger = new Logger(EmailConfig.name)
 	) {
-		//this.logger.log('MailConfig initialized');
+
 		configValidationUtility.validateConfig(this);
+		console.log('mailerLogin', this.mailerLogin);
 	}
 }
