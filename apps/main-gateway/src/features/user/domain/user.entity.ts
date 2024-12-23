@@ -1,32 +1,38 @@
-import { BaseEntity } from "apps/main-gateway/src/core/entities/base.entity";
-import { UserCreateModel } from "../api/models/input/user.input";
+import { BaseEntity } from 'apps/main-gateway/src/core/entities/base.entity';
+import { UserCreateModel } from '../api/models/input/user.input';
+import { OAuthUserCreateModel } from '../api/models/input/oauth.user.input';
 
 export class UserEntity extends BaseEntity {
-  email: string;
-  username: string;
-  passwordHash: string;
-  confirmationCode: string | null = null;
-  codeExpirationDate: Date | null = null;
-  isConfirmed: boolean = false;
+	email: string;
+	username: string;
+	passwordHash: string;
+	confirmationCode: string | null = null;
+	codeExpirationDate: Date | null = null;
+	isConfirmed: boolean = false;
 
-  constructor(userCreateData: UserCreateModel) {
-    super();
-    this.email = userCreateData.email;
-    this.username = userCreateData.username;
-    this.passwordHash = userCreateData.passwordHash;
-  }
+	static create(userCreateData: UserCreateModel) {
+		const user = new UserEntity();
+		user.email = userCreateData.email;
+		user.username = userCreateData.username;
+		user.passwordHash = userCreateData.passwordHash;
+	}
 
-  addConfirmData(confirmCode: string, expirationDate: Date) {
-    this.confirmationCode = confirmCode;
-    this.codeExpirationDate = expirationDate;
-  }
+	static createWithOAuth(userCreateData: OAuthUserCreateModel) {
+		const user = new UserEntity();
+		user.email = userCreateData.email;
+		user.username = userCreateData.username;
+	}
 
-  confirmEmail() {
-    this.isConfirmed = true
-  }
+	addConfirmData(confirmCode: string, expirationDate: Date) {
+		this.confirmationCode = confirmCode;
+		this.codeExpirationDate = expirationDate;
+	}
 
-  updatePassword(passwordHash: string) {
-    this.passwordHash = passwordHash
-  }
+	confirmEmail() {
+		this.isConfirmed = true;
+	}
 
+	updatePassword(passwordHash: string) {
+		this.passwordHash = passwordHash;
+	}
 }
