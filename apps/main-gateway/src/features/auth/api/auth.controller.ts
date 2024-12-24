@@ -35,6 +35,10 @@ import { RefreshTokensCommand } from '../application/use-cases/refresh-token.use
 import { RefreshCookieInputModel } from '../../session/api/models/input/refresh.cookie.model';
 import { DeviceDeleteCommand } from '../../session/application/use-cases/delete.device.use-case';
 import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
+import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
+import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.oauth.google';
+import { OauthUserInputModel } from '../../user/api/models/input/oauth.user.input';
+import { OAuthUserCreateCommand } from '../../user/application/use-cases/oauth.user.cereate.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -152,6 +156,12 @@ export class AuthController {
 	async loginWithGithub() {}
 
 	@Get('google/login')
+	@UseGuards(GoogleOAuthGuard)
 	@HttpCode(200)
-	async loginWithGoogle() {}
+	async loginWithGoogle(@CurrentUserDataFromOAuth() data: OauthUserInputModel) {
+		const result = await this.commandBus.execute(new OAuthUserCreateCommand(data));
+		if (!result)
+			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+		return;
+	}
 }
