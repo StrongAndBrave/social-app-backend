@@ -32,7 +32,7 @@ export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand
 			...command.userData,
 			username,
 		};
-		const newUser = new UserEntity.createWithOAuth(userCreateData);
+		const newUser = UserEntity.createWithOAuth(userCreateData);
 
 		const addedUser = await this.userRepository.createWithOAuth(newUser);
 		console.log('User id = ', addedUser.id);

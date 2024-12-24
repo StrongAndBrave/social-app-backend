@@ -36,7 +36,8 @@ export class UserCreateUseCase implements ICommandHandler<UserCreateCommand> {
 			...command.userData,
 			passwordHash,
 		};
-		const newUser = new UserEntity.create(userCreateData);
+		const newUser = UserEntity.create(userCreateData);
+		console.log(newUser);
 
 		const addedUser = await this.userRepository.create(newUser);
 		console.log('User id = ', addedUser.id);

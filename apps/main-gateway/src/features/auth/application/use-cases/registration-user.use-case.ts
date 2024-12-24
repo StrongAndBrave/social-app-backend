@@ -8,34 +8,42 @@ import { UserCreateCommand } from '../../../user/application/use-cases/user.crea
 import { MailService } from '../../../../core/adapters/mailer/mail.service';
 
 export class UserRegistrationCommand {
-  constructor(public userData: UserInputModel) { }
+	constructor(public userData: UserInputModel) {}
 }
 
 @CommandHandler(UserRegistrationCommand)
 export class UserRegistrationUseCase implements ICommandHandler<UserRegistrationCommand> {
-  constructor(
-    @Inject(MailService.name) protected mailService: MailService,
-    private readonly commandBus: CommandBus,
-    @Inject(UserRepository.name) private readonly userRepository: UserRepository
-  ) { }
+	constructor(
+		@Inject(MailService.name) protected mailService: MailService,
+		private readonly commandBus: CommandBus,
+		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
+	) {}
 
-  async execute(command: UserRegistrationCommand): Promise<boolean> {
-    const token = uuidv4();
-    const expirationDate = add(new Date(), {
-      hours: 1,
-    })
+	async execute(command: UserRegistrationCommand): Promise<boolean> {
+		const token = uuidv4();
+		const expirationDate = add(new Date(), {
+			hours: 1,
+		});
 
-    const newUserId: string = await this.commandBus.execute(new UserCreateCommand(command.userData))
-    if (!newUserId) return false;
+		const newUserId: string = await this.commandBus.execute(
+			new UserCreateCommand(command.userData),
+		);
+		if (!newUserId) return false;
 
-    const user = await this.userRepository.getByUnique({ id: newUserId })
-    if (!user) return false
+		const user = await this.userRepository.getByUnique({ id: newUserId });
+		if (!user) return false;
 
-    await this.userRepository.update({ where: { id: newUserId }, data: { confirmationCode: token, codeExpirationDate: expirationDate } })
+		await this.userRepository.update({
+			where: { id: newUserId },
+			data: { confirmationCode: token, codeExpirationDate: expirationDate },
+		});
 
-    await this.mailService.sendUserConfirmation(command.userData.email, command.userData.username, token)
+		await this.mailService.sendUserConfirmation(
+			command.userData.email,
+			command.userData.username,
+			token,
+		);
 
-    return true;
-
-  }
+		return true;
+	}
 }

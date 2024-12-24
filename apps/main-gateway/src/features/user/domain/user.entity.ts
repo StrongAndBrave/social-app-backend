@@ -15,12 +15,14 @@ export class UserEntity extends BaseEntity {
 		user.email = userCreateData.email;
 		user.username = userCreateData.username;
 		user.passwordHash = userCreateData.passwordHash;
+		return user;
 	}
 
 	static createWithOAuth(userCreateData: OAuthUserCreateModel) {
 		const user = new UserEntity();
 		user.email = userCreateData.email;
 		user.username = userCreateData.username;
+		return user;
 	}
 
 	addConfirmData(confirmCode: string, expirationDate: Date) {
