@@ -19,9 +19,9 @@ import { RecoveryPasswordDataRepository } from './infrastructure/recovery.passwo
 import { AuthConfig } from './auth.config';
 import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
 import { UserModule } from '../user/user.module';
-import { OAuth2Controller } from './api/OAuth2.controller';
+import { GoogleOAuthStrategy } from '../../core/strategies/google.oauth.strategy';
 
-const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy];
+const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy, GoogleOAuthStrategy];
 
 @Module({
 	imports: [
@@ -38,7 +38,7 @@ const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy];
 			},
 		]),
 	],
-	controllers: [AuthController, OAuth2Controller],
+	controllers: [AuthController],
 	providers: [
 		{
 			provide: AuthService.name,
