@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Provider, User } from '@prisma/client';
 import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
@@ -22,6 +22,10 @@ export class UserRepository {
 				isConfirmed: true,
 			},
 		});
+	}
+
+	async addProvider(data: Prisma.ProviderCreateInput): Promise<Provider> {
+		return this.prisma.provider.create({ data });
 	}
 
 	async update(params: {

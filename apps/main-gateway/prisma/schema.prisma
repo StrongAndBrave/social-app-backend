@@ -32,12 +32,15 @@ model User {
 }
 
 model Provider {
-  id           String  @id @default(uuid())
+  id           String    @id @default(uuid())
   userId       String
   providerId   String
   providerName String
   fullUserName String
-  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
