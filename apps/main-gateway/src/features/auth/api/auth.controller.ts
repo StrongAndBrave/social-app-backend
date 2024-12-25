@@ -37,8 +37,8 @@ import { DeviceDeleteCommand } from '../../session/application/use-cases/delete.
 import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
 import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
 import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.oauth.google';
-import { OauthUserInputModel } from '../../user/api/models/input/oauth.user.input';
-import { OAuthUserCreateCommand } from '../../user/application/use-cases/oauth.user.cereate.use-case';
+import { OAuthUserInputModel } from '../../user/api/models/input/oauth.user.input';
+import { OAuthUserRegistrationCommand } from '../application/use-cases/oauth-registration-user.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -163,7 +163,7 @@ export class AuthController {
 	@Get('google-callback')
 	@UseGuards(GoogleOAuthGuard)
 	async googleAuthRedirect(
-		@CurrentUserDataFromOAuth() data: OauthUserInputModel,
+		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
 		@Res({ passthrough: true }) res: Response,
 	) {
 		if (!data) {
@@ -172,8 +172,7 @@ export class AuthController {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 			);
 		}
-		const result = await this.commandBus.execute(new OAuthUserCreateCommand(data));
-		console.log(result);
+		const result = await this.commandBus.execute(new OAuthUserRegistrationCommand(data));
 		if (!result)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
 		return;

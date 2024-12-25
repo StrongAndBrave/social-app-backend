@@ -5,13 +5,13 @@ import { UserEntity } from '../../domain/user.entity';
 import { BadRequestDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
 import {
 	OAuthUserCreateModel,
-	OauthUserInputModel,
+	OAuthUserInputModel,
 } from '../../api/models/input/oauth.user.input';
 import { v4 as uuidv4 } from 'uuid';
 import { MailService } from '../../../../core/adapters/mailer/mail.service';
 
 export class OAuthUserCreateCommand {
-	constructor(public userData: OauthUserInputModel) {}
+	constructor(public userData: OAuthUserInputModel) {}
 }
 
 @CommandHandler(OAuthUserCreateCommand)
@@ -38,11 +38,6 @@ export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCo
 
 		const addedUser = await this.userRepository.createWithOAuth(newUser);
 		console.log('User id = ', addedUser.id);
-
-		await this.mailService.sendSuccessfulRegistrationEmail(
-			newUser.email,
-			newUser.username,
-		);
 
 		return addedUser.id;
 	}
