@@ -158,8 +158,22 @@ export class AuthController {
 	@Get('google/login')
 	@UseGuards(GoogleOAuthGuard)
 	@HttpCode(200)
-	async loginWithGoogle(@CurrentUserDataFromOAuth() data: OauthUserInputModel) {
+	async googleOAuth() {}
+
+	@Get('google-callback')
+	@UseGuards(GoogleOAuthGuard)
+	async googleAuthRedirect(
+		@CurrentUserDataFromOAuth() data: OauthUserInputModel,
+		@Res({ passthrough: true }) res: Response,
+	) {
+		if (!data) {
+			throw new HttpException(
+				'No user data from google',
+				HttpStatus.INTERNAL_SERVER_ERROR,
+			);
+		}
 		const result = await this.commandBus.execute(new OAuthUserCreateCommand(data));
+		console.log(result);
 		if (!result)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
 		return;

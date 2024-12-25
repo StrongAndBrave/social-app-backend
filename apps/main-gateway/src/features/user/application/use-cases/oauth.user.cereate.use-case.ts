@@ -15,7 +15,7 @@ export class OAuthUserCreateCommand {
 }
 
 @CommandHandler(OAuthUserCreateCommand)
-export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand> {
+export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand> {
 	constructor(
 		@Inject(MailService.name) protected mailService: MailService,
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
@@ -29,7 +29,7 @@ export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand
 			throw BadRequestDomainException.create('Email with this email already exist');
 		}
 
-		const username = `client ${uuidv4}`;
+		const username = `client ${uuidv4()}`;
 		const userCreateData: OAuthUserCreateModel = {
 			...command.userData,
 			username,

@@ -1,9 +1,7 @@
-import { Trim } from '../../../../../core/decorators/transform/trim.decorator';
-import { IsEmail } from 'class-validator';
-
 export class OauthUserInputModel {
-	@Trim()
-	@IsEmail()
+	provider: string;
+	providerId: string;
+	fullName: string;
 	email: string;
 }
 
