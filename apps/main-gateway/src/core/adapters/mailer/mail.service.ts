@@ -3,36 +3,56 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService,
-  ) { 
-  }
+	constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(userEmail: string, userName: string, token: string): Promise<void> {
-    const url = `https://snapfolio.ru/confirm-email?code=${token}`;
+	async sendUserConfirmation(
+		userEmail: string,
+		userName: string,
+		token: string,
+	): Promise<void> {
+		const url = `https://snapfolio.ru/confirm-email?code=${token}`;
 
-    await this.mailerService.sendMail({
-      to: userEmail,
-      subject: 'Welcome! Confirm your Email',
-      template: 'confirmation',
-      context: {
-        name: userName,
-        url,
-        token,
-      },
-    });
-  }
-  
-  async sendPasswordRecovery(userEmail: string, userName: string, token: string): Promise<void> {
-    const url = `https://snapfolio.ru/reset-password?code=${token}`;
-    await this.mailerService.sendMail({
-      to: userEmail,
-      subject: 'Password reset',
-      template: 'password.reset',
-      context: {
-        name: userName,
-        url,
-        token,
-      },
-    });
-  }
+		await this.mailerService.sendMail({
+			to: userEmail,
+			subject: 'Welcome! Confirm your Email',
+			template: './confirmation',
+			context: {
+				name: userName,
+				url,
+				token,
+			},
+		});
+	}
+
+	async sendPasswordRecovery(
+		userEmail: string,
+		userName: string,
+		token: string,
+	): Promise<void> {
+		const url = `https://snapfolio.ru/reset-password?code=${token}`;
+		await this.mailerService.sendMail({
+			to: userEmail,
+			subject: 'Password reset',
+			template: 'password.reset',
+			context: {
+				name: userName,
+				url,
+				token,
+			},
+		});
+	}
+
+	async sendSuccessfulRegistrationEmail(
+		userEmail: string,
+		userName: string,
+	): Promise<void> {
+		await this.mailerService.sendMail({
+			to: userEmail,
+			subject: 'Successful registration',
+			template: 'registration',
+			context: {
+				name: userName,
+			},
+		});
+	}
 }

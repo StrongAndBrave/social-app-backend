@@ -8,14 +8,16 @@ import {
 	OauthUserInputModel,
 } from '../../api/models/input/oauth.user.input';
 import { v4 as uuidv4 } from 'uuid';
+import { MailService } from '../../../../core/adapters/mailer/mail.service';
 
 export class OAuthUserCreateCommand {
 	constructor(public userData: OauthUserInputModel) {}
 }
 
 @CommandHandler(OAuthUserCreateCommand)
-export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand> {
+export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand> {
 	constructor(
+		@Inject(MailService.name) protected mailService: MailService,
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 
@@ -27,7 +29,7 @@ export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand
 			throw BadRequestDomainException.create('Email with this email already exist');
 		}
 
-		const username = `client ${uuidv4}`;
+		const username = `client ${uuidv4()}`;
 		const userCreateData: OAuthUserCreateModel = {
 			...command.userData,
 			username,
@@ -36,6 +38,11 @@ export class UserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand
 
 		const addedUser = await this.userRepository.createWithOAuth(newUser);
 		console.log('User id = ', addedUser.id);
+
+		await this.mailService.sendSuccessfulRegistrationEmail(
+			newUser.email,
+			newUser.username,
+		);
 
 		return addedUser.id;
 	}
