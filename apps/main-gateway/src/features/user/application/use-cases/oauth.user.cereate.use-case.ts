@@ -39,9 +39,9 @@ export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCo
 		console.log('User id = ', addedUser.id);
 
 		const providerCreateData: Omit<OAuthUserInputModel, 'email'> = {
-			provider: command.userData.provider,
+			providerName: command.userData.providerName,
 			providerId: command.userData.providerId,
-			fullName: command.userData.fullName,
+			fullUserName: command.userData.fullUserName,
 		};
 		const newProvider = new ProviderEntity(addedUser.id, providerCreateData);
 		await this.userRepository.addProvider(newProvider);

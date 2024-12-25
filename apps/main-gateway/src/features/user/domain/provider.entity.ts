@@ -11,8 +11,8 @@ export class ProviderEntity extends BaseEntity {
 		super();
 		this.userId = userId;
 		this.providerId = providerCreateModel.providerId;
-		this.providerName = providerCreateModel.provider;
-		this.fullUserName = providerCreateModel.fullName;
+		this.providerName = providerCreateModel.providerName;
+		this.fullUserName = providerCreateModel.fullUserName;
 		this.updatedAt = new Date();
 	}
 }

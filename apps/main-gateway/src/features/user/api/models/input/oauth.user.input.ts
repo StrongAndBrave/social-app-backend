@@ -1,7 +1,7 @@
 export class OAuthUserInputModel {
-	provider: string;
+	providerName: string;
 	providerId: string;
-	fullName: string;
+	fullUserName: string;
 	email: string;
 }
 
