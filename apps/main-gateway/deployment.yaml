@@ -92,6 +92,21 @@ spec:
                  secretKeyRef:
                    name: main-gateway-production-config-secret
                    key: RECAPTCHA_SECRET_KEY
+             - name: GOOGLE_OAUTH_CLIENT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: GOOGLE_OAUTH_CLIENT_ID
+             - name: GOOGLE_OAUTH_SECRET_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: GOOGLE_OAUTH_SECRET_KEY
+             - name: GOOGLE_OAUTH_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: main-gateway-production-config-secret
+                   key: GOOGLE_OAUTH_CALLBACK_URL
              - name: FILES_SERVICE_HOST
                valueFrom:
                  secretKeyRef:
