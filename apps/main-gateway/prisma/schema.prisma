@@ -28,6 +28,16 @@ model User {
   deletedAt          DateTime?
   sessions           Session[]
   passwordResetData  PasswordResetData[]
+  providers          Provider[]
+}
+
+model Provider {
+  id         String  @id @default(uuid())
+  userId     String
+  providerId String
+  provider   String
+  fullName   String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
