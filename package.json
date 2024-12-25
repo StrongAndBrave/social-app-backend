@@ -30,7 +30,7 @@
     "test:debug": "cross-env NODE_ENV=DEVELOPMENT node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:files-microservice": "cross-env NODE_ENV=DEVELOPMENT jest --config apps/files-microservice/test/jest-e2e.json",
     "test:e2e:payments-microservice": "cross-env NODE_ENV=DEVELOPMENT jest --config apps/payments-microservice/test/jest-e2e.json",
-    "test:e2e:main": "dotenv -e .env.development.local -- jest --config apps/main-gateway/test/jest-e2e.json",
+    "test:e2e:main": "dotenv -e apps/main-gateway/.env.development.local -- jest --config apps/main-gateway/test/jest-e2e.json",
     "test:e2e:prod:main": "jest --config apps/main-gateway/test/jest-e2e.json",
     "swagger:generate": "cross-env NODE_ENV=DEVELOPMENT nest build && node dist/apps/main-gateway/main.js --swagger",
     "generate:main": "npx prisma generate --schema=./apps/main-gateway/prisma/schema.prisma",
