@@ -20,18 +20,26 @@ export class OAuthUserRegistrationUseCase
 	) {}
 
 	async execute(command: OAuthUserRegistrationCommand): Promise<boolean> {
-		const addedUserId = await this.commandBus.execute(
-			new OAuthUserCreateCommand(command.userData),
-		);
-		if (!addedUserId) return false;
+		const isUserExist = await this.userRepository.getByUnique({
+			email: command.userData.email,
+		});
 
-		const user = await this.userRepository.getByUnique({ id: addedUserId });
-		if (!user) return false;
+		if (!isUserExist) {
+			const addedUserId = await this.commandBus.execute(
+				new OAuthUserCreateCommand(command.userData),
+			);
+			if (!addedUserId) return false;
 
-		await this.mailService.sendSuccessfulRegistrationEmail(
-			command.userData.email,
-			user.username,
-		);
+			const user = await this.userRepository.getByUnique({ id: addedUserId });
+			if (!user) return false;
+
+			await this.mailService.sendSuccessfulRegistrationEmail(
+				command.userData.email,
+				user.username,
+			);
+
+			return true;
+		}
 
 		return true;
 	}

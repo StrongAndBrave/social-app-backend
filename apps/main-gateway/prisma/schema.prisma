@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:sa@localhost:5433/postgres"
   shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
 }
 
@@ -32,12 +32,12 @@ model User {
 }
 
 model Provider {
-  id         String  @id @default(uuid())
-  userId     String
-  providerId String
-  provider   String
-  fullName   String
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String  @id @default(uuid())
+  userId       String
+  providerId   String
+  providerName String
+  fullUserName String
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
