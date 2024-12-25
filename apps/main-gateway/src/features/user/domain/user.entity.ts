@@ -1,6 +1,6 @@
-import { BaseEntity } from 'apps/main-gateway/src/core/entities/base.entity';
 import { UserCreateModel } from '../api/models/input/user.input';
 import { OAuthUserCreateModel } from '../api/models/input/oauth.user.input';
+import { BaseEntity } from '../../../core/entities/base.entity';
 
 export class UserEntity extends BaseEntity {
 	email: string;

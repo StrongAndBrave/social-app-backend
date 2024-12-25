@@ -4,10 +4,10 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 import { UserRepository } from '../../user/infrastructure/user.repository';
-import { MailService } from 'apps/main-gateway/src/core/adapters/mailer/mail.service';
-import { UnauthorizedDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
 import { AuthConfig } from '../auth.config';
 import { SessionRepository } from '../../session/infrastructure/session.repository';
+import { MailService } from '../../../core/adapters/mailer/mail.service';
+import { UnauthorizedDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
 		@Inject(MailService.name) private readonly mailService: MailService,
 		@Inject(SessionRepository.name) private readonly sessionRepository: SessionRepository,
 		@Inject(AuthConfig.name) private readonly authConfig: AuthConfig,
-	) {}
+	) { }
 
 	async resendEmail(email: string): Promise<boolean | null> {
 		const token = uuidv4();
