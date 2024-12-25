@@ -49,8 +49,7 @@ export class MailService {
 		await this.mailerService.sendMail({
 			to: userEmail,
 			subject: 'Successful registration',
-			//template: '',
-			text: 'You have been successfully registered',
+			template: 'registration',
 			context: {
 				name: userName,
 			},
