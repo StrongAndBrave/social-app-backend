@@ -8,7 +8,7 @@ import {
 	OAuthUserInputModel,
 } from '../../api/models/input/oauth.user.input';
 import { v4 as uuidv4 } from 'uuid';
-import { MailService } from '../../../../core/adapters/mailer/mail.service';
+import { ProviderEntity } from '../../domain/provider.entity';
 
 export class OAuthUserCreateCommand {
 	constructor(public userData: OAuthUserInputModel) {}
@@ -17,7 +17,6 @@ export class OAuthUserCreateCommand {
 @CommandHandler(OAuthUserCreateCommand)
 export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCommand> {
 	constructor(
-		@Inject(MailService.name) protected mailService: MailService,
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 
@@ -38,6 +37,14 @@ export class OAuthUserCreateUseCase implements ICommandHandler<OAuthUserCreateCo
 
 		const addedUser = await this.userRepository.createWithOAuth(newUser);
 		console.log('User id = ', addedUser.id);
+
+		const providerCreateData: Omit<OAuthUserInputModel, 'email'> = {
+			provider: command.userData.provider,
+			providerId: command.userData.providerId,
+			fullName: command.userData.fullName,
+		};
+		const newProvider = new ProviderEntity(addedUser.id, providerCreateData);
+		await this.userRepository.addProvider(newProvider);
 
 		return addedUser.id;
 	}

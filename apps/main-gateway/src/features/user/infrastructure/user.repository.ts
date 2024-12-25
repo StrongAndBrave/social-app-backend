@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, Provider, User } from '@prisma/client';
 import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { ProviderEntity } from '../domain/provider.entity';
 
 @Injectable()
 export class UserRepository {
@@ -24,7 +25,7 @@ export class UserRepository {
 		});
 	}
 
-	async addProvider(data: Prisma.ProviderCreateInput): Promise<Provider> {
+	async addProvider(data: ProviderEntity): Promise<Provider> {
 		return this.prisma.provider.create({ data });
 	}
 
