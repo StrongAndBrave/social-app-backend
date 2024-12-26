@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
+import { CurrentUserId } from 'apps/main-gateway/src/core/decorators/transform/current-user-id.param.decorator';
 import { UserRegistrationCommand } from '../application/use-cases/registration-user.use-case';
 import { UserInputModel } from '../../user/api/models/input/user.input';
 import { AuthService } from '../application/auth.service';
@@ -23,22 +24,21 @@ import {
 	ValidationCodeModel,
 } from './models/input/auth.input.models';
 import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
+import { JwtAuthGuard } from 'apps/main-gateway/src/core/guards/jwt-auth.guard';
+import { UserAgent } from 'apps/main-gateway/src/core/decorators/transform/user-agent.from.headers.decorator';
+import { LocalAuthGuard } from 'apps/main-gateway/src/core/guards/local-auth.guard';
 import { UserLoginCommand } from '../application/use-cases/login-user.use-case';
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 import { SetNewPasswordCommand } from '../application/use-cases/set-new-password.use-case';
+import { JwtCookieGuard } from 'apps/main-gateway/src/core/guards/jwt-cookie.guard';
 import { RefreshTokensCommand } from '../application/use-cases/refresh-token.use-case';
 import { RefreshCookieInputModel } from '../../session/api/models/input/refresh.cookie.model';
 import { DeviceDeleteCommand } from '../../session/application/use-cases/delete.device.use-case';
 import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
 import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
 import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.oauth.google';
-import { OauthUserInputModel } from '../../user/api/models/input/oauth.user.input';
-import { OAuthUserCreateCommand } from '../../user/application/use-cases/oauth.user.cereate.use-case';
-import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
-import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
-import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
-import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
-import { UserAgent } from '../../../core/decorators/transform/user-agent.from.headers.decorator';
+import { OAuthUserInputModel } from '../../user/api/models/input/oauth.user.input';
+import { OAuthUserRegistrationOrLoginCommand } from '../application/use-cases/oauth-registration-user.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -163,7 +163,9 @@ export class AuthController {
 	@Get('google-callback')
 	@UseGuards(GoogleOAuthGuard)
 	async googleAuthRedirect(
-		@CurrentUserDataFromOAuth() data: OauthUserInputModel,
+		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
 		@Res({ passthrough: true }) res: Response,
 	) {
 		if (!data) {
@@ -172,10 +174,15 @@ export class AuthController {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 			);
 		}
-		const result = await this.commandBus.execute(new OAuthUserCreateCommand(data));
-		console.log(result);
-		if (!result)
+		const userId = await this.commandBus.execute(
+			new OAuthUserRegistrationOrLoginCommand(data),
+		);
+		if (!userId)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
-		return;
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
 	}
 }

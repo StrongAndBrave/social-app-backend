@@ -20,6 +20,7 @@ import { AuthConfig } from './auth.config';
 import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
 import { UserModule } from '../user/user.module';
 import { GoogleOAuthStrategy } from '../../core/strategies/google.oauth.strategy';
+import { OAuthUserRegistrationOrLoginUseCase } from './application/use-cases/oauth-registration-user.use-case';
 
 const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy, GoogleOAuthStrategy];
 
@@ -56,6 +57,7 @@ const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy, GoogleOAuthSt
 		RecaptchaGuard,
 		PasswordRecoveryUseCase,
 		UserRegistrationUseCase,
+		OAuthUserRegistrationOrLoginUseCase,
 		UserLoginUseCase,
 		SetNewPasswordUseCase,
 		RefreshTokensUseCase,

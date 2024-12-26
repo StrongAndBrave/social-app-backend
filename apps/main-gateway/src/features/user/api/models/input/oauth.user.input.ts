@@ -1,10 +1,10 @@
-export class OauthUserInputModel {
-	provider: string;
+export class OAuthUserInputModel {
+	providerName: string;
 	providerId: string;
-	fullName: string;
+	fullUserName: string;
 	email: string;
 }
 
-export interface OAuthUserCreateModel extends OauthUserInputModel {
+export interface OAuthUserCreateModel extends OAuthUserInputModel {
 	username: string;
 }

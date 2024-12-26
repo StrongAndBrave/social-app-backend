@@ -15,7 +15,7 @@
     "start:debug": "cross-env NODE_ENV=DEVELOPMENT nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=PRODUCTION node dist/apps/main-gateway/main.js",
     "start:main-gateway": "nest start main-gateway",
-    "start:dev:main-gateway": "cross-env NODE_ENV=development nest start main-gateway --watch",
+    "start:dev:main-gateway": "cross-env NODE_ENV=development nest start main-gateway --debug --watch",
     "start:files-microservice": "nest start files-microservice",
     "start:payments-microservice": "cross-env NODE_ENV=PRODUCTION node dist/apps/payments-microservice/main.js",
     "start:dev:files-microservice": "cross-env NODE_ENV=DEVELOPMENT nest start files-microservice --watch",

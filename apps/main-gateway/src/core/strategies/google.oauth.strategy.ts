@@ -22,10 +22,10 @@ export class GoogleOAuthStrategy extends PassportStrategy(Strategy, 'google') {
 	): Promise<any> {
 		const { id, name, emails } = profile;
 		const user = {
-			provider: 'google',
+			providerName: 'Google',
 			providerId: id,
 			email: emails[0].value,
-			fullName: `${name.givenName} ${name.familyName}`,
+			fullUserName: `${name.givenName} ${name.familyName}`,
 		};
 
 		done(null, user);
