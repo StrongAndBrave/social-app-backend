@@ -46,12 +46,14 @@ export class MailService {
 		userEmail: string,
 		userName: string,
 	): Promise<void> {
+		const url = `https://snapfolio.ru`;
 		await this.mailerService.sendMail({
 			to: userEmail,
 			subject: 'Successful registration',
-			template: 'registration',
+			template: 'oauth.success.registration.hbs',
 			context: {
 				name: userName,
+				url,
 			},
 		});
 	}

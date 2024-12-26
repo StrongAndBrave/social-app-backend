@@ -33,10 +33,7 @@ export class OAuthUserRegistrationUseCase
 			const user = await this.userRepository.getByUnique({ id: addedUserId });
 			if (!user) return false;
 
-			await this.mailService.sendSuccessfulRegistrationEmail(
-				command.userData.email,
-				user.username,
-			);
+			await this.mailService.sendSuccessfulRegistrationEmail(user.email, user.username);
 
 			return true;
 		}
