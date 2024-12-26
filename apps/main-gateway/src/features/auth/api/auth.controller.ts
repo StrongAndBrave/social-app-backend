@@ -38,7 +38,7 @@ import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
 import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
 import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.oauth.google';
 import { OAuthUserInputModel } from '../../user/api/models/input/oauth.user.input';
-import { OAuthUserRegistrationCommand } from '../application/use-cases/oauth-registration-user.use-case';
+import { OAuthUserRegistrationOrLoginCommand } from '../application/use-cases/oauth-registration-user.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -164,6 +164,8 @@ export class AuthController {
 	@UseGuards(GoogleOAuthGuard)
 	async googleAuthRedirect(
 		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
 		@Res({ passthrough: true }) res: Response,
 	) {
 		if (!data) {
@@ -172,9 +174,15 @@ export class AuthController {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 			);
 		}
-		const result = await this.commandBus.execute(new OAuthUserRegistrationCommand(data));
-		if (!result)
+		const userId = await this.commandBus.execute(
+			new OAuthUserRegistrationOrLoginCommand(data),
+		);
+		if (!userId)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
-		return;
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
 	}
 }

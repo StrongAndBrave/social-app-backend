@@ -5,13 +5,13 @@ import { MailService } from '../../../../core/adapters/mailer/mail.service';
 import { OAuthUserInputModel } from '../../../user/api/models/input/oauth.user.input';
 import { OAuthUserCreateCommand } from '../../../user/application/use-cases/oauth.user.cereate.use-case';
 
-export class OAuthUserRegistrationCommand {
+export class OAuthUserRegistrationOrLoginCommand {
 	constructor(public userData: OAuthUserInputModel) {}
 }
 
-@CommandHandler(OAuthUserRegistrationCommand)
-export class OAuthUserRegistrationUseCase
-	implements ICommandHandler<OAuthUserRegistrationCommand>
+@CommandHandler(OAuthUserRegistrationOrLoginCommand)
+export class OAuthUserRegistrationOrLoginUseCase
+	implements ICommandHandler<OAuthUserRegistrationOrLoginCommand>
 {
 	constructor(
 		@Inject(MailService.name) protected mailService: MailService,
@@ -19,25 +19,24 @@ export class OAuthUserRegistrationUseCase
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 
-	async execute(command: OAuthUserRegistrationCommand): Promise<boolean> {
-		const isUserExist = await this.userRepository.getByUnique({
+	async execute(command: OAuthUserRegistrationOrLoginCommand): Promise<string | null> {
+		const user = await this.userRepository.getByUnique({
 			email: command.userData.email,
 		});
 
-		if (!isUserExist) {
+		if (!user) {
 			const addedUserId = await this.commandBus.execute(
 				new OAuthUserCreateCommand(command.userData),
 			);
-			if (!addedUserId) return false;
+			if (!addedUserId) return null;
 
 			const user = await this.userRepository.getByUnique({ id: addedUserId });
-			if (!user) return false;
+			if (!user) return null;
 
 			await this.mailService.sendSuccessfulRegistrationEmail(user.email, user.username);
 
-			return true;
+			return addedUserId;
 		}
-
-		return true;
+		return user.id;
 	}
 }
