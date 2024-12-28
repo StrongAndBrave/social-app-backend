@@ -21,8 +21,15 @@ import { RecaptchaGuard } from '../../core/guards/recaptcha.guard';
 import { UserModule } from '../user/user.module';
 import { GoogleOAuthStrategy } from '../../core/strategies/google.oauth.strategy';
 import { OAuthUserRegistrationOrLoginUseCase } from './application/use-cases/oauth-registration-user.use-case';
+import { GithubOAuthStrategy } from '../../core/strategies/github.oauth.strategy';
 
-const strategies = [LocalStrategy, JwtStrategy, JwtCookieStrategy, GoogleOAuthStrategy];
+const strategies = [
+	LocalStrategy,
+	JwtStrategy,
+	JwtCookieStrategy,
+	GoogleOAuthStrategy,
+	GithubOAuthStrategy,
+];
 
 @Module({
 	imports: [
