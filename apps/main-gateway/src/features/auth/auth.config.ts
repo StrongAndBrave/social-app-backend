@@ -32,6 +32,15 @@ export class AuthConfig {
 	@IsNotEmpty()
 	googleOAuthCallbackUrl: string = this.configService.get('GOOGLE_OAUTH_CALLBACK_URL');
 
+	@IsNotEmpty()
+	githubOAuthClientId: string = this.configService.get('GITHUB_OAUTH_CLIENT_ID');
+
+	@IsNotEmpty()
+	githubOAuthSecretKey: string = this.configService.get('GITHUB_OAUTH_SECRET_KEY');
+
+	@IsNotEmpty()
+	githubOAuthCallbackUrl: string = this.configService.get('GITHUB_OAUTH_CALLBACK_URL');
+
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
 	}
