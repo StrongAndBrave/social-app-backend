@@ -8,13 +8,7 @@ export class SessionRepository {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async create(data: SessionEntity): Promise<Session> {
-		const session: Prisma.SessionCreateInput = {
-			...data,
-			user: { connect: { id: data.userId } },
-		};
-		return this.prisma.session.create({
-			data: session,
-		});
+		return this.prisma.session.create({ data });
 	}
 
 	async update(params: {

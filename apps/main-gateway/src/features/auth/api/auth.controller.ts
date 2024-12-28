@@ -36,9 +36,10 @@ import { RefreshCookieInputModel } from '../../session/api/models/input/refresh.
 import { DeviceDeleteCommand } from '../../session/application/use-cases/delete.device.use-case';
 import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
 import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
-import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.oauth.google';
+import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.from.oauth';
 import { OAuthUserInputModel } from '../../user/api/models/input/oauth.user.input';
 import { OAuthUserRegistrationOrLoginCommand } from '../application/use-cases/oauth-registration-user.use-case';
+import { GithubOauthGuard } from '../../../core/guards/github.oauth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -152,17 +153,48 @@ export class AuthController {
 	}
 
 	@Get('github/login')
+	@UseGuards(GithubOauthGuard)
 	@HttpCode(200)
 	async loginWithGithub() {}
+
+	@Get('github/callback')
+	@UseGuards(GithubOauthGuard)
+	@HttpCode(200)
+	async githubOAuthRedirect(
+		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response,
+	) {
+		if (!data) {
+			throw new HttpException(
+				'No user data from github',
+				HttpStatus.INTERNAL_SERVER_ERROR,
+			);
+		}
+		if (!data.email) {
+			throw new HttpException('Need user email to continue', HttpStatus.BAD_REQUEST);
+		}
+		const userId = await this.commandBus.execute(
+			new OAuthUserRegistrationOrLoginCommand(data),
+		);
+		if (!userId)
+			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
+	}
 
 	@Get('google/login')
 	@UseGuards(GoogleOAuthGuard)
 	@HttpCode(200)
 	async googleOAuth() {}
 
-	@Get('google-callback')
+	@Get('google/callback')
 	@UseGuards(GoogleOAuthGuard)
-	async googleAuthRedirect(
+	async googleOAuthRedirect(
 		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
 		@UserAgent() deviceName: string,
 		@Ip() ip: string,
@@ -172,6 +204,12 @@ export class AuthController {
 			throw new HttpException(
 				'No user data from google',
 				HttpStatus.INTERNAL_SERVER_ERROR,
+			);
+		}
+		if (!data.email) {
+			throw new HttpException(
+				'Need user public email to continue',
+				HttpStatus.BAD_REQUEST,
 			);
 		}
 		const userId = await this.commandBus.execute(
