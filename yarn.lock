@@ -1213,6 +1213,13 @@
   dependencies:
     "@types/mjml-core" "*"
 
+"@types/multer@^1.4.12":
+  version "1.4.12"
+  resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.12.tgz#da67bd0c809f3a63fe097c458c0d4af1fea50ab7"
+  integrity sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==
+  dependencies:
+    "@types/express" "*"
+
 "@types/node@*":
   version "22.10.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.2.tgz#a485426e6d1fdafc7b0d4c7b24e2c78182ddabb9"
@@ -1234,31 +1241,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/oauth@*":
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/@types/oauth/-/oauth-0.9.6.tgz#fb5a278f6a826108a7467a01f856324e11e9ba4a"
-  integrity sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==
-  dependencies:
-    "@types/node" "*"
-
-"@types/passport-github@^1.1.12":
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/@types/passport-github/-/passport-github-1.1.12.tgz#85907077295c086af26c995f3865a2eb36bbda1f"
-  integrity sha512-VJpMEIH+cOoXB694QgcxuvWy2wPd1Oq3gqrg2Y9DMVBYs9TmH9L14qnqPDZsNMZKBDH+SvqRsGZj9SgHYeDgcA==
-  dependencies:
-    "@types/express" "*"
-    "@types/passport" "*"
-    "@types/passport-oauth2" "*"
-
-"@types/passport-google-oauth20@^2.0.16":
-  version "2.0.16"
-  resolved "https://registry.yarnpkg.com/@types/passport-google-oauth20/-/passport-google-oauth20-2.0.16.tgz#9e39c1203d56496d89392538e6109626e253bc28"
-  integrity sha512-ayXK2CJ7uVieqhYOc6k/pIr5pcQxOLB6kBev+QUGS7oEZeTgIs1odDobXRqgfBPvXzl0wXCQHftV5220czZCPA==
-  dependencies:
-    "@types/express" "*"
-    "@types/passport" "*"
-    "@types/passport-oauth2" "*"
-
 "@types/passport-jwt@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/passport-jwt/-/passport-jwt-4.0.1.tgz#080fbe934fb9f6954fb88ec4cdf4bb2cc7c4d435"
@@ -1275,15 +1257,6 @@
     "@types/express" "*"
     "@types/passport" "*"
     "@types/passport-strategy" "*"
-
-"@types/passport-oauth2@*":
-  version "1.4.17"
-  resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.17.tgz#d5d54339d44f6883d03e69dc0cc0e2114067abb4"
-  integrity sha512-ODiAHvso6JcWJ6ZkHHroVp05EHGhqQN533PtFNBkg8Fy5mERDqsr030AX81M0D69ZcaMvhF92SRckEk2B0HYYg==
-  dependencies:
-    "@types/express" "*"
-    "@types/oauth" "*"
-    "@types/passport" "*"
 
 "@types/passport-strategy@*":
   version "0.2.38"
@@ -2467,7 +2440,7 @@ cross-spawn@^6.0.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3, cross-spawn@^7.0.6:
+cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
   integrity sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==
@@ -2694,17 +2667,7 @@ domutils@^3.0.1, domutils@^3.1.0:
     domelementtype "^2.3.0"
     domhandler "^5.0.3"
 
-dotenv-cli@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv-cli/-/dotenv-cli-8.0.0.tgz#cea1519f5a06c7372a1428fca4605fcf3d50e1cf"
-  integrity sha512-aLqYbK7xKOiTMIRf1lDPbI+Y+Ip/wo5k3eyp6ePysVaSqbyxjyK3dK35BTxG+rmd7djf5q2UPs4noPNH+cj0Qw==
-  dependencies:
-    cross-spawn "^7.0.6"
-    dotenv "^16.3.0"
-    dotenv-expand "^10.0.0"
-    minimist "^1.2.6"
-
-dotenv-expand@10.0.0, dotenv-expand@^10.0.0:
+dotenv-expand@10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-10.0.0.tgz#12605d00fb0af6d0a592e6558585784032e4ef37"
   integrity sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==
@@ -2714,7 +2677,7 @@ dotenv@16.4.5:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
   integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
-dotenv@^16.3.0, dotenv@^16.4.5:
+dotenv@^16.4.5:
   version "16.4.7"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.7.tgz#0e20c5b82950140aa99be360a8a5f52335f53c26"
   integrity sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
@@ -5523,13 +5486,6 @@ parseurl@~1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
-
-passport-github@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/passport-github/-/passport-github-1.1.0.tgz#8ce1e3fcd61ad7578eb1df595839e4aea12355d4"
-  integrity sha512-XARXJycE6fFh/dxF+Uut8OjlwbFEXgbPVj/+V+K7cvriRK7VcAOm+NgBmbiLM9Qv3SSxEAV+V6fIk89nYHXa8A==
-  dependencies:
-    passport-oauth2 "1.x.x"
 
 passport-google-oauth20@^2.0.0:
   version "2.0.0"
