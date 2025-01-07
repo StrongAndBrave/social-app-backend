@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:sa@localhost:5433/postgres"
   shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
 }
 
@@ -29,6 +29,7 @@ model User {
   sessions           Session[]
   passwordResetData  PasswordResetData[]
   providers          Provider[]
+  posts              Post[]
 }
 
 model Provider {
@@ -65,4 +66,15 @@ model PasswordResetData {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  description String
+  image       String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
