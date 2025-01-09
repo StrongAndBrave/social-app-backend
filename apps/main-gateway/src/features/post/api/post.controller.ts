@@ -19,7 +19,6 @@ import { CurrentUserId } from '../../../core/decorators/transform/current-user-i
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostInputModel } from './models/input/post.input';
 import { PostCreateCommand } from '../application/use-cases/create.post.use-case';
-import { use } from 'passport';
 import { PostDeleteCommand } from '../application/use-cases/delete.post.use-case';
 
 @Controller('posts')
