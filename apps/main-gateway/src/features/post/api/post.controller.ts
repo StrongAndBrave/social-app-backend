@@ -17,9 +17,10 @@ import { CommandBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PostInputModel } from './models/input/post.input';
+import { NewDescriptionModel, PostInputModel } from './models/input/post.input';
 import { PostCreateCommand } from '../application/use-cases/create.post.use-case';
 import { PostDeleteCommand } from '../application/use-cases/delete.post.use-case';
+import { PostUpdateCommand } from '../application/use-cases/update.post.use-case';
 
 @Controller('posts')
 export class PostController {
@@ -48,11 +49,21 @@ export class PostController {
 
 	@Put(':id')
 	@UseGuards(JwtAuthGuard)
-	async updatePost(@Param('id') id: string) {}
+	@HttpCode(204)
+	async updatePost(
+		@CurrentUserId() userId: string,
+		@Param('id') id: string,
+		@Body() body: NewDescriptionModel,
+	): Promise<void> {
+		await this.commandBus.execute(new PostUpdateCommand(userId, id, body.description));
+		return;
+	}
 
 	@Delete(':id')
 	@UseGuards(JwtAuthGuard)
+	@HttpCode(204)
 	async deletePost(@Param('id') id: string, @CurrentUserId() userId: string) {
 		await this.commandBus.execute(new PostDeleteCommand(userId, id));
+		return;
 	}
 }

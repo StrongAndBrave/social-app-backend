@@ -11,3 +11,9 @@ export interface PostCreateModel extends PostInputModel {
 	userId: string;
 	image: string;
 }
+
+export class NewDescriptionModel {
+	@Trim()
+	@Length(0, 500)
+	description: string;
+}

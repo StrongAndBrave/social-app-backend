@@ -11,6 +11,20 @@ export class PostRepository {
 		return this.prisma.post.create({ data });
 	}
 
+	async updatePost(params: {
+		where: Prisma.PostWhereUniqueInput;
+		data: Prisma.PostUpdateInput;
+	}): Promise<Post> {
+		const { where, data } = params;
+		return this.prisma.post.update({
+			data,
+			where: {
+				...where,
+				deletedAt: null,
+			},
+		});
+	}
+
 	async getByUnique(
 		dataWhereUniqueInput: Prisma.PostWhereUniqueInput,
 	): Promise<Post | null> {
