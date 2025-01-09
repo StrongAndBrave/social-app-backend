@@ -18,8 +18,9 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostInputModel } from './models/input/post.input';
-import { PostCreateCommand } from '../application/use-cases/post.create.use-case';
+import { PostCreateCommand } from '../application/use-cases/create.post.use-case';
 import { use } from 'passport';
+import { PostDeleteCommand } from '../application/use-cases/delete.post.use-case';
 
 @Controller('posts')
 export class PostController {
@@ -52,5 +53,7 @@ export class PostController {
 
 	@Delete(':id')
 	@UseGuards(JwtAuthGuard)
-	async deletePost(@Param('id') id: string) {}
+	async deletePost(@Param('id') id: string, @CurrentUserId() userId: string) {
+		await this.commandBus.execute(new PostDeleteCommand(userId, id));
+	}
 }

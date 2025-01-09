@@ -13,7 +13,7 @@ export class PostCreateCommand {
 }
 
 @CommandHandler(PostCreateCommand)
-export class PostCreateUseCase implements ICommandHandler<PostCreateCommand> {
+export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 	constructor(
 		@Inject(PostRepository.name) private readonly postRepository: PostRepository,
 	) {}

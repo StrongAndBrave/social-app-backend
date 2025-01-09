@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PostRepository } from './infrastructure/post.repository';
-import { PostCreateUseCase } from './application/use-cases/post.create.use-case';
+import { CreatePostUseCase } from './application/use-cases/create.post.use-case';
 import { PostController } from './api/post.controller';
+import { DeletePostUseCase } from './application/use-cases/delete.post.use-case';
 
 @Module({
 	imports: [JwtModule],
@@ -11,7 +12,8 @@ import { PostController } from './api/post.controller';
 			provide: PostRepository.name,
 			useClass: PostRepository,
 		},
-		PostCreateUseCase,
+		CreatePostUseCase,
+		DeletePostUseCase,
 	],
 	controllers: [PostController],
 })
