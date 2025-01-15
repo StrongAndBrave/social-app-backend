@@ -5,6 +5,7 @@ import { CreatePostUseCase } from './application/use-cases/create.post.use-case'
 import { PostController } from './api/post.controller';
 import { DeletePostUseCase } from './application/use-cases/delete.post.use-case';
 import { PostUpdateUseCase } from './application/use-cases/update.post.use-case';
+import { PostQueryRepository } from './infrastructure/post.query.repository';
 
 @Module({
 	imports: [JwtModule],
@@ -12,6 +13,10 @@ import { PostUpdateUseCase } from './application/use-cases/update.post.use-case'
 		{
 			provide: PostRepository.name,
 			useClass: PostRepository,
+		},
+		{
+			provide: PostQueryRepository.name,
+			useClass: PostQueryRepository,
 		},
 		CreatePostUseCase,
 		PostUpdateUseCase,

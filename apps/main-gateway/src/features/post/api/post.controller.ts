@@ -6,6 +6,7 @@ import {
 	HttpCode,
 	HttpException,
 	HttpStatus,
+	Inject,
 	Param,
 	Post,
 	Put,
@@ -21,14 +22,20 @@ import { NewDescriptionModel, PostInputModel } from './models/input/post.input';
 import { PostCreateCommand } from '../application/use-cases/create.post.use-case';
 import { PostDeleteCommand } from '../application/use-cases/delete.post.use-case';
 import { PostUpdateCommand } from '../application/use-cases/update.post.use-case';
+import { PostQueryRepository } from '../infrastructure/post.query.repository';
 
 @Controller('posts')
 export class PostController {
-	constructor(private commandBus: CommandBus) {}
+	constructor(
+		private commandBus: CommandBus,
+		@Inject(PostQueryRepository.name) private postQueryRepository: PostQueryRepository,
+	) {}
 
 	@Get(':userId')
 	@HttpCode(200)
-	async findPosts(@Param('userId') userId: string) {}
+	async findPosts(@Param('userId') userId: string) {
+		return this.postQueryRepository.findPosts(userId);
+	}
 
 	@Post()
 	@UseInterceptors(FileInterceptor('photo'))
