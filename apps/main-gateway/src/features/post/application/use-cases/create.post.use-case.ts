@@ -19,7 +19,7 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 	) {}
 
 	async execute(command: PostCreateCommand): Promise<string> {
-		const uploadPhotoURL = 'photoURL';
+		const uploadPhotoURL = 'photoURL'; // todo req on files-microservice to upload photo (localhost:3000/object-storage/upload)
 
 		const postCreateData: PostCreateModel = {
 			userId: command.userId,

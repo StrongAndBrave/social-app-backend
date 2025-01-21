@@ -42,7 +42,7 @@
     "migrate:prod:payments": "npx prisma migrate deploy --schema=apps/payments-microservice/prisma/schema.prisma"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.722.0",
+    "@aws-sdk/client-s3": "^3.729.0",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.3.0",
