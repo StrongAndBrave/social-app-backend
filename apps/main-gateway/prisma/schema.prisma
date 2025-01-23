@@ -70,7 +70,7 @@ model PasswordResetData {
 
 model Post {
   id          String    @id @default(uuid())
-  userId      String    @unique
+  userId      String
   description String
   image       String    @unique
   createdAt   DateTime  @default(now())
