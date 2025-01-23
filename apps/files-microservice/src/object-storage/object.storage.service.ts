@@ -16,7 +16,7 @@ export class YandexStorageAdapter {
 		});
 	}
 
-	async savePhoto(postId: string, userId: string, buffer: Buffer) {
+	async saveImage(postId: string, userId: string, buffer: Buffer) {
 		const key = `posts/images/users/user_${userId}/${postId}.png`;
 		const bucketParams = {
 			Bucket: 'social-app',

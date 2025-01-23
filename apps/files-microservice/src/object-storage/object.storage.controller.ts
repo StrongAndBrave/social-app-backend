@@ -1,19 +1,15 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { YandexStorageAdapter } from './object.storage.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('object-storage')
 export class YandexStorageController {
 	constructor(private readonly yandexStorageAdapter: YandexStorageAdapter) {}
 
-	@Post('upload')
-	@UseInterceptors(FileInterceptor('image'))
-	async uploadPhoto(
-		@Body() postId: string,
-		@Body() userId: string,
-		@UploadedFile() image: Express.Multer.File,
-	) {
-		const result = await this.yandexStorageAdapter.savePhoto(postId, userId, image);
+	@MessagePattern({ cmd: 'upload_image' })
+	async uploadImage(postId: string, userId: string, image: Buffer) {
+		console.log(image);
+		const result = await this.yandexStorageAdapter.saveImage(postId, userId, image);
 		return result;
 	}
 }
