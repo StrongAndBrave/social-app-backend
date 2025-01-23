@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:sa@localhost:5433/postgres"
   shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
 }
 
@@ -72,7 +72,7 @@ model Post {
   id          String    @id @default(uuid())
   userId      String
   description String
-  image       String    @unique
+  image       String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
