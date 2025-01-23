@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { YandexStorageController } from './files.controller';
-import { YandexStorageAdapter } from './files.service';
+import { YandexStorageController } from './object.storage.controller';
+import { YandexStorageAdapter } from './object.storage.service';
 
 @Module({
 	imports: [],

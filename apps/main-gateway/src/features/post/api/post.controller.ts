@@ -38,16 +38,16 @@ export class PostController {
 	}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('photo'))
+	@UseInterceptors(FileInterceptor('image'))
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(204)
 	async createPost(
 		@Body() body: PostInputModel,
 		@CurrentUserId() userId: string,
-		@UploadedFile() photo: Express.Multer.File,
+		@UploadedFile() image: Express.Multer.File,
 	) {
 		const newPost = await this.commandBus.execute(
-			new PostCreateCommand(userId, body.description, photo),
+			new PostCreateCommand(userId, body.description, image),
 		);
 		if (!newPost)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);

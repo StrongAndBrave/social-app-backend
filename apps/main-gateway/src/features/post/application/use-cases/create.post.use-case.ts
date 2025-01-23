@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { PostRepository } from '../../infrastructure/post.repository';
 import { PostEntity } from '../../domain/post.entity';
 import { PostCreateModel } from '../../api/models/input/post.input';
+import axios from 'axios';
 
 export class PostCreateCommand {
 	constructor(
@@ -19,16 +20,26 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 	) {}
 
 	async execute(command: PostCreateCommand): Promise<string> {
-		const uploadPhotoURL = 'photoURL'; // todo req on files-microservice to upload photo (localhost:3000/object-storage/upload)
-
 		const postCreateData: PostCreateModel = {
 			userId: command.userId,
 			description: command.description,
-			image: uploadPhotoURL,
+			image: 'image',
 		};
 
 		const newPost = new PostEntity(postCreateData);
 		const addedPost = await this.postRepository.createPost(newPost);
+
+		const url = 'http://localhost:3630/object-storage/upload';
+		const uploadImage = await axios({
+			method: 'post',
+			url: url,
+			data: {
+				postId: addedPost.id,
+				userId: addedPost.userId,
+				image: command.image,
+			},
+		});
+
 		return addedPost.id ?? null;
 	}
 }
