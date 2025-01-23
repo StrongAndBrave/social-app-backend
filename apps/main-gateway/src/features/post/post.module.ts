@@ -6,6 +6,7 @@ import { PostController } from './api/post.controller';
 import { DeletePostUseCase } from './application/use-cases/delete.post.use-case';
 import { PostUpdateUseCase } from './application/use-cases/update.post.use-case';
 import { PostQueryRepository } from './infrastructure/post.query.repository';
+import { FilesClientService } from './application/files-microservice-connection/client-service';
 
 @Module({
 	imports: [JwtModule],
@@ -21,6 +22,7 @@ import { PostQueryRepository } from './infrastructure/post.query.repository';
 		CreatePostUseCase,
 		PostUpdateUseCase,
 		DeletePostUseCase,
+		FilesClientService,
 	],
 	controllers: [PostController],
 })

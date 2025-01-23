@@ -11,6 +11,7 @@ import { AuthModule } from './features/auth/auth.module';
 //import { Session } from 'inspector/promises';
 import { SessionModule } from './features/session/session.module';
 import { PostModule } from './features/post/post.module';
+import { FilesClientService } from './features/post/application/files-microservice-connection/client-service';
 
 @Module({
 	imports: [
@@ -60,7 +61,6 @@ import { PostModule } from './features/post/post.module';
 			//   inject: [ConfigService],
 			// },
 		]),
-
 		UserModule,
 		AuthModule,
 		SessionModule,

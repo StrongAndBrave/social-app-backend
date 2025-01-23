@@ -47,7 +47,7 @@ export class PostController {
 		@UploadedFile() image: Express.Multer.File,
 	) {
 		const newPost = await this.commandBus.execute(
-			new PostCreateCommand(userId, body.description, image),
+			new PostCreateCommand(userId, body.description, image.buffer),
 		);
 		if (!newPost)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
