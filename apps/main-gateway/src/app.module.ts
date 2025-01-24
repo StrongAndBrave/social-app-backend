@@ -8,10 +8,8 @@ import { CoreConfig } from './config/env/configuration';
 import { MailModule } from './core/adapters/mailer/mail.module';
 import { UserModule } from './features/user/user.module';
 import { AuthModule } from './features/auth/auth.module';
-//import { Session } from 'inspector/promises';
 import { SessionModule } from './features/session/session.module';
 import { PostModule } from './features/post/post.module';
-import { FilesClientService } from './features/post/application/files-microservice-connection/client-service';
 
 @Module({
 	imports: [
