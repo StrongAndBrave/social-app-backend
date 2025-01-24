@@ -15,15 +15,19 @@ import { DevicesDeleteCommand } from '../application/use-cases/delete.devices.us
 import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
 import { RefreshCookieInputModel } from './models/input/refresh.cookie.model';
 import { CurrentSession } from '../../../core/decorators/transform/session.data.cookie.decorator';
+import { ApiTags } from '@nestjs/swagger';
+import { DeleteAllDeviceSessions, DeleteDeviceSessionsByDeviceId, GetDevices } from '../../../core/swagger/sessions.swagger';
 
+@ApiTags('Sessions')
 @Controller('sessions')
 export class SessionController {
 	constructor(
 		private commandBus: CommandBus,
 		@Inject(SessionQueryRepository.name)
 		private readonly sessionQueryRepository: SessionQueryRepository,
-	) {}
+	) { }
 
+	@GetDevices()
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(200)
 	@Get()
@@ -34,6 +38,7 @@ export class SessionController {
 		);
 	}
 
+	@DeleteAllDeviceSessions()
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(204)
 	@Delete('terminate-all')
@@ -45,6 +50,7 @@ export class SessionController {
 		);
 	}
 
+	@DeleteDeviceSessionsByDeviceId()
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(204)
 	@Delete(':deviceId')
