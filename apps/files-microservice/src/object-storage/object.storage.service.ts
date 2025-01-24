@@ -1,28 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { PutObjectCommand, PutObjectCommandOutput, S3Client } from '@aws-sdk/client-s3';
+import { CoreConfig } from '../config/configuration';
+import { Readable } from 'stream';
 
 @Injectable()
 export class YandexStorageAdapter {
 	s3Client: S3Client;
-	constructor() {
-		const REGION = 'us-east-1';
+	constructor(private readonly coreConfig: CoreConfig) {
 		this.s3Client = new S3Client({
-			region: REGION,
-			endpoint: 'https://storage.yandexcloud.net',
+			region: this.coreConfig.yandexObjectStorageRegion,
+			endpoint: this.coreConfig.yandexObjectStorageUrl,
 			credentials: {
-				secretAccessKey: '', // todo don`t commit with credentials
-				accessKeyId: '',
+				secretAccessKey: this.coreConfig.yandexObjectStorageSecretKey,
+				accessKeyId: this.coreConfig.yandexObjectStorageClientId,
 			},
 		});
 	}
 
-	async saveImage(postId: string, userId: string, buffer: Buffer) {
-		const key = `posts/images/users/user_${userId}/${postId}.png`;
+	async saveImage(postId: string, userId: string, image: Buffer) {
+		/*const bufferToStream = (buffer: Buffer): Readable => {
+			const stream = new Readable();
+			stream.push(buffer);
+			stream.push(null);
+			return stream;
+		};*/
+		const key = `posts/images/users/user_${userId}/${postId}_image.png`;
 		const bucketParams = {
-			Bucket: 'social-app',
+			Bucket: this.coreConfig.yandexObjectStorageBucket,
 			Key: key,
-			Body: buffer,
-			ContentType: 'image/png',
+			Body: image,
+			ContentType: this.coreConfig.yandexObjectStorageContentType,
 		};
 
 		const command = new PutObjectCommand(bucketParams);
