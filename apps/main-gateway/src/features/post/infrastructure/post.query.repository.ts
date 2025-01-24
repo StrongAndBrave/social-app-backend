@@ -7,17 +7,23 @@ export class PostQueryRepository {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async findPosts(userId: string): Promise<PostOutputModel[]> {
-		const posts = await this.prisma.post.findMany({
-			select: { id: true, description: true, createdAt: true },
+		const items = await this.prisma.post.findMany({
 			where: { userId: userId, deletedAt: null },
+			include: { user: true },
 			orderBy: { createdAt: 'desc' },
 			take: 8,
 		});
 
-		return posts.map((post) => ({
-			id: post.id,
-			description: post.description,
-			createdAt: post.createdAt.toISOString(),
+		return items.map((item) => ({
+			id: item.id,
+			owner: {
+				ownerId: item.user.id,
+				ownerName: item.user.username,
+			},
+			description: item.description,
+			image: item.image,
+			createdAt: item.createdAt.toISOString(),
+			updatedAt: item.updatedAt.toISOString(),
 		}));
 	}
 }
