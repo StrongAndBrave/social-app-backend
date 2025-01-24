@@ -38,14 +38,17 @@ export class PostController {
 	}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('image'))
+	@UseInterceptors(FileInterceptor('image', { limits: { fileSize: 5 * 1024 * 1024 } }))
 	@UseGuards(JwtAuthGuard)
-	@HttpCode(204)
+	@HttpCode(201)
 	async createPost(
 		@Body() body: PostInputModel,
 		@CurrentUserId() userId: string,
 		@UploadedFile() image: Express.Multer.File,
 	) {
+		if (!image || !Buffer.isBuffer(image.buffer)) {
+			throw new HttpException('Invalid image format', HttpStatus.BAD_REQUEST);
+		}
 		const newPost = await this.commandBus.execute(
 			new PostCreateCommand(userId, body.description, image.buffer),
 		);

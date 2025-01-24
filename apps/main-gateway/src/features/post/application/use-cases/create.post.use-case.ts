@@ -20,7 +20,7 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 		private readonly filesClientService: FilesClientService,
 	) {}
 
-	async execute(command: PostCreateCommand): Promise<string> {
+	async execute(command: PostCreateCommand): Promise<string | null> {
 		const postCreateData: PostCreateModel = {
 			userId: command.userId,
 			description: command.description,
@@ -33,8 +33,12 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 		const uploadImage = await this.filesClientService.uploadFile({
 			postId: addedPost.id,
 			userId: command.userId,
-			image: command.image,
+			image: command.image.toString('base64'),
 		});
+		console.log('uploadImage: ', uploadImage);
+		if (!uploadImage) {
+			return null;
+		}
 
 		return addedPost.id ?? null;
 	}
