@@ -9,5 +9,4 @@ export class PostOutputModel {
 	description: string;
 	image: string;
 	createdAt: string;
-	updatedAt: string;
 }
