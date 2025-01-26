@@ -9,7 +9,6 @@ export class YandexStorageController {
 	@MessagePattern('upload_image')
 	async uploadImage(data: { postId: string; userId: string; image: string }) {
 		const imageBuffer = Buffer.from(data.image);
-		console.log('second: ', imageBuffer);
 		const result = await this.yandexStorageAdapter.saveImage(
 			data.postId,
 			data.userId,
