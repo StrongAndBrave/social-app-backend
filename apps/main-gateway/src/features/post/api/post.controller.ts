@@ -54,7 +54,7 @@ export class PostController {
 		);
 		if (!newPost)
 			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
-		return newPost;
+		return this.postQueryRepository.findPostById({ id: newPost });
 	}
 
 	@Put(':id')
