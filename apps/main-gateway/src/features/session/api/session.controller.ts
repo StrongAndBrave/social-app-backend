@@ -17,6 +17,7 @@ import { RefreshCookieInputModel } from './models/input/refresh.cookie.model';
 import { CurrentSession } from '../../../core/decorators/transform/session.data.cookie.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { DeleteAllDeviceSessions, DeleteDeviceSessionsByDeviceId, GetDevices } from '../../../core/swagger/sessions.swagger';
+import { SessionOutputModel } from './models/output/session.output.model';
 
 @ApiTags('Sessions')
 @Controller('sessions')
@@ -31,7 +32,7 @@ export class SessionController {
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(200)
 	@Get()
-	async findAllSessions(@CurrentSession() cookie: RefreshCookieInputModel) {
+	async findAllSessions(@CurrentSession() cookie: RefreshCookieInputModel): Promise<SessionOutputModel> {
 		return this.sessionQueryRepository.findAllActiveSessions(
 			cookie.userId,
 			cookie.deviceId,
@@ -44,7 +45,7 @@ export class SessionController {
 	@Delete('terminate-all')
 	async terminateAllSessionsExcludeCurrent(
 		@CurrentSession() cookie: RefreshCookieInputModel,
-	) {
+	): Promise<void> {
 		await this.commandBus.execute(
 			new DevicesDeleteCommand(cookie.userId, cookie.deviceId),
 		);
@@ -57,7 +58,7 @@ export class SessionController {
 	async terminateSessionByDeviceId(
 		@Param('deviceId') deviceId: string,
 		@CurrentSession() cookie: RefreshCookieInputModel,
-	) {
+	): Promise<void> {
 		if (!deviceId) {
 			throw new NotFoundException();
 		}
