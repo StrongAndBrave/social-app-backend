@@ -40,8 +40,12 @@ import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
 import { UserAgent } from '../../../core/decorators/transform/user-agent.from.headers.decorator';
 import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
+import { UserAuthMeDTO } from '../../user/api/models/output/user.output';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthMeEndpoint, LoginUserEndpoint, LogoutEndpoint, NewPasswordEndpoint, PasswordRecoveryEndpoint, RefreshTokenEndpoint, RegConfirmationEndpoint, RegEmailResendingEndpoint, RegistrationUserEndpoint } from '../../../core/swagger/auth.swagger';
 
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 	constructor(
@@ -50,12 +54,13 @@ export class AuthController {
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 
+	@AuthMeEndpoint()
 	@Get('me')
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(200)
 	async getMe(
 		@CurrentUserId() userId: string,
-	): Promise<{ email: string; username: string; userId: string }> {
+	): Promise<UserAuthMeDTO> {
 		const user = await this.userRepository.getByUnique({ id: userId });
 		if (!user) throw new HttpException(`user do not exist`, HttpStatus.NOT_FOUND);
 		const outputUser = {
@@ -66,6 +71,7 @@ export class AuthController {
 		return outputUser;
 	}
 
+	@RegistrationUserEndpoint() 
 	@Post('registration')
 	@HttpCode(204)
 	async registration(@Body() newUser: UserInputModel): Promise<void> {
@@ -75,6 +81,7 @@ export class AuthController {
 		return;
 	}
 
+	@RegConfirmationEndpoint()
 	@Post('registration-confirmation')
 	@HttpCode(204)
 	async registrationConfirmation(@Body() body: ValidationCodeModel): Promise<void> {
@@ -89,6 +96,7 @@ export class AuthController {
 		return;
 	}
 
+	@RegEmailResendingEndpoint()
 	@Post('registration-email-resending')
 	@HttpCode(204)
 	async emailResend(@Body() body: EmailResendingModel): Promise<void> {
@@ -96,6 +104,7 @@ export class AuthController {
 		return;
 	}
 
+	@LoginUserEndpoint()
 	@Post('login')
 	@UseGuards(LocalAuthGuard)
 	@HttpCode(200)
@@ -112,6 +121,7 @@ export class AuthController {
 		return { accessToken: tokens.accessToken };
 	}
 
+	@PasswordRecoveryEndpoint()
 	@UseGuards(RecaptchaGuard)
 	@Post('password-recovery')
 	@HttpCode(204)
@@ -120,6 +130,7 @@ export class AuthController {
 		return;
 	}
 
+	@NewPasswordEndpoint()
 	@Post('new-password')
 	@HttpCode(204)
 	async setNewPassword(@Body() body: NewPasswordModel): Promise<void> {
@@ -129,6 +140,7 @@ export class AuthController {
 		return;
 	}
 
+	@LogoutEndpoint()
 	@Post('logout')
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(204)
@@ -139,6 +151,7 @@ export class AuthController {
 		return;
 	}
 
+	@RefreshTokenEndpoint()
 	@Post('update-tokens')
 	@UseGuards(JwtCookieGuard)
 	@HttpCode(200)

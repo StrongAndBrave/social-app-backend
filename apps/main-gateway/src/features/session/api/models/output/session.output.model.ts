@@ -1,7 +1,4 @@
-export interface SessionOutputModel {
-	current: Session;
-	others: Array<Session>;
-}
+import { ApiProperty } from '@nestjs/swagger';
 
 export class Session {
 	@ApiProperty({ description: 'Name of the device', })
