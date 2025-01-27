@@ -1,42 +1,53 @@
-import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 import { Trim } from '../../../../../core/decorators/transform/trim.decorator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserInputModel {
-	// @ApiProperty({
-	//   required: true,
-	//   description: 'User name',
-	//   minLength: 6,
-	//   maxLength: 15,
-	//   pattern: '^[a-zA-Z0-9_-]*$',
-	// })
+	@ApiProperty({
+	  required: true,
+	  description: 'User name',
+	  minLength: 6,
+	  maxLength: 15,
+	  pattern: '^[a-zA-Z0-9_-]*$',
+	})
 	@Trim()
 	@Length(6, 30)
 	@Matches(/^[a-zA-Z0-9_-]*$/)
 	username: string;
-
-	// @ApiProperty({
-	//   required: true,
-	//   description: 'Password',
-	//   minLength: 6,
-	//   maxLength: 20,
-	//   example: 'string',
-	//   pattern:
-	//     '^(?=.*[0-9])(?=.*[A-Z])(?=.*[! "#$%&\'()*+,-./:;<=>?@[\\\\\\]^_`{|}~]).*$',
-	// })
+	@ApiProperty({
+	  required: true,
+	  description: 'Password',
+	  minLength: 6,
+	  maxLength: 20,
+	  example: 'string',
+	  pattern:
+	    '^(?=.*[0-9])(?=.*[A-Z])(?=.*[! "#$%&\'()*+,-./:;<=>?@[\\\\\\]^_`{|}~]).*$',
+	})
 	@Trim()
 	@Length(6, 20)
 	password: string;
 
-	// @ApiProperty({
-	//   required: true,
-	//   description: 'Email',
-	//   example: 'example@example.com',
-	//   pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
-	// })
+	@ApiProperty({
+	  required: true,
+	  description: 'Email',
+	  example: 'example@example.com',
+	  pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+	})
 	@Trim()
 	@IsString()
 	@IsEmail()
 	email: string;
+}
+
+export class LoginInputModelType {
+  @ApiProperty({ required: true, example: 'string' })
+  @IsNotEmpty()
+  @IsString()
+  loginOrEmail: string;
+  @ApiProperty({ required: true, example: 'string' })
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 }
 
 export interface UserCreateModel extends UserInputModel {

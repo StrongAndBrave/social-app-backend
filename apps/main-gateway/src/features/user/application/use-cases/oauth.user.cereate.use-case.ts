@@ -2,13 +2,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../infrastructure/user.repository';
 import { UserEntity } from '../../domain/user.entity';
-import { BadRequestDomainException } from 'apps/main-gateway/src/core/exceptions/domain-exceptions';
 import {
 	OAuthUserCreateModel,
 	OAuthUserInputModel,
 } from '../../api/models/input/oauth.user.input';
 import { v4 as uuidv4 } from 'uuid';
 import { ProviderEntity } from '../../domain/provider.entity';
+import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class OAuthUserCreateCommand {
 	constructor(public userData: OAuthUserInputModel) {}
