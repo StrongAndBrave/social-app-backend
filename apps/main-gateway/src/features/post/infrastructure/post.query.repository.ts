@@ -22,7 +22,7 @@ export class PostQueryRepository {
 				ownerName: item.user.username,
 			},
 			description: item.description,
-			image: item.image,
+			image: `https://storage.yandexcloud.net/social-app/${item.image}`,
 			createdAt: item.createdAt.toISOString(),
 		}));
 	}
@@ -43,7 +43,7 @@ export class PostQueryRepository {
 						ownerName: post.user.username,
 					},
 					description: post.description,
-					image: post.image,
+					image: `https://storage.yandexcloud.net/social-app/${post.image}`,
 					createdAt: post.createdAt.toISOString(),
 				}
 			: null;

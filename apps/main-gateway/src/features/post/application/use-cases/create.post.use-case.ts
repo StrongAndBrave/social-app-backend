@@ -33,7 +33,7 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 		const uploadImageUrl = await this.filesClientService.uploadFile({
 			postId: addedPost.id,
 			userId: command.userId,
-			image: command.image.toString('base64'),
+			image: command.image,
 		});
 		console.log('uploadImage: ', uploadImageUrl);
 		if (!uploadImageUrl) {
