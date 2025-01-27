@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
 import { PostOutputModel } from '../api/models/output/post.output';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostQueryRepository {
@@ -21,9 +22,30 @@ export class PostQueryRepository {
 				ownerName: item.user.username,
 			},
 			description: item.description,
-			image: item.image,
+			image: `https://storage.yandexcloud.net/social-app/${item.image}`,
 			createdAt: item.createdAt.toISOString(),
-			updatedAt: item.updatedAt.toISOString(),
 		}));
+	}
+
+	async findPostById(
+		dataWhereUniqueInput: Prisma.PostWhereUniqueInput,
+	): Promise<PostOutputModel | null> {
+		const post = await this.prisma.post.findUnique({
+			where: { ...dataWhereUniqueInput, deletedAt: null },
+			include: { user: true },
+		});
+
+		return post
+			? {
+					id: post.id,
+					owner: {
+						ownerId: post.user.id,
+						ownerName: post.user.username,
+					},
+					description: post.description,
+					image: `https://storage.yandexcloud.net/social-app/${post.image}`,
+					createdAt: post.createdAt.toISOString(),
+				}
+			: null;
 	}
 }
