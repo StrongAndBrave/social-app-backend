@@ -5,6 +5,7 @@ import {
 	ForbiddenDomainException,
 	NotFoundDomainException,
 } from '../../../../core/exceptions/domain-exceptions';
+import { FilesClientService } from '../files-microservice-connection/client-service';
 
 export class PostDeleteCommand {
 	constructor(
@@ -15,7 +16,10 @@ export class PostDeleteCommand {
 
 @CommandHandler(PostDeleteCommand)
 export class DeletePostUseCase implements ICommandHandler<PostDeleteCommand> {
-	constructor(@Inject(PostRepository.name) private postRepository: PostRepository) {}
+	constructor(
+		@Inject(PostRepository.name) private postRepository: PostRepository,
+		private readonly filesClientService: FilesClientService,
+	) {}
 
 	async execute(command: PostDeleteCommand): Promise<boolean> {
 		const post = await this.postRepository.getByUnique({ id: command.postId });
@@ -24,6 +28,11 @@ export class DeletePostUseCase implements ICommandHandler<PostDeleteCommand> {
 			throw ForbiddenDomainException.create('Unauthorized');
 
 		await this.postRepository.softDeleteById(command.postId);
+		const a = await this.filesClientService.deleteFile({
+			postId: command.postId,
+			userId: command.userId,
+		});
+		console.log(a);
 		return true;
 	}
 }

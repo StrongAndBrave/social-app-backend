@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PutObjectCommand, PutObjectCommandOutput, S3Client } from '@aws-sdk/client-s3';
+import {
+	DeleteObjectCommand,
+	DeleteObjectCommandOutput,
+	PutObjectCommand,
+	PutObjectCommandOutput,
+	S3Client,
+} from '@aws-sdk/client-s3';
 import { CoreConfig } from '../config/configuration';
 
 @Injectable()
@@ -31,6 +37,25 @@ export class YandexStorageAdapter {
 			const uploadResult: PutObjectCommandOutput = await this.s3Client.send(command);
 			console.log(uploadResult);
 			return { url: key };
+		} catch (exception) {
+			console.error(exception);
+			throw exception;
+		}
+	}
+
+	async deleteImage(postId: string, userId: string) {
+		const key = `posts/images/users/user_${userId}/${postId}_image.png`;
+		const bucketParams = {
+			Bucket: this.coreConfig.yandexObjectStorageBucket,
+			Key: key,
+		};
+
+		const command = new DeleteObjectCommand(bucketParams);
+
+		try {
+			const deleteResult: DeleteObjectCommandOutput = await this.s3Client.send(command);
+			console.log(deleteResult);
+			return true;
 		} catch (exception) {
 			console.error(exception);
 			throw exception;

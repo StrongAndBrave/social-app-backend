@@ -17,9 +17,18 @@ export class FilesClientService implements OnModuleInit {
 		});
 	}
 
-	async uploadFile(data: { postId: string; userId: string; image: string }) {
+	async uploadFile(data: { postId: string; userId: string; image: Buffer }) {
 		try {
 			return await this.client.send('upload_image', data).toPromise();
+		} catch (error) {
+			console.error('something wrong with upload image: ', error);
+			return null;
+		}
+	}
+
+	async deleteFile(data: { postId: string; userId: string }) {
+		try {
+			return await this.client.send('delete_image', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with upload image: ', error);
 			return null;
