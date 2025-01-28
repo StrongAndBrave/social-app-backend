@@ -69,12 +69,19 @@ model PasswordResetData {
 }
 
 model Post {
-  id          String    @id @default(uuid())
-  userId      String
-  description String
-  image       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String    @id @default(uuid())
+  userId       String
+  description  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images       PostImages[]
+}
+
+model PostImages {
+  id     String @id @default(uuid())
+  postId String
+  image  String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
