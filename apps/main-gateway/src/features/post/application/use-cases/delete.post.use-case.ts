@@ -28,11 +28,9 @@ export class DeletePostUseCase implements ICommandHandler<PostDeleteCommand> {
 			throw ForbiddenDomainException.create('Unauthorized');
 
 		await this.postRepository.softDeleteById(command.postId);
-		const a = await this.filesClientService.deleteFile({
-			postId: command.postId,
-			userId: command.userId,
+		await this.filesClientService.deleteFile({
+			filePath: post.image,
 		});
-		console.log(a);
 		return true;
 	}
 }

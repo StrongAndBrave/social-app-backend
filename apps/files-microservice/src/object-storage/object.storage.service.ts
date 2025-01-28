@@ -7,6 +7,7 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { CoreConfig } from '../config/configuration';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class YandexStorageAdapter {
@@ -22,8 +23,9 @@ export class YandexStorageAdapter {
 		});
 	}
 
-	async saveImage(postId: string, userId: string, image: Buffer) {
-		const key = `posts/images/users/user_${userId}/${postId}_image.png`;
+	async saveImage(userId: string, image: Buffer) {
+		const imageId = uuidv4();
+		const key = `images/users/user_${userId}/posts/${imageId}_image.png`;
 		const bucketParams = {
 			Bucket: this.coreConfig.yandexObjectStorageBucket,
 			Key: key,
@@ -35,7 +37,7 @@ export class YandexStorageAdapter {
 
 		try {
 			const uploadResult: PutObjectCommandOutput = await this.s3Client.send(command);
-			console.log(uploadResult);
+			console.log(`upload file result: ${uploadResult}`);
 			return { url: key };
 		} catch (exception) {
 			console.error(exception);
@@ -43,18 +45,17 @@ export class YandexStorageAdapter {
 		}
 	}
 
-	async deleteImage(postId: string, userId: string) {
-		const key = `posts/images/users/user_${userId}/${postId}_image.png`;
+	async deleteImage(filePath: string) {
 		const bucketParams = {
 			Bucket: this.coreConfig.yandexObjectStorageBucket,
-			Key: key,
+			Key: filePath,
 		};
 
 		const command = new DeleteObjectCommand(bucketParams);
 
 		try {
 			const deleteResult: DeleteObjectCommandOutput = await this.s3Client.send(command);
-			console.log(deleteResult);
+			console.log(`delete file result: ${deleteResult}`);
 			return true;
 		} catch (exception) {
 			console.error(exception);

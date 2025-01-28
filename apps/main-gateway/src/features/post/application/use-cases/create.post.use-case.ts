@@ -21,20 +21,20 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 	) {}
 
 	async execute(command: PostCreateCommand): Promise<string | null> {
+		const uploadImageUrl = await this.filesClientService.uploadFile({
+			userId: command.userId,
+			image: command.image,
+		});
+
 		const postCreateData: PostCreateModel = {
 			userId: command.userId,
 			description: command.description,
-			image: 'image',
+			image: uploadImageUrl,
 		};
 
 		const newPost = new PostEntity(postCreateData);
 		const addedPost = await this.postRepository.createPost(newPost);
 
-		const uploadImageUrl = await this.filesClientService.uploadFile({
-			postId: addedPost.id,
-			userId: command.userId,
-			image: command.image,
-		});
 		console.log('uploadImage: ', uploadImageUrl);
 		if (!uploadImageUrl) {
 			await this.postRepository.softDeleteById(addedPost.id);
