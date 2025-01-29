@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
-import { PostOutputModel } from '../api/models/output/post.output';
+import { PrismaService } from '../../../../../../../libs/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { PostOutputModel } from '../../api/models/output/post.output';
 
 @Injectable()
 export class PostQueryRepository {
@@ -10,7 +10,7 @@ export class PostQueryRepository {
 	async findPosts(userId: string): Promise<PostOutputModel[]> {
 		const items = await this.prisma.post.findMany({
 			where: { userId: userId, deletedAt: null },
-			include: { user: true },
+			include: { user: true, images: true },
 			orderBy: { createdAt: 'desc' },
 			take: 8,
 		});
@@ -22,7 +22,11 @@ export class PostQueryRepository {
 				ownerName: item.user.username,
 			},
 			description: item.description,
-			image: `https://storage.yandexcloud.net/social-app/${item.image}`,
+			images: item.images.flatMap((img) =>
+				img.imagesUrl.map((url) => ({
+					image: `https://storage.yandexcloud.net/social-app/${url}`,
+				})),
+			),
 			createdAt: item.createdAt.toISOString(),
 		}));
 	}
@@ -32,8 +36,18 @@ export class PostQueryRepository {
 	): Promise<PostOutputModel | null> {
 		const post = await this.prisma.post.findUnique({
 			where: { ...dataWhereUniqueInput, deletedAt: null },
-			include: { user: true },
+			include: { user: true, images: true },
 		});
+
+		const images = post
+			? post.images
+					.map((img) =>
+						img.imagesUrl.map((url) => ({
+							image: `https://storage.yandexcloud.net/social-app/${url}`,
+						})),
+					)
+					.flat()
+			: [];
 
 		return post
 			? {
@@ -43,7 +57,7 @@ export class PostQueryRepository {
 						ownerName: post.user.username,
 					},
 					description: post.description,
-					image: `https://storage.yandexcloud.net/social-app/${post.image}`,
+					images: images,
 					createdAt: post.createdAt.toISOString(),
 				}
 			: null;
