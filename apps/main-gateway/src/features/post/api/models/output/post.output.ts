@@ -3,10 +3,14 @@ export class PostOwnerInfo {
 	ownerName: string;
 }
 
+export class PostImageModel {
+	image: string;
+}
+
 export class PostOutputModel {
 	id: string;
 	owner: PostOwnerInfo;
 	description: string;
-	image: string;
+	images: PostImageModel[];
 	createdAt: string;
 }
