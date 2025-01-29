@@ -76,12 +76,12 @@ model Post {
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  images       PostImage[]
+  images       PostImages[]
 }
 
-model PostImage {
-  id       String @id @default(uuid())
-  postId   String
-  imageUrl String
-  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+model PostImages {
+  id        String   @id @default(uuid())
+  postId    String
+  imagesUrl String[]
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
