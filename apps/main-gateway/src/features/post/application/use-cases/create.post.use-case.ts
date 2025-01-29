@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PostRepository } from '../../infrastructure/post.repository';
+import { PostRepository } from '../../infrastructure/posts/post.repository';
 import { PostEntity } from '../../domain/post.entity';
 import { PostCreateModel } from '../../api/models/input/post.input';
 import { FilesClientService } from '../files-microservice-connection/client-service';
@@ -9,7 +9,7 @@ export class PostCreateCommand {
 	constructor(
 		public userId: string,
 		public description: string,
-		public image: Buffer,
+		public images: Buffer[],
 	) {}
 }
 
@@ -20,30 +20,25 @@ export class CreatePostUseCase implements ICommandHandler<PostCreateCommand> {
 		private readonly filesClientService: FilesClientService,
 	) {}
 
-	async execute(command: PostCreateCommand): Promise<string | null> {
+	async execute(command: PostCreateCommand) {
+		const uploadImagesUrl = await Promise.all(
+			command.images.map((img) =>
+				this.filesClientService.uploadFile({ userId: command.userId, image: img }),
+			),
+		);
+
+		if (uploadImagesUrl.some((url) => !url)) {
+			throw new Error('One or more images failed to upload');
+		}
+
 		const postCreateData: PostCreateModel = {
 			userId: command.userId,
 			description: command.description,
-			image: 'image',
 		};
 
 		const newPost = new PostEntity(postCreateData);
 		const addedPost = await this.postRepository.createPost(newPost);
 
-		const uploadImageUrl = await this.filesClientService.uploadFile({
-			postId: addedPost.id,
-			userId: command.userId,
-			image: command.image,
-		});
-		console.log('uploadImage: ', uploadImageUrl);
-		if (!uploadImageUrl) {
-			await this.postRepository.softDeleteById(addedPost.id);
-			return null;
-		}
-		await this.postRepository.updatePost({
-			where: { id: addedPost.id },
-			data: { image: uploadImageUrl },
-		});
-		return addedPost.id;
+		return { postId: addedPost.id, imagesUrl: uploadImagesUrl };
 	}
 }

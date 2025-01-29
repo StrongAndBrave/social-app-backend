@@ -16,15 +16,15 @@ datasource db {
 }
 
 model User {
-  id                 String             @id @default(uuid())
-  email              String             @unique
-  username           String             @unique
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  username           String              @unique
   passwordHash       String?
-  confirmationCode   String?            @unique
+  confirmationCode   String?             @unique
   codeExpirationDate DateTime?
-  isConfirmed        Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  isConfirmed        Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
   deletedAt          DateTime?
   sessions           Session[]
   passwordResetData  PasswordResetData[]
@@ -38,7 +38,7 @@ model Provider {
   providerId   String
   providerName String
   fullUserName String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -69,12 +69,19 @@ model PasswordResetData {
 }
 
 model Post {
-  id          String    @id @default(uuid())
-  userId      String
-  description String
-  image       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String       @id @default(uuid())
+  userId       String
+  description  String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images       PostImages[]
+}
+
+model PostImages {
+  id        String   @id @default(uuid())
+  postId    String
+  imagesUrl String[]
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

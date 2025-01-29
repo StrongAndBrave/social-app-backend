@@ -9,7 +9,11 @@ export class PostInputModel {
 
 export interface PostCreateModel extends PostInputModel {
 	userId: string;
-	image: string;
+}
+
+export interface PostImageCreateModel {
+	postId: string;
+	images: string[];
 }
 
 export class NewDescriptionModel {

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PostRepository } from '../../infrastructure/post.repository';
+import { PostRepository } from '../../infrastructure/posts/post.repository';
 import {
 	ForbiddenDomainException,
 	NotFoundDomainException,
