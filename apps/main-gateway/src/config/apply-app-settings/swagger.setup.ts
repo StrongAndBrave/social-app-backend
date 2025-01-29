@@ -11,7 +11,6 @@ export function swaggerSetup(app: INestApplication) {
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup(GLOBAL_PREFIX + '/swagger', app, document, {
-		// todo correct path
 		customSiteTitle: 'Blogger Swagger',
 	});
 }

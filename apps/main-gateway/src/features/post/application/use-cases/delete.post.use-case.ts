@@ -1,11 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostRepository } from '../../infrastructure/post.repository';
+import { PostRepository } from '../../infrastructure/posts/post.repository';
 import { Inject } from '@nestjs/common';
 import {
 	ForbiddenDomainException,
 	NotFoundDomainException,
 } from '../../../../core/exceptions/domain-exceptions';
 import { FilesClientService } from '../files-microservice-connection/client-service';
+import { PostImagesRepository } from '../../infrastructure/posts-images/post-images.repository';
 
 export class PostDeleteCommand {
 	constructor(
@@ -18,6 +19,8 @@ export class PostDeleteCommand {
 export class DeletePostUseCase implements ICommandHandler<PostDeleteCommand> {
 	constructor(
 		@Inject(PostRepository.name) private postRepository: PostRepository,
+		@Inject(PostImagesRepository.name)
+		private readonly postImagesRepository: PostImagesRepository,
 		private readonly filesClientService: FilesClientService,
 	) {}
 
@@ -28,9 +31,12 @@ export class DeletePostUseCase implements ICommandHandler<PostDeleteCommand> {
 			throw ForbiddenDomainException.create('Unauthorized');
 
 		await this.postRepository.softDeleteById(command.postId);
-		await this.filesClientService.deleteFile({
-			filePath: post.image,
-		});
+		const images = await this.postImagesRepository.findImagesByPostId(post.id);
+		await Promise.all(
+			images.flatMap((img) =>
+				img.imagesUrl.map((url) => this.filesClientService.deleteFile({ filePath: url })),
+			),
+		);
 		return true;
 	}
 }
