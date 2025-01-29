@@ -6,10 +6,10 @@ import { configValidationUtility } from '../../config/config-validation.utility'
 @Injectable()
 export class PostConfig {
 	@IsNotEmpty()
-	filesMicroserviceHost: string = this.configService.get('FILES_MICROSERVICE_HOST');
+	filesServiceHost: string = this.configService.get('FILES_SERVICE_HOST');
 
 	@IsNotEmpty()
-	filesMicroservicePort: number = this.configService.get('FILES_MICROSERVICE_PORT');
+	filesServicePort: number = this.configService.get('FILES_SERVICE_PORT');
 
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);

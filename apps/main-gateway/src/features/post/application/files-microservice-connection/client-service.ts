@@ -11,8 +11,8 @@ export class FilesClientService implements OnModuleInit {
 		this.client = ClientProxyFactory.create({
 			transport: Transport.TCP,
 			options: {
-				host: this.postConfig.filesMicroserviceHost,
-				port: this.postConfig.filesMicroservicePort,
+				host: this.postConfig.filesServiceHost,
+				port: this.postConfig.filesServicePort,
 			},
 		});
 	}
