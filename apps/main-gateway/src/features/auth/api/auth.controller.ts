@@ -42,8 +42,17 @@ import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { UserAuthMeDTO } from '../../user/api/models/output/user.output';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthMeEndpoint, LoginUserEndpoint, LogoutEndpoint, NewPasswordEndpoint, PasswordRecoveryEndpoint, RefreshTokenEndpoint, RegConfirmationEndpoint, RegEmailResendingEndpoint, RegistrationUserEndpoint } from '../../../core/swagger/auth.swagger';
-
+import {
+	AuthMeEndpoint,
+	LoginUserEndpoint,
+	LogoutEndpoint,
+	NewPasswordEndpoint,
+	PasswordRecoveryEndpoint,
+	RefreshTokenEndpoint,
+	RegConfirmationEndpoint,
+	RegEmailResendingEndpoint,
+	RegistrationUserEndpoint,
+} from '../../../core/swagger/auth.swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -58,9 +67,7 @@ export class AuthController {
 	@Get('me')
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(200)
-	async getMe(
-		@CurrentUserId() userId: string,
-	): Promise<UserAuthMeDTO> {
+	async getMe(@CurrentUserId() userId: string): Promise<UserAuthMeDTO> {
 		const user = await this.userRepository.getByUnique({ id: userId });
 		if (!user) throw new HttpException(`user do not exist`, HttpStatus.NOT_FOUND);
 		const outputUser = {
@@ -71,7 +78,7 @@ export class AuthController {
 		return outputUser;
 	}
 
-	@RegistrationUserEndpoint() 
+	@RegistrationUserEndpoint()
 	@Post('registration')
 	@HttpCode(204)
 	async registration(@Body() newUser: UserInputModel): Promise<void> {
@@ -126,6 +133,7 @@ export class AuthController {
 	@Post('password-recovery')
 	@HttpCode(204)
 	async passwordRecovery(@Body() body: EmailResendingModel): Promise<void> {
+		console.log(body.email);
 		await this.commandBus.execute(new PasswordRecoveryCommand(body.email));
 		return;
 	}
