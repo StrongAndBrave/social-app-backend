@@ -36,7 +36,9 @@ export class EmailIsConfirmedConstraint implements ValidatorConstraintInterface 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async validate(value: any, args: ValidationArguments): Promise<boolean> {
 		const targetUser = await this.userRepository.getByUsernameOrEmail(value);
-		return !!targetUser;
+		console.log(targetUser);
+		console.log(!!targetUser?.isConfirmed);
+		return !!targetUser?.isConfirmed;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
