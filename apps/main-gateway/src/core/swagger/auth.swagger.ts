@@ -13,7 +13,12 @@ import {
 } from '../../features/user/api/models/input/user.input';
 import { UserAuthMeDTO } from '../../features/user/api/models/output/user.output';
 import { ReturnAccessJWTforSwagger } from '../../features/auth/api/models/output/auth.output.models';
-import { ValidationCodeModel } from '../../features/auth/api/models/input/auth.input.models';
+import {
+	EmailResendingModel,
+	NewPasswordModel,
+	ValidationCodeModel,
+} from '../../features/auth/api/models/input/auth.input.models';
+import { ApiErrorResultDto } from './error-response-dto/api.error.result.dto';
 
 export function RegistrationUserEndpoint() {
 	return applyDecorators(
@@ -23,7 +28,7 @@ export function RegistrationUserEndpoint() {
 		}),
 		ApiBody({
 			description: 'Data for constructing a new User entity',
-			type: () => UserInputModel,
+			type: UserInputModel,
 		}),
 		ApiResponse({
 			status: 400,
@@ -31,6 +36,7 @@ export function RegistrationUserEndpoint() {
 				'If the inputModel has incorrect values (in particular if the user with the given email or login already exists). ' +
 				'And temporary solution, if email already exist: "Registration user command found user by the same email",' +
 				' if userName already exist: "Registration user command found user by the same userName"',
+			type: ApiErrorResultDto,
 		}),
 		ApiResponse({
 			status: 429,
@@ -60,6 +66,7 @@ export function LoginUserEndpoint() {
 		ApiResponse({
 			status: 400,
 			description: 'If the inputModel has incorrect values',
+			type: ApiErrorResultDto,
 		}),
 		ApiResponse({
 			status: 401,
@@ -77,6 +84,10 @@ export function RegEmailResendingEndpoint() {
 		ApiOperation({
 			summary: 'Resend confirmation registration Email if user exists',
 		}),
+		ApiBody({
+			description: 'Data for constructing a new User entity',
+			type: EmailResendingModel,
+		}),
 		ApiResponse({
 			status: 204,
 			description:
@@ -86,6 +97,7 @@ export function RegEmailResendingEndpoint() {
 		ApiResponse({
 			status: 400,
 			description: 'If the inputModel has incorrect values',
+			type: ApiErrorResultDto,
 		}),
 		ApiResponse({
 			status: 429,
@@ -98,7 +110,7 @@ export function RegConfirmationEndpoint() {
 	return applyDecorators(
 		ApiOperation({ summary: 'Confirm registration' }),
 		ApiBody({
-			type: () => ValidationCodeModel,
+			type: ValidationCodeModel,
 		}),
 		ApiResponse({
 			status: 204,
@@ -108,6 +120,7 @@ export function RegConfirmationEndpoint() {
 			status: 400,
 			description:
 				'If the confirmation code is incorrect, expired or already been applied',
+			type: ApiErrorResultDto,
 		}),
 		ApiResponse({
 			status: 429,
@@ -117,6 +130,7 @@ export function RegConfirmationEndpoint() {
 }
 
 export function PasswordRecoveryEndpoint() {
+	// todo add recaptcha
 	return applyDecorators(
 		ApiOperation({
 			summary:
@@ -141,6 +155,7 @@ export function PasswordRecoveryEndpoint() {
 export function NewPasswordEndpoint() {
 	return applyDecorators(
 		ApiOperation({ summary: 'Confirm Password recovery' }),
+		ApiBody({ type: NewPasswordModel }),
 		ApiResponse({
 			status: 204,
 			description: 'If code is valid and new password is accepted',
@@ -165,7 +180,7 @@ export function LogoutEndpoint() {
 		}),
 		ApiResponse({
 			status: 204,
-			description: 'No Content',
+			description: 'Success',
 		}),
 		ApiResponse({
 			status: 401,
@@ -190,7 +205,7 @@ export function RefreshTokenEndpoint() {
 			status: 200,
 			description:
 				'Returns JWT accessToken (expired after 5 minutes) in body and JWT refreshToken in cookie (http-only, secure) (expired after 24 hours).',
-			type: () => ReturnAccessJWTforSwagger,
+			type: ReturnAccessJWTforSwagger,
 		}),
 		ApiResponse({
 			status: 401,
@@ -206,10 +221,13 @@ export function RefreshTokenEndpoint() {
 export function AuthMeEndpoint() {
 	return applyDecorators(
 		ApiBearerAuth(),
+		ApiOperation({
+			summary: 'Get information about current user',
+		}),
 		ApiResponse({
 			status: 200,
 			description: 'Success',
-			type: () => UserAuthMeDTO,
+			type: UserAuthMeDTO,
 		}),
 		ApiResponse({
 			status: 401,
