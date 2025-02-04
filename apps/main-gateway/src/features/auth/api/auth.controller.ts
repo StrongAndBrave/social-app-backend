@@ -44,6 +44,8 @@ import { UserAuthMeDTO } from '../../user/api/models/output/user.output';
 import { ApiTags } from '@nestjs/swagger';
 import {
 	AuthMeEndpoint,
+	GithubOAuthEndpoint,
+	GoogleOAuthEndpoint,
 	LoginUserEndpoint,
 	LogoutEndpoint,
 	NewPasswordEndpoint,
@@ -174,6 +176,7 @@ export class AuthController {
 		return { accessToken: result.accessToken };
 	}
 
+	@GithubOAuthEndpoint()
 	@Get('github/login')
 	@UseGuards(GithubOauthGuard)
 	@HttpCode(200)
@@ -189,10 +192,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		if (!data) {
-			throw new HttpException(
-				'No user data from github',
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			throw new HttpException('No user data from github', HttpStatus.BAD_REQUEST);
 		}
 		if (!data.email) {
 			throw new HttpException('Need user email to continue', HttpStatus.BAD_REQUEST);
@@ -209,6 +209,7 @@ export class AuthController {
 		return { accessToken: tokens.accessToken };
 	}
 
+	@GoogleOAuthEndpoint()
 	@Get('google/login')
 	@UseGuards(GoogleOAuthGuard)
 	@HttpCode(200)
@@ -223,10 +224,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		if (!data) {
-			throw new HttpException(
-				'No user data from google',
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			throw new HttpException('No user data from google', HttpStatus.BAD_REQUEST);
 		}
 		if (!data.email) {
 			throw new HttpException(
