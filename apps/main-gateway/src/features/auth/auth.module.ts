@@ -44,7 +44,7 @@ const strategies = [
 		ThrottlerModule.forRoot([
 			{
 				ttl: 10000,
-				limit: 500,
+				limit: 5,
 			},
 		]),
 	],
