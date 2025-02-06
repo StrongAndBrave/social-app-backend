@@ -24,6 +24,12 @@ import { PostDeleteCommand } from '../application/use-cases/delete.post.use-case
 import { PostUpdateCommand } from '../application/use-cases/update.post.use-case';
 import { PostQueryRepository } from '../infrastructure/posts/post.query.repository';
 import { PostImageSaveCommand } from '../application/use-cases/save.image.use-case';
+import {
+	CreatePostEndpoint,
+	DeletePostEndpoint,
+	GetPostByUserIdEndpoint,
+	UpdatePostEndpoint,
+} from '../../../core/swagger/post.swagger';
 
 @Controller('posts')
 export class PostController {
@@ -32,12 +38,14 @@ export class PostController {
 		@Inject(PostQueryRepository.name) private postQueryRepository: PostQueryRepository,
 	) {}
 
+	@GetPostByUserIdEndpoint()
 	@Get(':userId')
 	@HttpCode(200)
 	async findPosts(@Param('userId') userId: string) {
 		return this.postQueryRepository.findPosts(userId);
 	}
 
+	@CreatePostEndpoint()
 	@Post()
 	@UseInterceptors(
 		FilesInterceptor('images', 10, { limits: { fileSize: 5 * 1024 * 1024 } }),
@@ -75,6 +83,7 @@ export class PostController {
 		return this.postQueryRepository.findPostById({ id: postData.postId });
 	}
 
+	@UpdatePostEndpoint()
 	@Put(':postId')
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(204)
@@ -89,6 +98,7 @@ export class PostController {
 		return;
 	}
 
+	@DeletePostEndpoint()
 	@Delete(':postId')
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(204)
