@@ -5,6 +5,6 @@ export class HomePageOutputModel {
 	@ApiProperty()
 	registeredUsersCount: number;
 
-	@ApiProperty()
+	@ApiProperty({ type: [PostOutputModel] })
 	posts: PostOutputModel[];
 }
