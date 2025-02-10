@@ -22,7 +22,7 @@ export class PostUpdateUseCase implements ICommandHandler<PostUpdateCommand> {
 
 	async execute(command: PostUpdateCommand): Promise<boolean> {
 		const post = await this.postRepository.getByUnique({ id: command.postId });
-		if (!post) throw NotFoundDomainException.create('Session not found');
+		if (!post) throw NotFoundDomainException.create('Post not found');
 		if (post.userId !== command.userId)
 			throw ForbiddenDomainException.create('Unauthorized');
 

@@ -13,6 +13,13 @@ export class YandexStorageController {
 		return result.url;
 	}
 
+	@MessagePattern('upload_avatar')
+	async uploadAvatar(data: { userId: string; image: Buffer }) {
+		const imageBuffer = Buffer.from(data.image);
+		const result = await this.yandexStorageAdapter.saveImage(data.userId, imageBuffer);
+		return result.url;
+	}
+
 	@MessagePattern('delete_image')
 	async deleteImage(data: { filePath: string }) {
 		return this.yandexStorageAdapter.deleteImage(data.filePath);

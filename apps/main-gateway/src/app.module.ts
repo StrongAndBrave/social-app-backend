@@ -10,6 +10,7 @@ import { UserModule } from './features/user/user.module';
 import { AuthModule } from './features/auth/auth.module';
 import { SessionModule } from './features/session/session.module';
 import { PostModule } from './features/post/post.module';
+import { ProfileModule } from './features/profile/profile.module';
 
 @Module({
 	imports: [
@@ -63,6 +64,7 @@ import { PostModule } from './features/post/post.module';
 		AuthModule,
 		SessionModule,
 		PostModule,
+		ProfileModule 
 	],
 	controllers: [AppController],
 	providers: [AppService],

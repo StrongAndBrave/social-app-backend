@@ -45,6 +45,28 @@ export class YandexStorageAdapter {
 		}
 	}
 
+	async saveAvatar(userId: string, image: Buffer) {
+		const imageId = uuidv4();
+		const key = `images/users/user_${userId}/profile/${imageId}_avatar.png`;
+		const bucketParams = {
+			Bucket: this.coreConfig.yandexObjectStorageBucket,
+			Key: key,
+			Body: image,
+			ContentType: this.coreConfig.yandexObjectStorageContentType,
+		};
+
+		const command = new PutObjectCommand(bucketParams);
+
+		try {
+			const uploadResult: PutObjectCommandOutput = await this.s3Client.send(command);
+			console.log(`upload file result: ${uploadResult}`);
+			return { url: key };
+		} catch (exception) {
+			console.error(exception);
+			throw exception;
+		}
+	}
+
 	async deleteImage(filePath: string) {
 		const bucketParams = {
 			Bucket: this.coreConfig.yandexObjectStorageBucket,
