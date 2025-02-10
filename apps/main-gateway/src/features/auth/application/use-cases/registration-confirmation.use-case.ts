@@ -14,7 +14,6 @@ export class RegistrationConfirmationUseCase implements ICommandHandler<Registra
   constructor(
     @Inject(UserRepository.name) private readonly userRepository: UserRepository,
     private readonly commandBus: CommandBus,
-    @Inject(ProfileRepository.name) private readonly profileRepository: ProfileRepository
   ) { }
 
   async execute(command: RegistrationConfirmationCommand): Promise<boolean> {

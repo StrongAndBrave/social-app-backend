@@ -8,12 +8,16 @@ import { FilesClientService } from './utils/files-microservice-connection/client
 @Global()
 @Module({
   imports: [CqrsModule],
-  providers: [CoreConfig, PrismaService,
+  providers: [ PrismaService,
+    {
+      provide: CoreConfig.name,
+      useClass: CoreConfig,
+    },
     {
       provide: FilesClientService.name,
       useClass: FilesClientService,
     },
   ],
-  exports: [CoreConfig, PrismaService, CqrsModule, FilesClientService.name],
+  exports: [CoreConfig.name, PrismaService, CqrsModule, FilesClientService.name],
 })
 export class CoreModule { }

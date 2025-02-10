@@ -35,7 +35,7 @@ import { ProfileModule } from './features/profile/profile.module';
 			{
 				name: 'FILES_SERVICE',
 				imports: [CoreModule],
-				inject: [CoreConfig],
+				inject: [CoreConfig.name],
 				useFactory: (coreConfig: CoreConfig) => ({
 					transport: Transport.TCP,
 					options: {
