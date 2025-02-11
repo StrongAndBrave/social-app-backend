@@ -15,7 +15,7 @@ async function bootstrap() {
 
 
   const app = await NestFactory.create(AppModule);
-  const coreConfig = app.get<CoreConfig>(CoreConfig);
+  const coreConfig = app.get<CoreConfig>(CoreConfig.name);
   configApp(app); 
 
   await app.listen(coreConfig.port, () => {
