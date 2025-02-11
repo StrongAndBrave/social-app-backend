@@ -10,7 +10,7 @@ import { UserModule } from './features/user/user.module';
 import { AuthModule } from './features/auth/auth.module';
 import { SessionModule } from './features/session/session.module';
 import { PostModule } from './features/post/post.module';
-import { HomePageModule } from './features/home-page/home-page.module';
+import { ProfileModule } from './features/profile/profile.module';
 
 @Module({
 	imports: [
@@ -35,7 +35,7 @@ import { HomePageModule } from './features/home-page/home-page.module';
 			{
 				name: 'FILES_SERVICE',
 				imports: [CoreModule],
-				inject: [CoreConfig],
+				inject: [CoreConfig.name],
 				useFactory: (coreConfig: CoreConfig) => ({
 					transport: Transport.TCP,
 					options: {
@@ -64,7 +64,7 @@ import { HomePageModule } from './features/home-page/home-page.module';
 		AuthModule,
 		SessionModule,
 		PostModule,
-		HomePageModule,
+		ProfileModule 
 	],
 	controllers: [AppController],
 	providers: [AppService],

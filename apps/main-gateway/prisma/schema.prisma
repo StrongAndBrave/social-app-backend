@@ -10,8 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
 }
 
@@ -30,6 +30,7 @@ model User {
   passwordResetData  PasswordResetData[]
   providers          Provider[]
   posts              Post[]
+  profile            Profile?
 }
 
 model Provider {
@@ -60,7 +61,7 @@ model PasswordResetData {
   id             String    @id @default(uuid())
   userId         String    @unique
   recoveryCode   String    @unique
-  expirationDate DateTime  
+  expirationDate DateTime
   isConfirmed    Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -69,14 +70,14 @@ model PasswordResetData {
 }
 
 model Post {
-  id           String       @id @default(uuid())
-  userId       String
-  description  String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  deletedAt    DateTime?
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  images       PostImages[]
+  id          String       @id @default(uuid())
+  userId      String
+  description String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images      PostImages[]
 }
 
 model PostImages {
@@ -84,4 +85,33 @@ model PostImages {
   postId    String
   imagesUrl String[]
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  firstName   String?
+  lastName    String?
+  city        String?
+  country     String?
+  region      String?
+  dateOfBirth DateTime?
+  aboutMe     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id])
+  avatars     Avatar[]
+}
+
+model Avatar {
+  id        String   @id @default(uuid())
+  profileId String   @unique
+  url       String
+  width     Int
+  height    Int
+  fileSize  Int
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
+  profile   Profile  @relation(fields: [profileId], references: [id])
 }
