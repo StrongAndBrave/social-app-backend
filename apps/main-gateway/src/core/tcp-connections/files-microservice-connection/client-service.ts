@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { PostConfig } from '../../post.config';
+import { PostConfig } from '../../../features/post/post.config';
 
 @Injectable()
 export class FilesClientService implements OnModuleInit {
