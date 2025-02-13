@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { CoreConfig } from '../../../config/env/configuration';
+import { UploadImageModel } from '../../../features/profile/application/avatar/create-avatar.use-case';
 
 @Injectable()
 export class FilesClientService implements OnModuleInit {
@@ -26,9 +27,9 @@ export class FilesClientService implements OnModuleInit {
 		}
 	}
 
-	async uploadAvatar(data: { userId: string; image: Buffer }) {
+	async uploadImage(data: UploadImageModel) {
 		try {
-			return await this.client.send('upload_avatar', data).toPromise();
+			return await this.client.send('upload_file', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with upload image: ', error);
 			return null;

@@ -7,7 +7,6 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Param,
   Post,
   Put,
   UploadedFile,
