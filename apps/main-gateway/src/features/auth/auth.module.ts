@@ -24,7 +24,6 @@ import { OAuthUserRegistrationOrLoginUseCase } from './application/use-cases/oau
 import { GithubOAuthStrategy } from '../../core/strategies/github.oauth.strategy';
 import { EmailIsConfirmedConstraint } from '../../core/decorators/validate/email-is-confirmed.decorator';
 import { ConfCodeIsValidConstraint } from '../../core/decorators/validate/confirmation-code.decorator';
-import { CreateProfileUseCase } from '../profile/application/profile/create-profile.use-case';
 
 const strategies = [
 	LocalStrategy,
