@@ -16,7 +16,7 @@ export class YandexStorageController {
 	@MessagePattern('upload_avatar')
 	async uploadAvatar(data: { userId: string; image: Buffer }) {
 		const imageBuffer = Buffer.from(data.image);
-		const result = await this.yandexStorageAdapter.saveImage(data.userId, imageBuffer);
+		const result = await this.yandexStorageAdapter.saveAvatar(data.userId, imageBuffer);
 		return result.url;
 	}
 
