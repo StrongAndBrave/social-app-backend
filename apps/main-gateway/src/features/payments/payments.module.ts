@@ -4,6 +4,7 @@ import { PaymentConfig } from './payments.config';
 import { PaymentsClientService } from '../../core/tcp-connections/payments-microservice-connection/payment-client-service';
 import { UserRepository } from '../user/infrastructure/user.repository';
 import { PaymentController } from './api/payments.controller';
+import { PaymentCreateUseCase } from './application/create.payment.use-case';
 
 @Module({
 	imports: [JwtModule],
@@ -17,6 +18,7 @@ import { PaymentController } from './api/payments.controller';
 			useClass: PaymentConfig,
 		},
 		PaymentsClientService,
+		PaymentCreateUseCase,
 	],
 	controllers: [PaymentController],
 })
