@@ -88,8 +88,9 @@ model PostImages {
 }
 
 model Profile {
-  id          String    @id @default(uuid())
-  userId      String    @unique
+  id          String      @id @default(uuid())
+  userId      String      @unique
+  accountType AccountType @default(Personal)
   firstName   String?
   lastName    String?
   city        String?
@@ -97,10 +98,10 @@ model Profile {
   region      String?
   dateOfBirth DateTime?
   aboutMe     String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   deletedAt   DateTime?
-  user        User      @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
   avatars     Avatar[]
 }
 
@@ -114,4 +115,9 @@ model Avatar {
   createdAt DateTime @default(now())
   deletedAt DateTime?
   profile   Profile  @relation(fields: [profileId], references: [id])
+}
+
+enum AccountType {
+  Personal
+  Business
 }
