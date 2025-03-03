@@ -5,7 +5,7 @@ import {
 	ForbiddenDomainException,
 	NotFoundDomainException,
 } from '../../../../core/exceptions/domain-exceptions';
-import { FilesClientService } from '../../../../core/tcp-connections/files-microservice-connection/client-service';
+import { FilesClientService } from '../../../../core/tcp-connections/files-microservice-connection/files-client-service';
 import { PostImagesRepository } from '../../infrastructure/posts-images/post-images.repository';
 
 export class PostDeleteCommand {
