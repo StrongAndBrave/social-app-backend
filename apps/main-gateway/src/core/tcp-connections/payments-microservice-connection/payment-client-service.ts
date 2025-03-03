@@ -22,16 +22,7 @@ export class PaymentsClientService implements OnModuleInit {
 		try {
 			return await this.client.send('create_payment', data).toPromise();
 		} catch (error) {
-			console.error('something wrong with upload image: ', error);
-			return null;
-		}
-	}
-
-	async deleteFile(data: { filePath: string }) {
-		try {
-			return await this.client.send('delete_image', data).toPromise();
-		} catch (error) {
-			console.error('something wrong with upload image: ', error);
+			console.error('something wrong with create payment: ', error);
 			return null;
 		}
 	}
