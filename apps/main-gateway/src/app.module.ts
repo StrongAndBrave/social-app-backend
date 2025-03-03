@@ -11,6 +11,8 @@ import { AuthModule } from './features/auth/auth.module';
 import { SessionModule } from './features/session/session.module';
 import { PostModule } from './features/post/post.module';
 import { ProfileModule } from './features/profile/profile.module';
+import { HomePageModule } from './features/home-page/home-page.module';
+import { PaymentsModule } from './features/payments/payments.module';
 
 @Module({
 	imports: [
@@ -64,7 +66,9 @@ import { ProfileModule } from './features/profile/profile.module';
 		AuthModule,
 		SessionModule,
 		PostModule,
-		ProfileModule 
+		ProfileModule,
+		HomePageModule,
+		PaymentsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
