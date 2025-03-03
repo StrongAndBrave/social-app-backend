@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { configValidationUtility } from '../../config/config-validation.utility';
 
 @Injectable()
-export class PaymentsConfig {
+export class PaymentConfig {
 	@IsNotEmpty()
 	paymentsServiceHost: string = this.configService.get('PAYMENTS_SERVICE_HOST');
 

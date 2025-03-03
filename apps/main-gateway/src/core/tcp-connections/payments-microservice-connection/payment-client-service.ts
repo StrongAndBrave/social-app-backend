@@ -1,10 +1,11 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { PaymentsConfig } from '../../../features/payments/payments.config';
+import { PaymentConfig } from '../../../features/payments/payments.config';
+import { PaymentEntity } from '../../../features/payments/domain/payment.entity';
 
 @Injectable()
 export class PaymentsClientService implements OnModuleInit {
-	@Inject(PaymentsConfig.name) private readonly paymentsConfig: PaymentsConfig;
+	@Inject(PaymentConfig.name) private readonly paymentsConfig: PaymentConfig;
 	private client: ClientProxy;
 
 	onModuleInit() {
@@ -17,9 +18,9 @@ export class PaymentsClientService implements OnModuleInit {
 		});
 	}
 
-	async uploadFile(data: { userId: string; image: Buffer }) {
+	async sendPaymentInfoToMicroservice(data: PaymentEntity) {
 		try {
-			return await this.client.send('upload_image', data).toPromise();
+			return await this.client.send('create_payment', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with upload image: ', error);
 			return null;
