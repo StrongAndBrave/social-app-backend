@@ -30,6 +30,7 @@ export class PaymentController {
 		if (!paymentInfo) {
 			throw new InternalServerErrorException();
 		}
+		return paymentInfo;
 	}
 
 	@Get('success')
