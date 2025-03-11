@@ -21,7 +21,6 @@ export class CreateStripePaymentUseCase
 		const stripe = new Stripe(this.coreConfig.stripeSecretKey, {
 			apiVersion: '2025-01-27.acacia',
 		});
-		console.log(command.paymentPeriod);
 
 		const session = await stripe.checkout.sessions.create({
 			success_url: this.coreConfig.successPaymentResUrl,
@@ -29,15 +28,22 @@ export class CreateStripePaymentUseCase
 			line_items: [
 				{
 					price_data: {
+						unit_amount: command.amount * 100,
 						currency: 'USD',
-
+						product_data: {
+							name: 'Snapfolio',
+							description: 'Subscription for business account',
+						},
 						recurring: {
 							interval: command.paymentPeriod,
 						},
 					},
+					quantity: 1,
 				},
 			],
 			mode: 'subscription',
 		});
+		console.log(session);
+		return session.url ?? null;
 	}
 }
