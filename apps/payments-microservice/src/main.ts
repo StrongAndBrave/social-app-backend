@@ -1,17 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
-import { PaymentsModule } from './features/payments/payments.module';
+import { MicroservicePaymentsModule } from './features/payments/payments.module';
 import { CoreConfig } from './config/configuration';
 
 async function bootstrap() {
-	const appContext = await NestFactory.createApplicationContext(PaymentsModule);
+	const appContext = await NestFactory.createApplicationContext(
+		MicroservicePaymentsModule,
+	);
 	const coreConfig = appContext.get<CoreConfig>(CoreConfig);
-	const app = await NestFactory.createMicroservice<MicroserviceOptions>(PaymentsModule, {
-		options: {
-			host: coreConfig.host,
-			port: coreConfig.port,
+	const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+		MicroservicePaymentsModule,
+		{
+			options: {
+				host: coreConfig.host,
+				port: coreConfig.port,
+			},
 		},
-	});
+	);
 
 	await app.listen();
 	console.log(`Payments Microservice is listening on port ${coreConfig.port}`);
