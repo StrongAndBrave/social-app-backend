@@ -1,12 +1,10 @@
-import { PaymentCreateModel, PaymentPeriod } from '../api/models/input/payment.input';
+import { PaymentCreateModel } from '../api/models/input/payment.input';
 import { BaseEntity } from '../../../core/entities/base.entity';
-
-interface PaymentService {}
 
 export class PaymentEntity extends BaseEntity {
 	userId: string;
-	paymentPeriod: PaymentPeriod;
-	paymentService: PaymentService;
+	paymentPeriod: 'day' | 'week' | 'month' | 'year';
+	paymentService: 'STRIPE' | 'PAYPAL';
 	amount: number;
 
 	static create(paymentCreateData: PaymentCreateModel) {

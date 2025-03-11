@@ -1,24 +1,21 @@
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
-
-export enum PaymentPeriod {
-	DAY = 0,
-	WEEKLY = 1,
-	MONTHLY = 2,
-}
-
-export enum PaymentService {
-	STRIPE = 0,
-	PAYPAL = 1,
-}
+import {
+	IsLowercase,
+	IsNotEmpty,
+	IsNumber,
+	IsString,
+	IsUppercase,
+} from 'class-validator';
 
 export class PaymentInputModel {
 	@IsNotEmpty()
-	@IsEnum(PaymentPeriod)
-	paymentPeriod: PaymentPeriod;
+	@IsLowercase()
+	@IsString()
+	paymentPeriod: 'day' | 'week' | 'month' | 'year';
 
 	@IsNotEmpty()
-	@IsEnum(PaymentService)
-	paymentService: PaymentService;
+	@IsUppercase()
+	@IsString()
+	paymentService: 'STRIPE' | 'PAYPAL';
 
 	@IsNotEmpty()
 	@IsNumber()
