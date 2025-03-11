@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	HttpCode,
+	InternalServerErrorException,
+	Post,
+	UseGuards,
+} from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { PaymentInputModel } from './models/input/payment.input';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
@@ -16,6 +24,21 @@ export class PaymentController {
 		@Body() inputBody: PaymentInputModel,
 		@CurrentUserId() userId: string,
 	) {
-		await this.commandBus.execute(new PaymentCreateCommand(userId, inputBody));
+		const paymentInfo = await this.commandBus.execute(
+			new PaymentCreateCommand(userId, inputBody),
+		);
+		if (!paymentInfo) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	@Get('success')
+	success(): string {
+		return 'Payment was successful!';
+	}
+
+	@Get('failure')
+	failure(): string {
+		return 'Transaction failed, please try again';
 	}
 }
