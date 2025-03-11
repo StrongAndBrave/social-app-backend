@@ -29,6 +29,9 @@ export class PaymentCreateUseCase implements ICommandHandler<PaymentCreateComman
 
 		const newPayment = PaymentEntity.create(paymentCreateData);
 
-		await this.paymentsClientService.sendPaymentInfoToMicroservice(newPayment);
+		const data =
+			await this.paymentsClientService.sendPaymentInfoToMicroservice(newPayment);
+
+		return data ?? null;
 	}
 }
