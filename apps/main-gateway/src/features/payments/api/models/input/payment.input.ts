@@ -1,10 +1,4 @@
-import {
-	IsLowercase,
-	IsNotEmpty,
-	IsNumber,
-	IsString,
-	IsUppercase,
-} from 'class-validator';
+import { IsLowercase, IsNotEmpty, IsString, IsUppercase } from 'class-validator';
 
 export class PaymentInputModel {
 	@IsNotEmpty()
@@ -16,12 +10,9 @@ export class PaymentInputModel {
 	@IsUppercase()
 	@IsString()
 	paymentService: 'STRIPE' | 'PAYPAL';
-
-	@IsNotEmpty()
-	@IsNumber()
-	amount: number;
 }
 
 export interface PaymentCreateModel extends PaymentInputModel {
+	amount: number;
 	userId: string;
 }
