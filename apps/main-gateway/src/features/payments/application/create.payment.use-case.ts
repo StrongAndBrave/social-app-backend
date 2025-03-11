@@ -4,6 +4,7 @@ import { PaymentsClientService } from '../../../core/tcp-connections/payments-mi
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../user/infrastructure/user.repository';
 import { PaymentEntity } from '../domain/payment.entity';
+import { PaymentConfig } from '../payments.config';
 
 export class PaymentCreateCommand {
 	constructor(
@@ -16,15 +17,36 @@ export class PaymentCreateCommand {
 export class PaymentCreateUseCase implements ICommandHandler<PaymentCreateCommand> {
 	constructor(
 		private readonly paymentsClientService: PaymentsClientService,
+		@Inject(PaymentConfig.name) private readonly paymentConfig: PaymentConfig,
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 
 	async execute(command: PaymentCreateCommand) {
 		const user = await this.userRepository.findOrNotFoundFail(command.userId);
 
+		let amount = 0;
+
+		console.log(this.paymentConfig.daySubscription);
+
+		switch (command.paymentData.paymentPeriod) {
+			case 'day':
+				amount = Number(this.paymentConfig.daySubscription);
+				break;
+			case 'week':
+				amount = Number(this.paymentConfig.weekSubscription);
+				break;
+			case 'month':
+				amount = Number(this.paymentConfig.monthSubscription);
+				break;
+			case 'year':
+				amount = Number(this.paymentConfig.yearSubscription);
+				break;
+		}
+
 		const paymentCreateData: PaymentCreateModel = {
 			...command.paymentData,
 			userId: user.id,
+			amount: amount,
 		};
 
 		const newPayment = PaymentEntity.create(paymentCreateData);
