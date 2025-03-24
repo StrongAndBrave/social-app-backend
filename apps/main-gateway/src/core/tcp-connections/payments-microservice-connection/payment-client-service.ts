@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { PaymentConfig } from '../../../features/payments/payments.config';
-import { PaymentEntity } from '../../../features/payments/domain/payment.entity';
+import { PaymentInputModel } from '../../../features/payments/api/models/input/payment.input';
 
 @Injectable()
 export class PaymentsClientService implements OnModuleInit {
@@ -18,8 +18,14 @@ export class PaymentsClientService implements OnModuleInit {
 		});
 	}
 
-	async sendPaymentInfoToMicroservice(data: PaymentEntity) {
+	async sendPaymentInfoToMicroservice(data: {
+		userId: string;
+		username: string;
+		paymentPeriod: string;
+		paymentService: string;
+	}) {
 		try {
+			console.log('SendedData: ', data);
 			return await this.client.send('create_payment', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with create payment: ', error);
