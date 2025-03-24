@@ -1,7 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { PaymentConfig } from '../../../features/payments/payments.config';
-import { PaymentInputModel } from '../../../features/payments/api/models/input/payment.input';
 
 @Injectable()
 export class PaymentsClientService implements OnModuleInit {
