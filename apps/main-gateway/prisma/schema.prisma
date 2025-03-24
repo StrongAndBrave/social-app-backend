@@ -88,33 +88,34 @@ model PostImages {
 }
 
 model Profile {
-  id          String      @id @default(uuid())
-  userId      String      @unique
-  accountType AccountType @default(Personal)
-  firstName   String?
-  lastName    String?
-  city        String?
-  country     String?
-  region      String?
-  dateOfBirth DateTime?
-  aboutMe     String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  deletedAt   DateTime?
-  user        User        @relation(fields: [userId], references: [id])
-  avatars     Avatar[]
+  id                 String      @id @default(uuid())
+  userId             String      @unique
+  accountType        AccountType @default(Personal)
+  subscribtionPeriod DateTime?
+  firstName          String?
+  lastName           String?
+  city               String?
+  country            String?
+  region             String?
+  dateOfBirth        DateTime?
+  aboutMe            String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  deletedAt          DateTime?
+  user               User        @relation(fields: [userId], references: [id])
+  avatars            Avatar[]
 }
 
 model Avatar {
-  id        String   @id @default(uuid())
-  profileId String   @unique
+  id        String    @id @default(uuid())
+  profileId String    @unique
   url       String
   width     Int
   height    Int
   fileSize  Int
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   deletedAt DateTime?
-  profile   Profile  @relation(fields: [profileId], references: [id])
+  profile   Profile   @relation(fields: [profileId], references: [id])
 }
 
 enum AccountType {
