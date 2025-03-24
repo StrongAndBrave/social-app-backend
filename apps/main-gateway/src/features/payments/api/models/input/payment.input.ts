@@ -11,8 +11,3 @@ export class PaymentInputModel {
 	@IsString()
 	paymentService: 'STRIPE' | 'PAYPAL';
 }
-
-export interface PaymentCreateModel extends PaymentInputModel {
-	amount: number;
-	userId: string;
-}
