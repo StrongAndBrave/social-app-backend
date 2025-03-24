@@ -11,18 +11,6 @@ export class PaymentConfig {
 	@IsNotEmpty()
 	paymentsServicePort: number = this.configService.get('PAYMENTS_SERVICE_PORT');
 
-	@IsNotEmpty()
-	daySubscription: string = this.configService.get('DAY_SUBSCRIPTION');
-
-	@IsNotEmpty()
-	weekSubscription: string = this.configService.get('WEEK_SUBSCRIPTION');
-
-	@IsNotEmpty()
-	monthSubscription: string = this.configService.get('MONTH_SUBSCRIPTION');
-
-	@IsNotEmpty()
-	yearSubscription: string = this.configService.get('YEAR_SUBSCRIPTION');
-
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
 	}

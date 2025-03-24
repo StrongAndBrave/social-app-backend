@@ -11,7 +11,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { PaymentInputModel } from './models/input/payment.input';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
-import { PaymentCreateCommand } from '../application/create.payment.use-case';
+import { SendPaymentInfoCommand } from '../application/send.payment.use-case';
 
 @Controller('subscriptions')
 export class PaymentController {
@@ -24,13 +24,13 @@ export class PaymentController {
 		@Body() inputBody: PaymentInputModel,
 		@CurrentUserId() userId: string,
 	) {
-		const paymentInfo = await this.commandBus.execute(
-			new PaymentCreateCommand(userId, inputBody),
+		const newPaymentInfo = await this.commandBus.execute(
+			new SendPaymentInfoCommand(userId, inputBody),
 		);
-		if (!paymentInfo) {
+		if (!newPaymentInfo) {
 			throw new InternalServerErrorException();
 		}
-		return paymentInfo;
+		return newPaymentInfo;
 	}
 
 	@Get('success')
