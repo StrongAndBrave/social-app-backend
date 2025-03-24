@@ -14,11 +14,7 @@ export class EmailConfig {
 	@IsNotEmpty()
 	mailerService: string = this.configService.get('MAILER_SERVICE');
 
-	constructor(
-		private configService: ConfigService<any, true>,
-	) {
-
+	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
-		console.log('mailerLogin', this.mailerLogin);
 	}
 }
