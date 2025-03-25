@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { IsNotEmpty } from 'class-validator';
 
 @Injectable()
-export class CoreConfig {
+export class DatabaseConfig {
 	@IsNotEmpty()
 	dbHost: string = this.configService.get('DB_HOST');
 
