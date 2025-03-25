@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { PaymentsController } from './api/payments.controller';
-import { ConfigModule } from '@nestjs/config';
-import { configModule } from '../../config/config-dynamic-module';
 import { CreateStripePaymentUseCase } from './application/use-cases/create.stripe.payment.use-case';
-import { CoreConfig } from '../../config/configuration';
-import { CqrsModule } from '@nestjs/cqrs';
+import { PaymentsConfig } from './payments.config';
+import { PaymentsRepository } from './infrastructure/payments.repository';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true }), configModule, CqrsModule],
+	imports: [],
 	controllers: [PaymentsController],
-	providers: [CreateStripePaymentUseCase, CoreConfig],
+	providers: [CreateStripePaymentUseCase, PaymentsRepository, PaymentsConfig],
 })
 export class MicroservicePaymentsModule {}
