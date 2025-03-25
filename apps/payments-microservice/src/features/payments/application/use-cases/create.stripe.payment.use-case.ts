@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CoreConfig } from '../../../../config/configuration';
 import Stripe from 'stripe';
+import { PaymentsConfig } from '../../payments.config';
 
 export class CreateStripePaymentCommand {
 	constructor(
@@ -15,34 +15,34 @@ export class CreateStripePaymentCommand {
 export class CreateStripePaymentUseCase
 	implements ICommandHandler<CreateStripePaymentCommand>
 {
-	constructor(private readonly coreConfig: CoreConfig) {}
+	constructor(private readonly paymentsConfig: PaymentsConfig) {}
 
 	async execute(command: CreateStripePaymentCommand) {
 		let amount = 0;
 
 		switch (command.paymentPeriod) {
 			case 'day':
-				amount = Number(this.coreConfig.daySubscriptionPrice);
+				amount = Number(this.paymentsConfig.daySubscriptionPrice);
 				break;
 			case 'week':
-				amount = Number(this.coreConfig.weekSubscriptionPrice);
+				amount = Number(this.paymentsConfig.weekSubscriptionPrice);
 				break;
 			case 'month':
-				amount = Number(this.coreConfig.monthSubscriptionPrice);
+				amount = Number(this.paymentsConfig.monthSubscriptionPrice);
 				break;
 			case 'year':
-				amount = Number(this.coreConfig.yearSubscriptionPrice);
+				amount = Number(this.paymentsConfig.yearSubscriptionPrice);
 				break;
 		}
 
-		const stripe = new Stripe(this.coreConfig.stripeSecretKey, {
+		const stripe = new Stripe(this.paymentsConfig.stripeSecretKey, {
 			apiVersion: '2025-01-27.acacia',
 		});
 
 		try {
 			const session = await stripe.checkout.sessions.create({
-				success_url: this.coreConfig.successPaymentResUrl,
-				cancel_url: this.coreConfig.failurePaymentResUrl,
+				success_url: this.paymentsConfig.successPaymentResUrl,
+				cancel_url: this.paymentsConfig.failurePaymentResUrl,
 				line_items: [
 					{
 						price_data: {
