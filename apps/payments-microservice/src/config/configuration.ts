@@ -10,10 +10,18 @@ export class CoreConfig {
 			message: 'Set Env variable PORT, example: 3000',
 		},
 	)
-	port: number = this.configService.get('PORT');
+	httpPort: number = this.configService.get('PORT');
+
+	@IsNumber(
+		{},
+		{
+			message: 'Set Env variable PORT, example: 3000',
+		},
+	)
+	tcpPort: number = this.configService.get('PORT');
 
 	@IsNotEmpty()
-	host: string = this.configService.get('HOST');
+	tcpHost: string = this.configService.get('HOST');
 
 	constructor(private configService: ConfigService<any, true>) {}
 }

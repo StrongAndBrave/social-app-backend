@@ -6,15 +6,20 @@ import { AppModule } from './app.module';
 async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule);
 	const coreConfig = appContext.get<CoreConfig>(CoreConfig);
-	const app = await NestFactory.createMicroservice<MicroserviceOptions>({
+
+	const app = await NestFactory.create(AppModule);
+	await app.listen(coreConfig.httpPort);
+	console.log(`Payments Microservice HTTP is listening on port:${coreConfig.httpPort}`);
+
+	const microservice = await NestFactory.createMicroservice<MicroserviceOptions>({
 		options: {
-			host: coreConfig.host,
-			port: coreConfig.port,
+			host: coreConfig.tcpHost,
+			port: coreConfig.tcpPort,
 		},
 	});
 
-	await app.listen();
-	console.log(`Payments Microservice is listening on port ${coreConfig.port}`);
+	await microservice.listen();
+	console.log(`Payments Microservice is listening on port: ${coreConfig.tcpPort}`);
 }
 
 /* {
