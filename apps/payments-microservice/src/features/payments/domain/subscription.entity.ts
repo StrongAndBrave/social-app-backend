@@ -1,6 +1,5 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { Sequelize } from 'sequelize';
-import { SubscriptionCreateModel } from '../api/models/input/payment.input.model';
 
 @Table({ timestamps: true })
 export class Subscription extends Model {

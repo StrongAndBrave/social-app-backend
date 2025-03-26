@@ -11,15 +11,10 @@ export class PaymentsController {
 	@MessagePattern('create_payment')
 	async createPayment(data: PaymentInputModel) {
 		console.log(data);
-		if (data.paymentService === 'STRIPE') {
+		if (data.paymentService === 'stripe') {
 			console.log('data go to stripe payment');
 			const paymentUrl = await this.commandBus.execute(
-				new CreateStripePaymentCommand(
-					data.userId,
-					data.username,
-					data.paymentPeriod,
-					data.paymentService,
-				),
+				new CreateStripePaymentCommand(data),
 			);
 			return paymentUrl ?? null;
 		}
