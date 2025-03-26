@@ -1,14 +1,15 @@
 import {
 	PaymentInputModel,
 	SubscriptionCreateModel,
-} from '../../api/models/input/payment.input.model';
+} from '../../../api/models/input/payment.input.model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SubscriptionRepository } from '../../infrastructure/subscription.repository';
+import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
 
 export class CreateSubscriptionCommand {
 	constructor(
 		public paymentData: PaymentInputModel,
 		public amount: number,
+		public clientReferenceId: string,
 	) {}
 }
 
@@ -22,6 +23,7 @@ export class CreateSubscriptionUseCase
 		const subscriptionCreateData: Omit<SubscriptionCreateModel, 'status'> = {
 			...command.paymentData,
 			price: command.amount,
+			clientReferenceId: command.clientReferenceId,
 		};
 
 		const addedSubscription =

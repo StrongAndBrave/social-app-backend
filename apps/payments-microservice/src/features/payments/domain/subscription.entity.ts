@@ -42,6 +42,12 @@ export class Subscription extends Model {
 	})
 	status: string;
 
+	@Column({
+		type: DataType.UUID,
+		allowNull: false,
+	})
+	clientReferenceId: string;
+
 	/*constructor(subscriptionCreateData: SubscriptionCreateModel) {
 		super();
 		this.userId = subscriptionCreateData.userId;

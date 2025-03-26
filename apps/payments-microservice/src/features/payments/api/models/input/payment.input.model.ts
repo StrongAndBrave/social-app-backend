@@ -8,4 +8,5 @@ export class PaymentInputModel {
 export interface SubscriptionCreateModel extends PaymentInputModel {
 	price: number;
 	status: 'succeeded' | 'pending' | 'failure';
+	clientReferenceId: string;
 }

@@ -1,8 +1,9 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import Stripe from 'stripe';
-import { PaymentsConfig } from '../../payments.config';
-import { PaymentInputModel } from '../../api/models/input/payment.input.model';
-import { CreateSubscriptionCommand } from './create.subscription.use-case';
+import { PaymentsConfig } from '../../../payments.config';
+import { PaymentInputModel } from '../../../api/models/input/payment.input.model';
+import { CreateSubscriptionCommand } from '../subscriptions/create.subscription.use-case';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CreateStripePaymentCommand {
 	constructor(public paymentData: PaymentInputModel) {}
@@ -39,6 +40,8 @@ export class CreateStripePaymentUseCase
 			apiVersion: '2025-01-27.acacia',
 		});
 
+		const clientReferenceId: string = uuidv4();
+
 		try {
 			const session = await stripe.checkout.sessions.create({
 				success_url: this.paymentsConfig.successPaymentResUrl,
@@ -60,11 +63,11 @@ export class CreateStripePaymentUseCase
 					},
 				],
 				mode: 'subscription',
-				client_reference_id: command.paymentData.userId,
+				client_reference_id: clientReferenceId,
 			});
 
 			const newSubscription = await this.commandBus.execute(
-				new CreateSubscriptionCommand(command.paymentData, amount),
+				new CreateSubscriptionCommand(command.paymentData, amount, clientReferenceId),
 			);
 
 			console.log(`New Session created: ${newSubscription}`);
