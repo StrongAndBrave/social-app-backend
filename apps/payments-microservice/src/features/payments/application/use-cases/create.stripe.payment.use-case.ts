@@ -1,26 +1,26 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import Stripe from 'stripe';
 import { PaymentsConfig } from '../../payments.config';
+import { PaymentInputModel } from '../../api/models/input/payment.input.model';
+import { CreateSubscriptionCommand } from './create.subscription.use-case';
 
 export class CreateStripePaymentCommand {
-	constructor(
-		public userId: string,
-		public username: string,
-		public paymentPeriod: 'day' | 'week' | 'month' | 'year',
-		public paymentService: string,
-	) {}
+	constructor(public paymentData: PaymentInputModel) {}
 }
 
 @CommandHandler(CreateStripePaymentCommand)
 export class CreateStripePaymentUseCase
 	implements ICommandHandler<CreateStripePaymentCommand>
 {
-	constructor(private readonly paymentsConfig: PaymentsConfig) {}
+	constructor(
+		private readonly paymentsConfig: PaymentsConfig,
+		private readonly commandBus: CommandBus,
+	) {}
 
-	async execute(command: CreateStripePaymentCommand) {
+	async execute(command: CreateStripePaymentCommand): Promise<string | null> {
 		let amount = 0;
 
-		switch (command.paymentPeriod) {
+		switch (command.paymentData.paymentPeriod) {
 			case 'day':
 				amount = Number(this.paymentsConfig.daySubscriptionPrice);
 				break;
@@ -50,21 +50,26 @@ export class CreateStripePaymentUseCase
 							currency: 'USD',
 							product_data: {
 								name: 'Snapfolio',
-								description: `1 ${command.paymentPeriod} business account subscription for ${command.username}`,
+								description: `1 ${command.paymentData.paymentPeriod} business account subscription for ${command.paymentData.username}`,
 							},
 							recurring: {
-								interval: command.paymentPeriod,
+								interval: command.paymentData.paymentPeriod,
 							},
 						},
 						quantity: 1,
 					},
 				],
 				mode: 'subscription',
-				client_reference_id: command.userId,
+				client_reference_id: command.paymentData.userId,
 			});
 
-			console.log(session);
-			return session.url;
+			const newSubscription = await this.commandBus.execute(
+				new CreateSubscriptionCommand(command.paymentData, amount),
+			);
+
+			console.log(`New Session created: ${newSubscription}`);
+			console.log(`New Subscription created: ${newSubscription}`);
+			return session && newSubscription ? session.url : null;
 		} catch (e) {
 			console.error(e);
 			throw e;
