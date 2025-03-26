@@ -75,7 +75,7 @@ export class CreateStripePaymentUseCase
 			return session && newSubscription ? session.url : null;
 		} catch (e) {
 			console.error(e);
-			throw e;
+			return null;
 		}
 	}
 }

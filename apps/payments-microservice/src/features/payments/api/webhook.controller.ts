@@ -1,10 +1,16 @@
 import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common';
 import { PaymentsConfig } from '../payments.config';
 import Stripe from 'stripe';
+import { CommandBus } from '@nestjs/cqrs';
+import { FinishSubscriptionCommand } from '../application/use-cases/subscriptions/finish.subscription.use-case';
+import { FailureSubscriptionCommand } from '../application/use-cases/subscriptions/failure.subscription.use-case';
 
 @Controller('payments')
 export class WebhookController {
-	constructor(private readonly paymentsConfig: PaymentsConfig) {}
+	constructor(
+		private readonly commandBus: CommandBus,
+		private readonly paymentsConfig: PaymentsConfig,
+	) {}
 
 	@Post('stripe-webhook')
 	@HttpCode(200)
@@ -19,6 +25,17 @@ export class WebhookController {
 				signature,
 				this.paymentsConfig.stripeWebhookSecretKey,
 			);
+			if (event.type === 'checkout.session.completed') {
+				const session = event.data.object as Stripe.Checkout.Session;
+				await this.commandBus.execute(
+					new FinishSubscriptionCommand(session.client_reference_id!),
+				);
+			} else {
+				const session = event.data.object as Stripe.Checkout.Session;
+				await this.commandBus.execute(
+					new FailureSubscriptionCommand(session.client_reference_id!),
+				);
+			}
 		} catch (e) {
 			console.error(e);
 		}

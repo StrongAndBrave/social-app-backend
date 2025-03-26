@@ -7,6 +7,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Subscription } from './domain/subscription.entity';
 import { CreateSubscriptionUseCase } from './application/use-cases/subscriptions/create.subscription.use-case';
 import { WebhookController } from './api/webhook.controller';
+import { FailureSubscriptionUseCase } from './application/use-cases/subscriptions/failure.subscription.use-case';
+import { FinishSubscriptionUseCase } from './application/use-cases/subscriptions/finish.subscription.use-case';
 
 @Module({
 	imports: [SequelizeModule.forFeature([Subscription])],
@@ -14,6 +16,8 @@ import { WebhookController } from './api/webhook.controller';
 	providers: [
 		CreateStripePaymentUseCase,
 		CreateSubscriptionUseCase,
+		FailureSubscriptionUseCase,
+		FinishSubscriptionUseCase,
 		SubscriptionRepository,
 		PaymentsConfig,
 	],
