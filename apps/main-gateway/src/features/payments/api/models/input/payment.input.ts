@@ -1,4 +1,4 @@
-import { IsLowercase, IsNotEmpty, IsString, IsUppercase } from 'class-validator';
+import { IsLowercase, IsNotEmpty, IsString } from 'class-validator';
 
 export class PaymentInputModel {
 	@IsNotEmpty()
@@ -7,7 +7,7 @@ export class PaymentInputModel {
 	paymentPeriod: 'day' | 'week' | 'month' | 'year';
 
 	@IsNotEmpty()
-	@IsUppercase()
+	@IsLowercase()
 	@IsString()
-	paymentService: 'STRIPE' | 'PAYPAL';
+	paymentService: 'stripe' | 'paypal';
 }
