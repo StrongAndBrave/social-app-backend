@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateStripePaymentCommand } from '../application/use-cases/create.stripe.payment.use-case';
+import { CreateStripePaymentCommand } from '../application/use-cases/payments/create.stripe.payment.use-case';
 import { PaymentInputModel } from './models/input/payment.input.model';
 
 @Controller()
