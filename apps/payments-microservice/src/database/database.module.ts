@@ -14,6 +14,7 @@ import { DatabaseConfigModule } from './database.config.module';
 				port: databaseConfig.dbPort,
 				username: databaseConfig.dbUsername,
 				password: databaseConfig.dbPassword,
+				//database: databaseConfig.dbName,
 				autoLoadModels: true,
 				synchronize: true,
 			}),

@@ -16,5 +16,8 @@ export class DatabaseConfig {
 	@IsNotEmpty()
 	dbPassword: string = this.configService.get('DB_PASSWORD');
 
+	@IsNotEmpty()
+	dbName: string = this.configService.get('DB_NAME');
+
 	constructor(private configService: ConfigService<any, true>) {}
 }
