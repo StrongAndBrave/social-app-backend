@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateStripePaymentCommand } from '../application/use-cases/create.stripe.payment.use-case';
 import { PaymentInputModel } from './models/input/payment.input.model';
+import { CreateStripePaymentCommand } from '../application/use-cases/payments/create.stripe.payment.use-case';
 
 @Controller()
 export class PaymentsController {
@@ -11,15 +11,10 @@ export class PaymentsController {
 	@MessagePattern('create_payment')
 	async createPayment(data: PaymentInputModel) {
 		console.log(data);
-		if (data.paymentService === 'STRIPE') {
+		if (data.paymentService === 'stripe') {
 			console.log('data go to stripe payment');
 			const paymentUrl = await this.commandBus.execute(
-				new CreateStripePaymentCommand(
-					data.userId,
-					data.username,
-					data.paymentPeriod,
-					data.paymentService,
-				),
+				new CreateStripePaymentCommand(data),
 			);
 			return paymentUrl ?? null;
 		}
