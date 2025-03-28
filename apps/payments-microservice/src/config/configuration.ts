@@ -10,6 +10,14 @@ export class CoreConfig {
 			message: 'Set Env variable PORT, example: 3000',
 		},
 	)
+	httpPort: number = this.configService.get('HTTP_PORT');
+
+	@IsNumber(
+		{},
+		{
+			message: 'Set Env variable PORT, example: 3000',
+		},
+	)
 	tcpPort: number = this.configService.get('TCP_PORT');
 
 	@IsNotEmpty()
