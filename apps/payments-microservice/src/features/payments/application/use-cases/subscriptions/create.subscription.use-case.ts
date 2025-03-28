@@ -26,8 +26,12 @@ export class CreateSubscriptionUseCase
 			clientReferenceId: command.clientReferenceId,
 		};
 
+		console.log(`subscriptionCreateData: ${JSON.stringify(subscriptionCreateData)}`);
+
 		const addedSubscription =
 			await this.paymentsRepository.createSubscription(subscriptionCreateData);
+
+		console.log(`New subscription: ${JSON.stringify(addedSubscription)}`);
 
 		return addedSubscription ?? null;
 	}

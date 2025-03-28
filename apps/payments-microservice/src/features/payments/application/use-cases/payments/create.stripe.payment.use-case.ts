@@ -66,12 +66,14 @@ export class CreateStripePaymentUseCase
 				client_reference_id: clientReferenceId,
 			});
 
+			console.log('New subscription creating...');
+
 			const newSubscription = await this.commandBus.execute(
 				new CreateSubscriptionCommand(command.paymentData, amount, clientReferenceId),
 			);
 
-			console.log(`New Session created: ${session}`);
-			console.log(`New Subscription created: ${newSubscription}`);
+			console.log(`New Session created: ${JSON.stringify(session)}`);
+			console.log(`New Subscription created: ${JSON.stringify(newSubscription)}`);
 			return session && newSubscription ? session.url : null;
 		} catch (e) {
 			console.error(e);
