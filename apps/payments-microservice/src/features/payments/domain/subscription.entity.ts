@@ -17,10 +17,15 @@ export class Subscription extends Model {
 	})
 	userId: string;
 
-	@Column({})
+	@Column({
+		allowNull: false,
+	})
 	username: string;
 
-	@Column({ allowNull: false })
+	@Column({
+		type: DataType.SMALLINT,
+		allowNull: false,
+	})
 	price: number;
 
 	@Column({
@@ -48,13 +53,10 @@ export class Subscription extends Model {
 	})
 	clientReferenceId: string;
 
-	/*constructor(subscriptionCreateData: SubscriptionCreateModel) {
-		super();
-		this.userId = subscriptionCreateData.userId;
-		this.username = subscriptionCreateData.username;
-		this.price = subscriptionCreateData.price;
-		this.paymentPeriod = subscriptionCreateData.paymentPeriod;
-		this.paymentService = subscriptionCreateData.paymentService;
-		this.status = 'pending';
-	}*/
+	@Column({
+		type: DataType.DATE,
+		defaultValue: null,
+		allowNull: true,
+	})
+	updatedAt: Date | null;
 }

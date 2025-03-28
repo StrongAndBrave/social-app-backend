@@ -26,7 +26,7 @@ export class SubscriptionRepository {
 
 	async changeSubscriptionStatus(id: string, newStatus: string): Promise<boolean> {
 		const subscription = await this.subscriptionModel.update(
-			{ status: newStatus },
+			{ status: newStatus, updatedAt: null },
 			{ where: { id: id } },
 		);
 		return !!subscription;
