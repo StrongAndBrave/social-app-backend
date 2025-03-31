@@ -5,8 +5,13 @@ export class PaymentInputModel {
 	paymentService: 'stripe' | 'paypal';
 }
 
-export interface SubscriptionCreateModel extends PaymentInputModel {
+export interface SubscriptionPaymentCreateModel extends PaymentInputModel {
 	price: number;
-	status: 'succeeded' | 'pending' | 'failure';
 	clientReferenceId: string;
+}
+
+export interface SubscriptionCreateModel {
+	userId: string;
+	startAt: Date;
+	expiredAt: Date;
 }

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
+import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 
 export class FailureSubscriptionCommand {
 	constructor(public clientReferenceId: string) {}
@@ -9,18 +9,18 @@ export class FailureSubscriptionCommand {
 export class FailureSubscriptionUseCase
 	implements ICommandHandler<FailureSubscriptionCommand>
 {
-	constructor(public subscriptionRepository: SubscriptionRepository) {}
+	constructor(public subscriptionPaymentsRepository: SubscriptionPaymentsRepository) {}
 
 	async execute(command: FailureSubscriptionCommand) {
 		try {
 			const subscription =
-				await this.subscriptionRepository.findSubscriptionByClientReferenceId(
+				await this.subscriptionPaymentsRepository.findSubscriptionPaymentByClientReferenceId(
 					command.clientReferenceId,
 				);
 			if (!subscription) {
 				return null;
 			}
-			await this.subscriptionRepository.changeSubscriptionStatus(
+			await this.subscriptionPaymentsRepository.changeSubscriptionPaymentStatus(
 				subscription.id,
 				'failure',
 			);

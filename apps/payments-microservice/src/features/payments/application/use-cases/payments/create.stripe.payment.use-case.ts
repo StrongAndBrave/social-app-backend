@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import Stripe from 'stripe';
 import { PaymentsConfig } from '../../../payments.config';
 import { PaymentInputModel } from '../../../api/models/input/payment.input.model';
-import { CreateSubscriptionCommand } from '../subscriptions/create.subscription.use-case';
+import { CreateSubscriptionPaymentCommand } from '../subscriptions/create.subscription.use-case';
 import { v4 as uuidv4 } from 'uuid';
 
 export class CreateStripePaymentCommand {
@@ -66,15 +66,19 @@ export class CreateStripePaymentUseCase
 				client_reference_id: clientReferenceId,
 			});
 
-			console.log('New subscription creating...');
-
-			const newSubscription = await this.commandBus.execute(
-				new CreateSubscriptionCommand(command.paymentData, amount, clientReferenceId),
+			const newSubscriptionPayment = await this.commandBus.execute(
+				new CreateSubscriptionPaymentCommand(
+					command.paymentData,
+					amount,
+					clientReferenceId,
+				),
 			);
 
 			console.log(`New Session created: ${JSON.stringify(session)}`);
-			console.log(`New Subscription created: ${JSON.stringify(newSubscription)}`);
-			return session && newSubscription ? session.url : null;
+			console.log(
+				`New Subscription payment created: ${JSON.stringify(newSubscriptionPayment)}`,
+			);
+			return session && newSubscriptionPayment ? session.url : null;
 		} catch (e) {
 			console.error(e);
 			return null;

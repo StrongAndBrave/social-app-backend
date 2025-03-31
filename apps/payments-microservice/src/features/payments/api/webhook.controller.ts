@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	HttpCode,
+	InternalServerErrorException,
+	Post,
+	Req,
+} from '@nestjs/common';
 import { PaymentsConfig } from '../payments.config';
 import Stripe from 'stripe';
 import { CommandBus } from '@nestjs/cqrs';
@@ -19,6 +26,9 @@ export class WebhookController {
 			apiVersion: '2025-01-27.acacia',
 		});
 		const signature = req.headers['stripe-signature'];
+		if (!signature || data) {
+			throw new InternalServerErrorException();
+		}
 		try {
 			const event = stripe.webhooks.constructEvent(
 				data,

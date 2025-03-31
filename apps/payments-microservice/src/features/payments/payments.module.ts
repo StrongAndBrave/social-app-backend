@@ -3,21 +3,24 @@ import { PaymentsController } from './api/payments.controller';
 import { CreateStripePaymentUseCase } from './application/use-cases/payments/create.stripe.payment.use-case';
 import { PaymentsConfig } from './payments.config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Subscription } from './domain/subscription.entity';
+import { SubscriptionPayment } from './domain/subscription.payment.entity';
 import { CreateSubscriptionUseCase } from './application/use-cases/subscriptions/create.subscription.use-case';
-import { SubscriptionRepository } from './infrastructure/subscription.repository';
+import { SubscriptionPaymentsRepository } from './infrastructure/subscription.payment.repository';
 import { FinishSubscriptionUseCase } from './application/use-cases/subscriptions/finish.subscription.use-case';
 import { FailureSubscriptionUseCase } from './application/use-cases/subscriptions/failure.subscription.use-case';
 import { WebhookController } from './api/webhook.controller';
+import { Subscription } from './domain/subscription.entity';
+import { SubscriptionRepository } from './infrastructure/subscription.repository';
 
 @Module({
-	imports: [SequelizeModule.forFeature([Subscription])],
+	imports: [SequelizeModule.forFeature([SubscriptionPayment, Subscription])],
 	controllers: [PaymentsController, WebhookController],
 	providers: [
 		CreateStripePaymentUseCase,
 		CreateSubscriptionUseCase,
 		FinishSubscriptionUseCase,
 		FailureSubscriptionUseCase,
+		SubscriptionPaymentsRepository,
 		SubscriptionRepository,
 		PaymentsConfig,
 	],
