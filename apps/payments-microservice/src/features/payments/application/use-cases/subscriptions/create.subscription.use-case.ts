@@ -1,11 +1,11 @@
 import {
 	PaymentInputModel,
-	SubscriptionCreateModel,
+	SubscriptionPaymentCreateModel,
 } from '../../../api/models/input/payment.input.model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
+import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 
-export class CreateSubscriptionCommand {
+export class CreateSubscriptionPaymentCommand {
 	constructor(
 		public paymentData: PaymentInputModel,
 		public amount: number,
@@ -13,26 +13,33 @@ export class CreateSubscriptionCommand {
 	) {}
 }
 
-@CommandHandler(CreateSubscriptionCommand)
+@CommandHandler(CreateSubscriptionPaymentCommand)
 export class CreateSubscriptionUseCase
-	implements ICommandHandler<CreateSubscriptionCommand>
+	implements ICommandHandler<CreateSubscriptionPaymentCommand>
 {
-	constructor(private readonly paymentsRepository: SubscriptionRepository) {}
+	constructor(
+		private readonly subscriptionPaymentsRepository: SubscriptionPaymentsRepository,
+	) {}
 
-	async execute(command: CreateSubscriptionCommand) {
-		const subscriptionCreateData: Omit<SubscriptionCreateModel, 'status'> = {
-			...command.paymentData,
-			price: command.amount,
-			clientReferenceId: command.clientReferenceId,
-		};
+	async execute(command: CreateSubscriptionPaymentCommand) {
+		const subscriptionPaymentCreateData: Omit<SubscriptionPaymentCreateModel, 'status'> =
+			{
+				...command.paymentData,
+				price: command.amount,
+				clientReferenceId: command.clientReferenceId,
+			};
 
-		console.log(`subscriptionCreateData: ${JSON.stringify(subscriptionCreateData)}`);
+		console.log(
+			`subscriptionCreateData: ${JSON.stringify(subscriptionPaymentCreateData)}`,
+		);
 
-		const addedSubscription =
-			await this.paymentsRepository.createSubscription(subscriptionCreateData);
+		const addedSubscriptionPayment =
+			await this.subscriptionPaymentsRepository.createSubscriptionPayment(
+				subscriptionPaymentCreateData,
+			);
 
-		console.log(`New subscription: ${JSON.stringify(addedSubscription)}`);
+		console.log(`New subscription: ${JSON.stringify(addedSubscriptionPayment)}`);
 
-		return addedSubscription ?? null;
+		return addedSubscriptionPayment ?? null;
 	}
 }
