@@ -9,26 +9,7 @@ export class SubscriptionRepository {
 		@InjectModel(Subscription) private readonly subscriptionModel: typeof Subscription,
 	) {}
 
-	async createSubscription(
-		data: CreationAttributes<Subscription>,
-	): Promise<Subscription> {
+	async createSubscription(data: CreationAttributes<Subscription>) {
 		return this.subscriptionModel.create(data);
-	}
-
-	async findSubscriptionByClientReferenceId(
-		clientReferenceId: string,
-	): Promise<Subscription | null> {
-		const subscription = this.subscriptionModel.findOne({
-			where: { clientReferenceId: clientReferenceId },
-		});
-		return subscription ?? null;
-	}
-
-	async changeSubscriptionStatus(id: string, newStatus: string): Promise<boolean> {
-		const subscription = await this.subscriptionModel.update(
-			{ status: newStatus, updatedAt: null },
-			{ where: { id: id } },
-		);
-		return !!subscription;
 	}
 }
