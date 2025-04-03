@@ -39,17 +39,26 @@ export class SubscriptionPaymentsRepository {
 	async findSubscriptionPaymentByClientReferenceId(
 		clientReferenceId: string,
 	): Promise<SubscriptionPayment | null> {
-		const subscription = this.subscriptionPaymentModel.findOne({
+		const subscriptionPayment = this.subscriptionPaymentModel.findOne({
 			where: { clientReferenceId: clientReferenceId },
 		});
-		return subscription ?? null;
+		return subscriptionPayment ?? null;
 	}
 
-	async changeSubscriptionPaymentStatus(id: string, newStatus: string): Promise<boolean> {
-		const subscription = await this.subscriptionPaymentModel.update(
-			{ status: newStatus, updatedAt: null },
-			{ where: { id: id } },
-		);
-		return !!subscription;
+	async changeSubscriptionPaymentStatus(
+		id: string,
+		newStatus: string,
+		updatedAt: string | null,
+	) {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { id: id },
+		});
+		if (!subscriptionPayment) {
+			return null;
+		}
+		subscriptionPayment.status = newStatus;
+		subscriptionPayment.updatedAt = updatedAt;
+		await subscriptionPayment.save();
+		return subscriptionPayment;
 	}
 }
