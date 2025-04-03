@@ -12,6 +12,6 @@ export interface SubscriptionPaymentCreateModel extends PaymentInputModel {
 
 export interface SubscriptionCreateModel {
 	userId: string;
-	startAt: Date;
-	expiredAt: Date;
+	startAt: Date | null;
+	expiredAt: Date | null;
 }
