@@ -1,8 +1,8 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { Sequelize } from 'sequelize';
 import { SubscriptionPayment } from './subscription.payment.entity';
+import { Sequelize } from 'sequelize';
 
-@Table({})
+@Table({ timestamps: false })
 export class Subscription extends Model {
 	@Column({
 		type: DataType.UUID,
@@ -14,6 +14,7 @@ export class Subscription extends Model {
 
 	@Column({
 		type: DataType.UUID,
+		unique: true,
 		allowNull: false,
 	})
 	userId: string;
@@ -21,18 +22,21 @@ export class Subscription extends Model {
 	@Column({
 		type: DataType.DATE,
 		allowNull: true,
+		defaultValue: null,
 	})
-	startAt: Date;
+	startAt: Date | null;
 
 	@Column({
 		type: DataType.DATE,
+		defaultValue: null,
 		allowNull: true,
 	})
-	expiredAt: Date;
+	expiredAt: Date | null;
 
 	@Column({
 		type: DataType.BOOLEAN,
 		defaultValue: true,
+		allowNull: false,
 	})
 	autoRenewal: boolean;
 

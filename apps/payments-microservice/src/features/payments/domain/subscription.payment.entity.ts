@@ -9,7 +9,7 @@ import {
 import { Sequelize } from 'sequelize';
 import { Subscription } from './subscription.entity';
 
-@Table({ timestamps: true })
+@Table({ timestamps: false })
 export class SubscriptionPayment extends Model {
 	@Column({
 		type: DataType.UUID,
@@ -64,10 +64,18 @@ export class SubscriptionPayment extends Model {
 
 	@Column({
 		type: DataType.DATE,
+		defaultValue: Sequelize.literal('now()'),
+		allowNull: false,
+	})
+	createdAt: Date;
+
+	@Column({
+		type: DataType.DATE,
+		defaultValue: null,
 		allowNull: true,
 	})
-	updatedAt: Date;
+	updatedAt: Date | null;
 
-	@BelongsTo(() => Subscription)
+	@BelongsTo(() => Subscription, { foreignKey: 'userId', targetKey: 'userId' })
 	subscription: Subscription;
 }
