@@ -11,9 +11,13 @@ import { FailureSubscriptionUseCase } from './application/use-cases/subscription
 import { WebhookController } from './api/webhook.controller';
 import { Subscription } from './domain/subscription.entity';
 import { SubscriptionRepository } from './infrastructure/subscription.repository';
+import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-	imports: [SequelizeModule.forFeature([SubscriptionPayment, Subscription])],
+	imports: [
+		SequelizeModule.forFeature([SubscriptionPayment, Subscription]),
+		DatabaseModule,
+	],
 	controllers: [PaymentsController, WebhookController],
 	providers: [
 		CreateStripePaymentUseCase,
