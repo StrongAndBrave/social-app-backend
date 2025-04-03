@@ -8,19 +8,21 @@ import { DatabaseConfigModule } from './database.config.module';
 		SequelizeModule.forRootAsync({
 			inject: [DatabaseConfig],
 			imports: [DatabaseConfigModule],
-			useFactory: (databaseConfig: DatabaseConfig) => ({
-				dialect: 'postgres',
-				host: databaseConfig.dbHost,
-				port: databaseConfig.dbPort,
-				username: databaseConfig.dbUsername,
-				password: databaseConfig.dbPassword,
-				//database: databaseConfig.dbName,
-				autoLoadModels: true,
-				synchronize: true,
-			}),
+			useFactory: (databaseConfig: DatabaseConfig) => {
+				return {
+					dialect: 'postgres',
+					host: databaseConfig.dbHost,
+					port: databaseConfig.dbPort,
+					username: databaseConfig.dbUsername,
+					password: databaseConfig.dbPassword,
+					//database: databaseConfig.dbName,
+					autoLoadModels: true,
+					synchronize: true,
+				};
+			},
 		}),
 	],
 	providers: [DatabaseConfig],
-	exports: [],
+	exports: [SequelizeModule],
 })
 export class DatabaseModule {}
