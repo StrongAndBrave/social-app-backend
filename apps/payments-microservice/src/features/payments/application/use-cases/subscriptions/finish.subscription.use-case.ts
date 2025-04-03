@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
-import { SubscriptionCreateModel } from '../../../api/models/input/payment.input.model';
 
 export class FinishSubscriptionCommand {
 	constructor(public clientReferenceId: string) {}
@@ -22,13 +21,16 @@ export class FinishSubscriptionUseCase
 				await this.subscriptionPaymentsRepository.findSubscriptionPaymentByClientReferenceId(
 					command.clientReferenceId,
 				);
+			console.log('subscriptionPayment', subscriptionPayment);
 			if (!subscriptionPayment) {
 				return null;
 			}
+			const updateSubscriptionDate = new Date().toISOString();
 			if (subscriptionPayment.status === 'pending')
 				await this.subscriptionPaymentsRepository.changeSubscriptionPaymentStatus(
 					subscriptionPayment.id,
 					'succeeded',
+					updateSubscriptionDate,
 				);
 
 			let subscriptionExpDate = 0;
@@ -48,12 +50,17 @@ export class FinishSubscriptionUseCase
 					break;
 			}
 
-			const subscriptionCreateData: Omit<SubscriptionCreateModel, 'autoRenewal'> = {
-				userId: subscriptionPayment.userId,
-				startAt: subscriptionPayment.updatedAt,
-				expiredAt: new Date(Date.now() + subscriptionExpDate * 24 * 60 * 60 * 1000),
+			const data = {
+				startAt: updateSubscriptionDate,
+				expiredAt: new Date(
+					Date.now() + subscriptionExpDate * 24 * 60 * 60 * 1000,
+				).toISOString(),
 			};
-			await this.subscriptionRepository.createSubscription(subscriptionCreateData);
+
+			await this.subscriptionRepository.updateSubscription(
+				subscriptionPayment.userId,
+				data,
+			);
 			return subscriptionPayment!.id;
 		} catch (e) {
 			console.error(e);

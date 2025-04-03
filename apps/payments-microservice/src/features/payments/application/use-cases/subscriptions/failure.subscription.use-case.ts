@@ -23,6 +23,7 @@ export class FailureSubscriptionUseCase
 			await this.subscriptionPaymentsRepository.changeSubscriptionPaymentStatus(
 				subscription.id,
 				'failure',
+				null,
 			);
 		} catch (e) {
 			console.error(e);
