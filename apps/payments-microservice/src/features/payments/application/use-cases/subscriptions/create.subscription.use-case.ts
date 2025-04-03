@@ -1,5 +1,6 @@
 import {
 	PaymentInputModel,
+	SubscriptionCreateModel,
 	SubscriptionPaymentCreateModel,
 } from '../../../api/models/input/payment.input.model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
@@ -29,17 +30,23 @@ export class CreateSubscriptionUseCase
 				clientReferenceId: command.clientReferenceId,
 			};
 
+		const subscriptionCreateData: Omit<SubscriptionCreateModel, 'autoRenewal'> = {
+			userId: command.paymentData.userId,
+			startAt: null,
+			expiredAt: null,
+		};
+
 		console.log(
-			`subscriptionCreateData: ${JSON.stringify(subscriptionPaymentCreateData)}`,
+			`subscriptionPaymentCreateData: ${JSON.stringify(subscriptionPaymentCreateData)}`,
+			`subscriptionCreateData: ${JSON.stringify(subscriptionCreateData)}`,
 		);
 
-		const addedSubscriptionPayment =
-			await this.subscriptionPaymentsRepository.createSubscriptionPayment(
+		const addedSubscriptionNPayment =
+			await this.subscriptionPaymentsRepository.createSubscriptionPaymentWithSubscription(
+				subscriptionCreateData,
 				subscriptionPaymentCreateData,
 			);
 
-		console.log(`New subscription: ${JSON.stringify(addedSubscriptionPayment)}`);
-
-		return addedSubscriptionPayment ?? null;
+		return addedSubscriptionNPayment ?? null;
 	}
 }
