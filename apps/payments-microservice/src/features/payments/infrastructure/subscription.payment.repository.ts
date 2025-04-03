@@ -1,19 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { SubscriptionPayment } from '../domain/subscription.payment.entity';
-import { CreationAttributes } from 'sequelize';
+import { CreationAttributes, Sequelize } from 'sequelize';
+import { Subscription } from '../domain/subscription.entity';
 
 @Injectable()
 export class SubscriptionPaymentsRepository {
 	constructor(
 		@InjectModel(SubscriptionPayment)
 		private readonly subscriptionPaymentModel: typeof SubscriptionPayment,
+		@InjectModel(Subscription) private readonly subscriptionModel: typeof Subscription,
+		@InjectConnection() private readonly sequelize: Sequelize,
 	) {}
 
-	async createSubscriptionPayment(
-		data: CreationAttributes<SubscriptionPayment>,
-	): Promise<SubscriptionPayment> {
-		return this.subscriptionPaymentModel.create(data);
+	async createSubscriptionPaymentWithSubscription(
+		subscriptionData: CreationAttributes<Subscription>,
+		subscriptionPaymentData: CreationAttributes<SubscriptionPayment>,
+	): Promise<boolean> {
+		try {
+			return await this.sequelize.transaction(async (t) => {
+				const newSubscription = await this.subscriptionModel.create(subscriptionData, {
+					transaction: t,
+				});
+
+				const newSubscriptionPayment = await this.subscriptionPaymentModel.create(
+					subscriptionPaymentData,
+					{ transaction: t },
+				);
+
+				return !!(newSubscription && newSubscriptionPayment);
+			});
+		} catch (e) {
+			console.error(e);
+			return false;
+		}
 	}
 
 	async findSubscriptionPaymentByClientReferenceId(
