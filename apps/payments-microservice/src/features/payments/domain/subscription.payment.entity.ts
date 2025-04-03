@@ -67,14 +67,14 @@ export class SubscriptionPayment extends Model {
 		defaultValue: Sequelize.literal('now()'),
 		allowNull: false,
 	})
-	createdAt: Date;
+	createdAt: string;
 
 	@Column({
 		type: DataType.DATE,
 		defaultValue: null,
 		allowNull: true,
 	})
-	updatedAt: Date | null;
+	updatedAt: string | null;
 
 	@BelongsTo(() => Subscription, { foreignKey: 'userId', targetKey: 'userId' })
 	subscription: Subscription;

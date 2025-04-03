@@ -24,14 +24,14 @@ export class Subscription extends Model {
 		allowNull: true,
 		defaultValue: null,
 	})
-	startAt: Date | null;
+	startAt: string | null;
 
 	@Column({
 		type: DataType.DATE,
 		defaultValue: null,
 		allowNull: true,
 	})
-	expiredAt: Date | null;
+	expiredAt: string | null;
 
 	@Column({
 		type: DataType.BOOLEAN,
