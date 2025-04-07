@@ -11,7 +11,6 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	configApp(app);
 	await app.listen(coreConfig.httpPort);
-	console.log(`Payments Microservice HTTP is listening on port ${coreConfig.httpPort}`);
 
 	const microservice = await NestFactory.createMicroservice<MicroserviceOptions>(
 		AppModule,
@@ -26,6 +25,7 @@ async function bootstrap() {
 
 	await microservice.listen();
 	console.log(`Payments Microservice TCP is listening on port ${coreConfig.tcpPort}`);
+	console.log(`Payments Microservice HTTP is listening on port ${coreConfig.httpPort}`);
 }
 
 /* {
