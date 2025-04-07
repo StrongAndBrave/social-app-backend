@@ -64,6 +64,11 @@ export class CreateStripePaymentUseCase
 				],
 				mode: 'subscription',
 				client_reference_id: clientReferenceId,
+				subscription_data: {
+					metadata: {
+						clientReferenceId: clientReferenceId,
+					},
+				},
 			});
 
 			const newSubscriptionPayment = await this.commandBus.execute(
