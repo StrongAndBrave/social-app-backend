@@ -1,11 +1,5 @@
-import {
-	Body,
-	Controller,
-	HttpCode,
-	InternalServerErrorException,
-	Post,
-	Req,
-} from '@nestjs/common';
+import { Controller, HttpCode, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { PaymentsConfig } from '../payments.config';
 import Stripe from 'stripe';
 import { CommandBus } from '@nestjs/cqrs';
@@ -21,33 +15,47 @@ export class WebhookController {
 
 	@Post('stripe-webhook')
 	@HttpCode(200)
-	async stripeWebhook(@Body() data: any, @Req() req: Request) {
+	async stripeWebhook(@Req() req: Request) {
 		const stripe = new Stripe(this.paymentsConfig.stripeSecretKey, {
 			apiVersion: '2025-01-27.acacia',
 		});
 		const signature = req.headers['stripe-signature'];
-		if (!signature || data) {
-			throw new InternalServerErrorException();
-		}
+
+		let event;
 		try {
-			const event = stripe.webhooks.constructEvent(
-				data,
-				signature,
+			event = stripe.webhooks.constructEvent(
+				req.body,
+				signature as string[],
 				this.paymentsConfig.stripeWebhookSecretKey,
 			);
-			if (event.type === 'checkout.session.completed') {
-				const session = event.data.object as Stripe.Checkout.Session;
-				await this.commandBus.execute(
-					new FinishSubscriptionCommand(session.client_reference_id!),
-				);
-			} else {
-				const session = event.data.object as Stripe.Checkout.Session;
-				await this.commandBus.execute(
-					new FailureSubscriptionCommand(session.client_reference_id!),
-				);
-			}
 		} catch (e) {
 			console.error(e);
+		}
+
+		if (event.type === 'checkout.session.completed') {
+			const session = event.data.object as Stripe.Checkout.Session;
+			const clientReferenceId = session.client_reference_id;
+			if (!clientReferenceId) {
+				console.warn('⚠️ No client_reference_id found in session:', session.id);
+				return;
+			}
+			await this.commandBus.execute(new FinishSubscriptionCommand(clientReferenceId));
+		}
+		if (event.type === 'payment_intent.payment_failed') {
+			const intent = event.data.object as Stripe.PaymentIntent;
+			const invoiceId = intent.invoice;
+			const invoice = await stripe.invoices.retrieve(invoiceId as string);
+			const lineItem = invoice.lines.data.find(
+				(item) => item.metadata?.clientReferenceId,
+			);
+			console.log(`lineItem: ${lineItem}`);
+			if (lineItem) {
+				const clientReferenceId = lineItem.metadata.clientReferenceId;
+				await this.commandBus.execute(new FailureSubscriptionCommand(clientReferenceId));
+			} else {
+				console.warn('⚠️ No clientReferenceId in invoice metadata:', intent.id);
+				return;
+			}
 		}
 	}
 }
