@@ -20,10 +20,11 @@ export class FailureSubscriptionUseCase
 			if (!subscription) {
 				return null;
 			}
+			const updateSubscriptionDate = new Date().toISOString();
 			await this.subscriptionPaymentsRepository.changeSubscriptionPaymentStatus(
 				subscription.id,
 				'failure',
-				null,
+				updateSubscriptionDate,
 			);
 		} catch (e) {
 			console.error(e);

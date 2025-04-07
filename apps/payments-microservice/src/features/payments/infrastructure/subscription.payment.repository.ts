@@ -48,7 +48,7 @@ export class SubscriptionPaymentsRepository {
 	async changeSubscriptionPaymentStatus(
 		id: string,
 		newStatus: string,
-		updatedAt: string | null,
+		updatedAt: string,
 	) {
 		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
 			where: { id: id },
