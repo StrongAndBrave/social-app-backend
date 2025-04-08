@@ -3,6 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { SubscriptionPayment } from '../domain/subscription.payment.entity';
 import { CreationAttributes, Sequelize } from 'sequelize';
 import { Subscription } from '../domain/subscription.entity';
+import { PaymentStatusEnum } from '../../../core/enums/payment.status.enum';
 
 @Injectable()
 export class SubscriptionPaymentsRepository {
@@ -47,7 +48,7 @@ export class SubscriptionPaymentsRepository {
 
 	async changeSubscriptionPaymentStatus(
 		id: string,
-		newStatus: string,
+		newStatus: PaymentStatusEnum,
 		updatedAt: string,
 	) {
 		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({

@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
+import { PaymentStatusEnum } from '../../../../../core/enums/payment.status.enum';
 
 export class FinishSubscriptionCommand {
 	constructor(public clientReferenceId: string) {}
@@ -21,15 +22,14 @@ export class FinishSubscriptionUseCase
 				await this.subscriptionPaymentsRepository.findSubscriptionPaymentByClientReferenceId(
 					command.clientReferenceId,
 				);
-			console.log('subscriptionPayment', subscriptionPayment);
 			if (!subscriptionPayment) {
 				return null;
 			}
 			const updateSubscriptionDate = new Date().toISOString();
-			if (subscriptionPayment.status === 'pending')
+			if (subscriptionPayment.status === PaymentStatusEnum.PENDING)
 				await this.subscriptionPaymentsRepository.changeSubscriptionPaymentStatus(
 					subscriptionPayment.id,
-					'succeeded',
+					PaymentStatusEnum.SUCCEEDED,
 					updateSubscriptionDate,
 				);
 
