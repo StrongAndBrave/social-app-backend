@@ -7,7 +7,6 @@ import { SubscriptionPayment } from './domain/subscription.payment.entity';
 import { CreateSubscriptionUseCase } from './application/use-cases/subscriptions/create.subscription.use-case';
 import { SubscriptionPaymentsRepository } from './infrastructure/subscription.payment.repository';
 import { FinishSubscriptionUseCase } from './application/use-cases/subscriptions/finish.subscription.use-case';
-import { FailureSubscriptionUseCase } from './application/use-cases/subscriptions/failure.subscription.use-case';
 import { WebhookController } from './api/webhook.controller';
 import { Subscription } from './domain/subscription.entity';
 import { SubscriptionRepository } from './infrastructure/subscription.repository';
@@ -23,7 +22,6 @@ import { DatabaseModule } from '../../database/database.module';
 		CreateStripePaymentUseCase,
 		CreateSubscriptionUseCase,
 		FinishSubscriptionUseCase,
-		FailureSubscriptionUseCase,
 		SubscriptionPaymentsRepository,
 		SubscriptionRepository,
 		PaymentsConfig,
