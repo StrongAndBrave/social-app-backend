@@ -64,11 +64,6 @@ export class CreateStripePaymentUseCase
 				],
 				mode: 'subscription',
 				client_reference_id: clientReferenceId,
-				subscription_data: {
-					metadata: {
-						clientReferenceId: clientReferenceId,
-					},
-				},
 			});
 
 			const newSubscriptionPayment = await this.commandBus.execute(
@@ -79,10 +74,6 @@ export class CreateStripePaymentUseCase
 				),
 			);
 
-			console.log(`New Session created: ${JSON.stringify(session)}`);
-			console.log(
-				`New Subscription payment created: ${JSON.stringify(newSubscriptionPayment)}`,
-			);
 			return session && newSubscriptionPayment ? session.url : null;
 		} catch (e) {
 			console.error(e);
