@@ -5,9 +5,18 @@ import { PaymentsClientService } from '../../core/tcp-connections/payments-micro
 import { UserRepository } from '../user/infrastructure/user.repository';
 import { PaymentController } from './api/payments.controller';
 import { SendPaymentInfoUseCase } from './application/send.payment.use-case';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-	imports: [JwtModule],
+	imports: [
+		JwtModule,
+		ThrottlerModule.forRoot([
+			{
+				ttl: 10000,
+				limit: 5,
+			},
+		]),
+	],
 	providers: [
 		{
 			provide: UserRepository.name,
