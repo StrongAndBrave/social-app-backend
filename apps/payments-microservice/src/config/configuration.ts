@@ -20,6 +20,14 @@ export class CoreConfig {
 	)
 	tcpPort: number = this.configService.get('TCP_PORT');
 
+	@IsNumber(
+		{},
+		{
+			message: 'Set Env variable PORT, example: 3000',
+		},
+	)
+	rabbitPort: number = this.configService.get('RABBIT_PORT');
+
 	@IsNotEmpty()
 	tcpHost: string = this.configService.get('TCP_HOST');
 
