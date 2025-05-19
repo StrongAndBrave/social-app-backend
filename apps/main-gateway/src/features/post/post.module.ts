@@ -10,9 +10,28 @@ import { FilesClientService } from '../../core/tcp-connections/files-microservic
 import { PostConfig } from './post.config';
 import { PostImagesRepository } from './infrastructure/posts-images/post-images.repository';
 import { PostImageSaveUseCase } from './application/use-cases/save.image.use-case';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CoreModule } from '../../core/core.module';
+import { CoreConfig } from '../../config/env/configuration';
 
 @Module({
-	imports: [JwtModule],
+	imports: [
+		JwtModule,
+		ClientsModule.registerAsync([
+			{
+				name: 'FILES_SERVICE',
+				imports: [CoreModule],
+				inject: [CoreConfig.name],
+				useFactory: (coreConfig: CoreConfig) => ({
+					transport: Transport.TCP,
+					options: {
+						host: coreConfig.filesServiceHost,
+						port: coreConfig.filesServicePort,
+					},
+				}),
+			},
+		]),
+	],
 	providers: [
 		{
 			provide: PostImagesRepository.name,

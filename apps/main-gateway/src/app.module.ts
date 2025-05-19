@@ -1,10 +1,9 @@
 import { configModule } from './config/config-dynamic-module'; // must be first
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
-import { CoreConfig } from './config/env/configuration';
 import { MailModule } from './core/adapters/mailer/mail.module';
 import { UserModule } from './features/user/user.module';
 import { AuthModule } from './features/auth/auth.module';
@@ -34,18 +33,6 @@ import { PaymentsModule } from './features/payments/payments.module';
 		// }),
 
 		ClientsModule.registerAsync([
-			{
-				name: 'FILES_SERVICE',
-				imports: [CoreModule],
-				inject: [CoreConfig.name],
-				useFactory: (coreConfig: CoreConfig) => ({
-					transport: Transport.TCP,
-					options: {
-						host: coreConfig.filesServiceHost,
-						port: coreConfig.filesServicePort,
-					},
-				}),
-			},
 			// {
 			//   name: 'PAYMENTS_SERVICE',
 			//   imports: [ConfigModule],

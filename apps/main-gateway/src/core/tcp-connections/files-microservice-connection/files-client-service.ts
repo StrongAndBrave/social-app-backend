@@ -1,25 +1,13 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { PostConfig } from '../../../features/post/post.config';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
-export class FilesClientService implements OnModuleInit {
-	@Inject(PostConfig.name) private readonly postConfig: PostConfig;
-	private client: ClientProxy;
-
-	onModuleInit() {
-		this.client = ClientProxyFactory.create({
-			transport: Transport.TCP,
-			options: {
-				host: this.postConfig.filesServiceHost,
-				port: this.postConfig.filesServicePort,
-			},
-		});
-	}
+export class FilesClientService /*implements OnModuleInit*/ {
+	@Inject('FILES_SERVICE') private filesProxyClient: ClientProxy;
 
 	async uploadFile(data: { userId: string; image: Buffer }) {
 		try {
-			return await this.client.send('upload_image', data).toPromise();
+			return await this.filesProxyClient.send('upload_image', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with upload image: ', error);
 			return null;
@@ -28,7 +16,7 @@ export class FilesClientService implements OnModuleInit {
 
 	async deleteFile(data: { filePath: string }) {
 		try {
-			return await this.client.send('delete_image', data).toPromise();
+			return await this.filesProxyClient.send('delete_image', data).toPromise();
 		} catch (error) {
 			console.error('something wrong with upload image: ', error);
 			return null;
