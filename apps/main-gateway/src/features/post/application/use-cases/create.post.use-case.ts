@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { PostRepository } from '../../infrastructure/posts/post.repository';
 import { PostEntity } from '../../domain/post.entity';
 import { PostCreateModel } from '../../api/models/input/post.input';
-import { FilesClientService } from '../../../../core/tcp-connections/files-microservice-connection/files-client-service';
+import { FilesClientService } from '../../../../core/tcp-connections/files-microservice-connection/files.client.service';
 
 export class PostCreateCommand {
 	constructor(

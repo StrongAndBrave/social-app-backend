@@ -6,32 +6,13 @@ import { PostController } from './api/post.controller';
 import { DeletePostUseCase } from './application/use-cases/delete.post.use-case';
 import { PostUpdateUseCase } from './application/use-cases/update.post.use-case';
 import { PostQueryRepository } from './infrastructure/posts/post.query.repository';
-import { FilesClientService } from '../../core/tcp-connections/files-microservice-connection/files-client-service';
-import { PostConfig } from './post.config';
+import { FilesClientService } from '../../core/tcp-connections/files-microservice-connection/files.client.service';
 import { PostImagesRepository } from './infrastructure/posts-images/post-images.repository';
 import { PostImageSaveUseCase } from './application/use-cases/save.image.use-case';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { CoreModule } from '../../core/core.module';
-import { CoreConfig } from '../../config/env/configuration';
+import { FilesClientModule } from '../../core/tcp-connections/files-microservice-connection/files.client.module';
 
 @Module({
-	imports: [
-		JwtModule,
-		ClientsModule.registerAsync([
-			{
-				name: 'FILES_SERVICE',
-				imports: [CoreModule],
-				inject: [CoreConfig.name],
-				useFactory: (coreConfig: CoreConfig) => ({
-					transport: Transport.TCP,
-					options: {
-						host: coreConfig.filesServiceHost,
-						port: coreConfig.filesServicePort,
-					},
-				}),
-			},
-		]),
-	],
+	imports: [JwtModule, FilesClientModule],
 	providers: [
 		{
 			provide: PostImagesRepository.name,
@@ -44,10 +25,6 @@ import { CoreConfig } from '../../config/env/configuration';
 		{
 			provide: PostQueryRepository.name,
 			useClass: PostQueryRepository,
-		},
-		{
-			provide: PostConfig.name,
-			useClass: PostConfig,
 		},
 		CreatePostUseCase,
 		PostUpdateUseCase,

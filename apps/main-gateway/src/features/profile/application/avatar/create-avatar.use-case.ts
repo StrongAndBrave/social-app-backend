@@ -1,15 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ProfileRepository } from '../../infrastructure/profile.repository';
-import { ProfileEntity } from '../../domain/profile.entity';
-import {
-	BadRequestDomainException,
-	NotFoundDomainException,
-} from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 import sharp from 'sharp';
-import { FilesClientService } from '../../../../core/utils/files-microservice-connection/client-service';
 import { AvatarRepository } from '../../infrastructure/avatar.repository';
 import { AvatarEntity } from '../../domain/avatar.entity';
+import { FilesClientService } from '../../../../core/tcp-connections/files-microservice-connection/files.client.service';
 
 export class AddAvatarCommand {
 	constructor(
@@ -23,7 +19,6 @@ export class AddAvatarUseCase implements ICommandHandler<AddAvatarCommand> {
 	constructor(
 		@Inject(ProfileRepository.name) private readonly profileRepository: ProfileRepository,
 		@Inject(AvatarRepository.name) private readonly avatarRepository: AvatarRepository,
-		@Inject(FilesClientService.name)
 		private readonly filesClientService: FilesClientService,
 	) {}
 
@@ -40,7 +35,7 @@ export class AddAvatarUseCase implements ICommandHandler<AddAvatarCommand> {
 		const avatarThumbnailMetadata = await sharp(avatarThumbnailBuffer).metadata();
 		const avatarThumbnailSize = avatarThumbnailMetadata.size;
 
-		const AvatarUrl = await this.filesClientService.uploadFile({
+		const AvatarUrl = await this.filesClientService.uploadAvatar({
 			userId: command.userId,
 			image: avatarBuffer,
 		});
@@ -49,7 +44,7 @@ export class AddAvatarUseCase implements ICommandHandler<AddAvatarCommand> {
 			throw new Error('Avatar failed to upload');
 		}
 
-		const avatarThumbnailUrl = await this.filesClientService.uploadFile({
+		const avatarThumbnailUrl = await this.filesClientService.uploadAvatar({
 			userId: command.userId,
 			image: avatarThumbnailBuffer,
 		});
@@ -80,8 +75,10 @@ export class AddAvatarUseCase implements ICommandHandler<AddAvatarCommand> {
 		const newAvatar = new AvatarEntity(avatarData);
 		const newAvatarThumbnail = new AvatarEntity(avatarThumbnailData);
 
-		await this.avatarRepository.save(newAvatar);
-		await this.avatarRepository.save(newAvatarThumbnail); // todo promise all
+		await Promise.all([
+			this.avatarRepository.save(newAvatar),
+			this.avatarRepository.save(newAvatarThumbnail),
+		]);
 
 		return true;
 	}

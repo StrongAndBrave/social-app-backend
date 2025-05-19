@@ -8,10 +8,11 @@ import { CreateProfileUseCase } from './application/profile/create-profile.use-c
 import { AvatarDeleteUseCase } from './application/avatar/delete-avatar.use-case';
 import { AddAvatarUseCase } from './application/avatar/create-avatar.use-case';
 import { ProfileController } from './api/profile.controller';
-import { CoreModule } from '../../core/core.module';
+import { FilesClientModule } from '../../core/tcp-connections/files-microservice-connection/files.client.module';
+import { FilesClientService } from '../../core/tcp-connections/files-microservice-connection/files.client.service';
 
 @Module({
-	imports: [JwtModule, CoreModule],
+	imports: [JwtModule, FilesClientModule],
 	providers: [
 		{
 			provide: ProfileRepository.name,
@@ -32,6 +33,7 @@ import { CoreModule } from '../../core/core.module';
 		CreateProfileUseCase,
 		AvatarDeleteUseCase,
 		AddAvatarUseCase,
+		FilesClientService,
 	],
 	controllers: [ProfileController],
 })

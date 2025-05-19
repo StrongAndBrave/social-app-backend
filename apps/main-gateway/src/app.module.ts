@@ -1,6 +1,5 @@
 import { configModule } from './config/config-dynamic-module'; // must be first
 import { Module } from '@nestjs/common';
-import { ClientsModule } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
@@ -12,13 +11,13 @@ import { PostModule } from './features/post/post.module';
 import { ProfileModule } from './features/profile/profile.module';
 import { HomePageModule } from './features/home-page/home-page.module';
 import { PaymentsModule } from './features/payments/payments.module';
+import { FilesClientModule } from './core/tcp-connections/files-microservice-connection/files.client.module';
 
 @Module({
 	imports: [
 		CoreModule,
 		configModule,
 		MailModule,
-
 		// Для примера конфига БД
 		// MongooseModule.forRootAsync({
 		//   // если CoreModule не глобальный, то явно импортируем в монгусовский модуль, иначе CoreConfig не заинджектится
@@ -31,24 +30,6 @@ import { PaymentsModule } from './features/payments/payments.module';
 		//   },
 		//   inject: [CoreConfig],
 		// }),
-
-		ClientsModule.registerAsync([
-			// {
-			//   name: 'PAYMENTS_SERVICE',
-			//   imports: [ConfigModule],
-			//   useFactory: (configService: ConfigService) => ({
-			//     transport: Transport.RMQ,
-			//     options: {
-			//       urls: [configService.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
-			//       queue: configService.get<string>('PAYMENTS_QUEUE', 'payments_queue'),
-			//       queueOptions: {
-			//         durable: false,
-			//       },
-			//     },
-			//   }),
-			//   inject: [ConfigService],
-			// },
-		]),
 		UserModule,
 		AuthModule,
 		SessionModule,
@@ -56,6 +37,7 @@ import { PaymentsModule } from './features/payments/payments.module';
 		ProfileModule,
 		HomePageModule,
 		PaymentsModule,
+		FilesClientModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
