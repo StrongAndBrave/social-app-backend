@@ -5,26 +5,24 @@ import { AvatarRepository } from '../../infrastructure/avatar.repository';
 import { ProfileRepository } from '../../infrastructure/profile.repository';
 
 export class AvatarDeleteCommand {
-  constructor(
-    public userId: string,
-
-  ) { }
+	constructor(public userId: string) {}
 }
 
 @CommandHandler(AvatarDeleteCommand)
 export class AvatarDeleteUseCase implements ICommandHandler<AvatarDeleteCommand> {
-  constructor(
-    @Inject(AvatarRepository.name) private readonly avatarRepository: AvatarRepository,
-    @Inject(ProfileRepository.name) private readonly profileRepository: ProfileRepository,
-  ) { }
+	constructor(
+		@Inject(AvatarRepository.name) private readonly avatarRepository: AvatarRepository,
+		@Inject(ProfileRepository.name) private readonly profileRepository: ProfileRepository,
+	) {}
 
-  async execute(command: AvatarDeleteCommand) {
+	async execute(command: AvatarDeleteCommand) {
+		const profile = await this.profileRepository.getByUnique({ userId: command.userId });
+		if (!profile) throw BadRequestDomainException.create('Profile already exists');
 
-    const profile = await this.profileRepository.getByUnique({ userId: command.userId });
-    if (profile) throw BadRequestDomainException.create('Profile already exists');
+		//profile.
 
-    await this.avatarRepository.deleteByUserId(command.userId);
+		await this.avatarRepository.deleteByUserId(command.userId);
 
-    return
-  }
+		return;
+	}
 }

@@ -29,9 +29,8 @@ export class OAuthUserRegistrationOrLoginUseCase
 			const addedUserId = await this.commandBus.execute(
 				new OAuthUserCreateCommand(command.userData),
 			);
-			if (!addedUserId) return null;
-
 			await this.commandBus.execute(new ProfileCreateCommand(addedUserId));
+			if (!addedUserId) return null;
 
 			const user = await this.userRepository.getByUnique({ id: addedUserId });
 			if (!user) return null;
