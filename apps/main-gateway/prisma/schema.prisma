@@ -108,7 +108,7 @@ model Profile {
 
 model Avatar {
   id        String    @id @default(uuid())
-  profileId String    @unique
+  profileId String
   url       String
   width     Int
   height    Int
