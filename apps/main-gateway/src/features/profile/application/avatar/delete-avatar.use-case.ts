@@ -18,10 +18,7 @@ export class AvatarDeleteUseCase implements ICommandHandler<AvatarDeleteCommand>
 	async execute(command: AvatarDeleteCommand) {
 		const profile = await this.profileRepository.getByUnique({ userId: command.userId });
 		if (!profile) throw BadRequestDomainException.create('Profile already exists');
-
-		//profile.
-
-		await this.avatarRepository.deleteByUserId(command.userId);
+		await this.avatarRepository.softDeleteByUserId(command.userId);
 
 		return;
 	}
