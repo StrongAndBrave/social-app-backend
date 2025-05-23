@@ -75,6 +75,8 @@ export class AddAvatarUseCase implements ICommandHandler<AddAvatarCommand> {
 		const newAvatar = new AvatarEntity(avatarData);
 		const newAvatarThumbnail = new AvatarEntity(avatarThumbnailData);
 
+		await this.avatarRepository.softDeleteByUserId(command.userId);
+
 		await Promise.all([
 			this.avatarRepository.save(newAvatar),
 			this.avatarRepository.save(newAvatarThumbnail),
