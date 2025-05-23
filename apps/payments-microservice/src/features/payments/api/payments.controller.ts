@@ -8,7 +8,7 @@ import { CreateStripePaymentCommand } from '../application/use-cases/payments/cr
 export class PaymentsController {
 	constructor(private commandBus: CommandBus) {}
 
-	@MessagePattern('create_payment')
+	@MessagePattern({ cmd: 'create_payment' })
 	async createPayment(data: PaymentInputModel) {
 		console.log(data);
 		if (data.paymentService === 'stripe') {
