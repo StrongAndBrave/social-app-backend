@@ -21,39 +21,8 @@ async function bootstrap() {
 	});
 	await tcpApp.listen();
 
-	const rabbitApp = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-		transport: Transport.RMQ,
-		options: {
-			urls: ['amqp://localhost:5672'],
-			queue: 'payments_queue',
-			queueOptions: {
-				durable: false,
-			},
-		},
-	});
-	await rabbitApp.listen();
-
 	console.log(`Payments Microservice TCP is listening on port ${coreConfig.tcpPort}`);
 	console.log(`Payments Microservice HTTP is listening on port ${coreConfig.httpPort}`);
-	console.log(
-		`Payments Microservice RABBIT is listening on port ${coreConfig.rabbitPort}`,
-	);
 }
-
-/* {
-	const app = await NestFactory.createMicroservice<MicroserviceOptions>(PaymentsModule, {
-		transport: Transport.RMQ,
-		options: {
-			urls: ['amqp://localhost:5672'],
-			queue: 'payments_queue',
-			queueOptions: {
-				durable: false,
-			},
-		},
-	});
-
-	await app.listen();
-	console.log('Payments Microservice is listening on RabbitMQ');
-}*/
 
 bootstrap();

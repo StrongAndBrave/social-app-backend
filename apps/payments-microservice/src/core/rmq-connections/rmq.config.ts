@@ -9,7 +9,7 @@ export class RmqConfig {
 	rmqUrl: string = this.configService.get('RMQ_URL');
 
 	@IsNotEmpty()
-	rmqQueue: number = this.configService.get('RMQ_QUEUE');
+	rmqQueue: string = this.configService.get('RMQ_QUEUE');
 
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
