@@ -3,10 +3,11 @@
   "compilerOptions": {
     "declaration": false,
     "outDir": "../../dist/apps/main-gateway",
+    "rootDir": "../../",
     "paths": {
       "@prisma/client": ["node_modules/@prisma/client"],
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../../libs/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
