@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IsNotEmpty, IsNumber } from 'class-validator';
+import { configValidationUtility } from './config-validation.utility';
 
 @Injectable()
 export class CoreConfig {
@@ -10,7 +11,7 @@ export class CoreConfig {
 			message: 'Set Env variable PORT, example: 3000',
 		},
 	)
-	port: number = this.configService.get('PORT');
+	port: number = Number(this.configService.get('PORT'));
 
 	@IsNotEmpty()
 	host: string = this.configService.get('HOST');
@@ -43,5 +44,7 @@ export class CoreConfig {
 		'YANDEX_OBJECT_STORAGE_CONTENT_TYPE',
 	);
 
-	constructor(private configService: ConfigService<any, true>) {}
+	constructor(private configService: ConfigService<any, true>) {
+		configValidationUtility.validateConfig(this);
+	}
 }
