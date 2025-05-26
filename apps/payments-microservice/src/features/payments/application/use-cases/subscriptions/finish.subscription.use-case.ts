@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
 import { PaymentStatusEnum } from '../../../../../core/enums/payment.status.enum';
+import { RmqService } from '../../../../../core/rmq-connections/rmq.service';
 
 export class FinishSubscriptionCommand {
 	constructor(public clientReferenceId: string) {}
@@ -14,6 +15,7 @@ export class FinishSubscriptionUseCase
 	constructor(
 		private readonly subscriptionPaymentsRepository: SubscriptionPaymentsRepository,
 		private readonly subscriptionRepository: SubscriptionRepository,
+		private readonly rmqService: RmqService,
 	) {}
 
 	async execute(command: FinishSubscriptionCommand): Promise<string | null> {
@@ -61,6 +63,12 @@ export class FinishSubscriptionUseCase
 				subscriptionPayment.userId,
 				data,
 			);
+
+			await this.rmqService.sendSubscriberData({
+				userId: subscriptionPayment.userId,
+				isSubscribed: true,
+			});
+
 			return subscriptionPayment!.id;
 		} catch (e) {
 			console.error(e);

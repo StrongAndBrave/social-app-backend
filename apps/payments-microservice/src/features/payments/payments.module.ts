@@ -11,11 +11,14 @@ import { WebhookController } from './api/webhook.controller';
 import { Subscription } from './domain/subscription.entity';
 import { SubscriptionRepository } from './infrastructure/subscription.repository';
 import { DatabaseModule } from '../../database/database.module';
+import { RmqModule } from '../../core/rmq-connections/rmq.module';
+import { RmqService } from '../../core/rmq-connections/rmq.service';
 
 @Module({
 	imports: [
 		SequelizeModule.forFeature([SubscriptionPayment, Subscription]),
 		DatabaseModule,
+		RmqModule,
 	],
 	controllers: [PaymentsController, WebhookController],
 	providers: [
@@ -25,6 +28,7 @@ import { DatabaseModule } from '../../database/database.module';
 		SubscriptionPaymentsRepository,
 		SubscriptionRepository,
 		PaymentsConfig,
+		RmqService,
 	],
 })
 export class MicroservicePaymentsModule {}

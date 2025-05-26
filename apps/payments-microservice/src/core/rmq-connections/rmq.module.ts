@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RmqConfig } from './rmq.config';
 import { RmqConfigModule } from './rmq.config.module';
+import { RmqService } from './rmq.service';
 
 @Module({
 	imports: [
@@ -13,8 +14,8 @@ import { RmqConfigModule } from './rmq.config.module';
 				useFactory: (rmqConfig: RmqConfig) => ({
 					transport: Transport.RMQ,
 					options: {
-						urls: [`${rmqConfig.rmqUrl}`],
-						queue: `${rmqConfig.rmqQueue}`,
+						urls: [rmqConfig.rmqUrl],
+						queue: rmqConfig.rmqQueue,
 						noAck: false,
 						queueOptions: {
 							durable: true,
@@ -24,7 +25,7 @@ import { RmqConfigModule } from './rmq.config.module';
 			},
 		]),
 	],
-	providers: [RmqConfig],
-	exports: [ClientsModule],
+	providers: [RmqConfig, RmqService],
+	exports: [RmqService, ClientsModule],
 })
 export class RmqModule {}
