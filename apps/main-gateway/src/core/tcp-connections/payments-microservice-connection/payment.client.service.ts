@@ -12,7 +12,6 @@ export class PaymentsClientService {
 		paymentService: string;
 	}) {
 		try {
-			console.log('SendedData: ', data);
 			return await this.paymentsProxyClient
 				.send({ cmd: 'create_payment' }, data)
 				.toPromise();

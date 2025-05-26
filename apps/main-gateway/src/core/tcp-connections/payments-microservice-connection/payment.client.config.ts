@@ -17,7 +17,6 @@ export class PaymentClientConfig {
 	paymentsServicePort: number = Number(this.configService.get('PAYMENTS_SERVICE_PORT'));
 
 	constructor(private configService: ConfigService<any, true>) {
-		console.log(`port ${this.paymentsServicePort}`);
 		configValidationUtility.validateConfig(this);
 	}
 }
