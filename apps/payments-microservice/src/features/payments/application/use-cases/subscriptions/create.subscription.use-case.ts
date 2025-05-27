@@ -29,8 +29,6 @@ export class CreateSubscriptionUseCase
 			command.paymentData.userId,
 		);
 
-		console.log('subscriptionIsExist: ', subscription);
-
 		const subscriptionPaymentCreateData: Omit<SubscriptionPaymentCreateModel, 'status'> =
 			{
 				...command.paymentData,
@@ -38,7 +36,7 @@ export class CreateSubscriptionUseCase
 				clientReferenceId: command.clientReferenceId,
 			};
 
-		if (!subscription) {
+		if (subscription) {
 			const newSubscriptionPayment =
 				await this.subscriptionPaymentsRepository.addNewSubscriptionPaymentData(
 					subscriptionPaymentCreateData,
@@ -51,11 +49,6 @@ export class CreateSubscriptionUseCase
 			startAt: null,
 			expiredAt: null,
 		};
-
-		console.log(
-			`subscriptionPaymentCreateData: ${JSON.stringify(subscriptionPaymentCreateData)}`,
-			`subscriptionCreateData: ${JSON.stringify(subscriptionCreateData)}`,
-		);
 
 		const addedSubscriptionNPayment =
 			await this.subscriptionPaymentsRepository.createSubscriptionPaymentWithSubscription(

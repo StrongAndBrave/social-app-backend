@@ -52,6 +52,22 @@ export class FinishSubscriptionUseCase
 					break;
 			}
 
+			const subscription = await this.subscriptionRepository.findSubscription(
+				subscriptionPayment.userId,
+			);
+
+			if (subscription?.expiredAt) {
+				await this.subscriptionRepository.addDateToSubscription(
+					subscription!.userId,
+					subscriptionExpDate * 24 * 60 * 60 * 1000,
+				);
+				/*await this.rmqService.sendSubscriberData({
+					userId: subscriptionPayment.userId,
+					isSubscribed: true,
+				});*/
+				return subscriptionPayment.id;
+			}
+
 			const data = {
 				startAt: updateSubscriptionDate,
 				expiredAt: new Date(
@@ -64,10 +80,10 @@ export class FinishSubscriptionUseCase
 				data,
 			);
 
-			await this.rmqService.sendSubscriberData({
+			/*await this.rmqService.sendSubscriberData({
 				userId: subscriptionPayment.userId,
 				isSubscribed: true,
-			});
+			});*/
 
 			return subscriptionPayment!.id;
 		} catch (e) {

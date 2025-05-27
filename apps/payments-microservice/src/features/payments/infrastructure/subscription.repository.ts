@@ -9,10 +9,31 @@ export class SubscriptionRepository {
 	) {}
 
 	async findSubscription(userId: string): Promise<Subscription | null> {
-		return this.subscriptionModel.findOne({ where: { id: userId } });
+		return this.subscriptionModel.findOne({ where: { userId: userId } });
 	}
 
-	async updateSubscription(userId: string, data: { startAt: string; expiredAt: string }) {
+	async addDateToSubscription(
+		userId: string,
+		msToAdd: number,
+	): Promise<Subscription | null> {
+		const subscription = await this.subscriptionModel.findOne({
+			where: { userId: userId },
+		});
+		if (!subscription) {
+			return null;
+		}
+		const currentExpDate = new Date(subscription.expiredAt!);
+		const newExpDate = new Date(currentExpDate.getTime() + msToAdd);
+		console.log('newExpDate: ', newExpDate);
+		subscription.expiredAt = newExpDate.toISOString();
+		await subscription.save();
+		return subscription;
+	}
+
+	async updateSubscription(
+		userId: string,
+		data: { startAt: string; expiredAt: string },
+	): Promise<Subscription | null> {
 		const subscription = await this.subscriptionModel.findOne({
 			where: { userId: userId },
 		});
