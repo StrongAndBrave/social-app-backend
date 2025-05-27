@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { SubscriptionPayment } from '../domain/subscription.payment.entity';
-import { CreationAttributes, Sequelize } from 'sequelize';
+import { CreationAttributes, FindOptions, Sequelize } from 'sequelize';
 import { Subscription } from '../domain/subscription.entity';
 import { PaymentStatusEnum } from '../../../core/enums/payment.status.enum';
 
@@ -13,6 +13,13 @@ export class SubscriptionPaymentsRepository {
 		@InjectModel(Subscription) private readonly subscriptionModel: typeof Subscription,
 		@InjectConnection() private readonly sequelize: Sequelize,
 	) {}
+
+	async addNewSubscriptionPaymentData(
+		subscriptionPaymentData: CreationAttributes<SubscriptionPayment> &
+			FindOptions<SubscriptionPayment>,
+	): Promise<SubscriptionPayment | null> {
+		return this.subscriptionPaymentModel.create(subscriptionPaymentData);
+	}
 
 	async createSubscriptionPaymentWithSubscription(
 		subscriptionData: CreationAttributes<Subscription>,

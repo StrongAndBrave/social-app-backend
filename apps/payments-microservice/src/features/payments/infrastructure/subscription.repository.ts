@@ -8,6 +8,10 @@ export class SubscriptionRepository {
 		@InjectModel(Subscription) private readonly subscriptionModel: typeof Subscription,
 	) {}
 
+	async findSubscription(userId: string): Promise<Subscription | null> {
+		return this.subscriptionModel.findOne({ where: { id: userId } });
+	}
+
 	async updateSubscription(userId: string, data: { startAt: string; expiredAt: string }) {
 		const subscription = await this.subscriptionModel.findOne({
 			where: { userId: userId },
