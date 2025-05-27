@@ -23,9 +23,9 @@ export class TasksService {
 	async changePaymentStatus() {
 		try {
 			await this.sequelize.query(`
-					UPDATE public."SubscriptionPayment"
-						SET "status" = 'failure'
-						WHERE "createdAt" < NOW() - INTERVAL '1 day' AND "status" = 'pending'
+					UPDATE public."SubscriptionPayments"
+						SET "status" = 'failure', "updatedAt" = NOW()
+						WHERE /*"createdAt" < NOW() - INTERVAL '1 day' AND*/ "status" = 'pending'
 			`);
 		} catch (e) {
 			console.error(e);
