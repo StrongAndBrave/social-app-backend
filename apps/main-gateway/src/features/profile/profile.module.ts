@@ -36,5 +36,6 @@ import { FilesClientService } from '../../core/tcp-connections/files-microservic
 		FilesClientService,
 	],
 	controllers: [ProfileController],
+	exports: [ProfileRepository.name],
 })
 export class ProfileModule {}
