@@ -14,7 +14,7 @@ import { CurrentUserId } from '../../../core/decorators/transform/current-user-i
 import { SendPaymentInfoCommand } from '../application/send.payment.use-case';
 
 @Controller('subscriptions')
-export class PaymentController {
+export class PaymentsController {
 	constructor(private commandBus: CommandBus) {}
 
 	@Post()

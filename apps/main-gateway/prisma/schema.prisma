@@ -91,7 +91,7 @@ model Profile {
   id                 String      @id @default(uuid())
   userId             String      @unique
   accountType        AccountType @default(Personal)
-  subscribtionPeriod DateTime?
+  subscriptionPeriod DateTime?
   firstName          String?
   lastName           String?
   city               String?
