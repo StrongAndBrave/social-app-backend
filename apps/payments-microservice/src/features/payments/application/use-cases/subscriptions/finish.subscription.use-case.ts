@@ -90,7 +90,7 @@ export class FinishSubscriptionUseCase
 				accountType: 'Business',
 				subscriptionPeriod: new Date(
 					Date.now() + subscriptionExpDate * 24 * 60 * 60 * 1000,
-				).toISOString(), //todo правильную дату
+				).toISOString(),
 			});
 
 			return subscriptionPayment!.id;

@@ -47,10 +47,19 @@ export class SubscriptionPaymentsRepository {
 	async findSubscriptionPaymentByClientReferenceId(
 		clientReferenceId: string,
 	): Promise<SubscriptionPayment | null> {
-		const subscriptionPayment = this.subscriptionPaymentModel.findOne({
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
 			where: { clientReferenceId: clientReferenceId },
 		});
 		return subscriptionPayment ?? null;
+	}
+
+	async findSubscriptionPaymentSessionIdByUserId(userId: string): Promise<string | null> {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { userId: userId },
+			order: [['createdAt', 'DESC']],
+		});
+
+		return subscriptionPayment?.sessionId || null;
 	}
 
 	async changeSubscriptionPaymentStatus(

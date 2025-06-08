@@ -5,7 +5,7 @@ import {
 	AutoRenewalInputModel,
 	PaymentInputModel,
 } from './models/input/payment.input.model';
-import { CreateStripePaymentCommand } from '../application/use-cases/payments/create.stripe.payment.use-case';
+import { CreateStripePaymentCommand } from '../application/use-cases/payments/stripe/create.stripe.payment.use-case';
 import { UpdateAutoRenewalSubscriptionCommand } from '../application/use-cases/subscriptions/update.auto-renewal.subscription.use-case';
 
 @Controller()

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PaymentsController } from './api/payments.controller';
-import { CreateStripePaymentUseCase } from './application/use-cases/payments/create.stripe.payment.use-case';
+import { CreateStripePaymentUseCase } from './application/use-cases/payments/stripe/create.stripe.payment.use-case';
 import { PaymentsConfig } from './payments.config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SubscriptionPayment } from './domain/subscription.payment.entity';
@@ -14,6 +14,7 @@ import { DatabaseModule } from '../../database/database.module';
 import { RmqModule } from '../../core/rmq-connections/rmq.module';
 import { RmqService } from '../../core/rmq-connections/rmq.service';
 import { UpdateAutoRenewalSubscriptionUseCase } from './application/use-cases/subscriptions/update.auto-renewal.subscription.use-case';
+import { UpdateStripeAutoRenewalSubscriptionUseCase } from './application/use-cases/payments/stripe/update.stripe.auto-renewal.subsctiption.use-case';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { UpdateAutoRenewalSubscriptionUseCase } from './application/use-cases/su
 		CreateSubscriptionUseCase,
 		FinishSubscriptionUseCase,
 		UpdateAutoRenewalSubscriptionUseCase,
+		UpdateStripeAutoRenewalSubscriptionUseCase,
 		SubscriptionPaymentsRepository,
 		SubscriptionRepository,
 		PaymentsConfig,

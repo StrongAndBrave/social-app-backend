@@ -1,8 +1,8 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import Stripe from 'stripe';
-import { PaymentsConfig } from '../../../payments.config';
-import { PaymentInputModel } from '../../../api/models/input/payment.input.model';
-import { CreateSubscriptionPaymentCommand } from '../subscriptions/create.subscription.use-case';
+import { PaymentsConfig } from '../../../../payments.config';
+import { PaymentInputModel } from '../../../../api/models/input/payment.input.model';
+import { CreateSubscriptionPaymentCommand } from '../../subscriptions/create.subscription.use-case';
 import { v4 as uuidv4 } from 'uuid';
 
 export class CreateStripePaymentCommand {
