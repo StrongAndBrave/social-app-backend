@@ -18,6 +18,7 @@ import { DatabaseConfigModule } from './database.config.module';
 					//database: databaseConfig.dbName,
 					autoLoadModels: true,
 					synchronize: true,
+					logging: false,
 				};
 			},
 		}),

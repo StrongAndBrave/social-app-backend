@@ -8,7 +8,7 @@ import { RmqService } from './rmq.service';
 	imports: [
 		ClientsModule.registerAsync([
 			{
-				name: 'RMQ',
+				name: 'MAIN_GATEWAY',
 				inject: [RmqConfig],
 				imports: [RmqConfigModule],
 				useFactory: (rmqConfig: RmqConfig) => ({
@@ -16,7 +16,7 @@ import { RmqService } from './rmq.service';
 					options: {
 						urls: [rmqConfig.rmqUrl],
 						queue: rmqConfig.rmqQueue,
-						noAck: false,
+						noAck: true,
 						queueOptions: {
 							durable: true,
 						},
