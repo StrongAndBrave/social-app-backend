@@ -61,10 +61,15 @@ export class FinishSubscriptionUseCase
 					subscription!.userId,
 					subscriptionExpDate * 24 * 60 * 60 * 1000,
 				);
-				/*await this.rmqService.sendSubscriberData({
+				const currentExpDate = new Date(subscription.expiredAt!);
+				const newExpDate = new Date(
+					currentExpDate.getTime() + subscriptionExpDate * 24 * 60 * 60 * 1000,
+				).toISOString();
+				await this.rmqService.sendSubscriberData({
 					userId: subscriptionPayment.userId,
-					isSubscribed: true,
-				});*/
+					accountType: 'Business',
+					subscriptionPeriod: newExpDate,
+				});
 				return subscriptionPayment.id;
 			}
 
@@ -80,10 +85,13 @@ export class FinishSubscriptionUseCase
 				data,
 			);
 
-			/*await this.rmqService.sendSubscriberData({
+			await this.rmqService.sendSubscriberData({
 				userId: subscriptionPayment.userId,
-				isSubscribed: true,
-			});*/
+				accountType: 'Business',
+				subscriptionPeriod: new Date(
+					Date.now() + subscriptionExpDate * 24 * 60 * 60 * 1000,
+				).toISOString(), //todo правильную дату
+			});
 
 			return subscriptionPayment!.id;
 		} catch (e) {
