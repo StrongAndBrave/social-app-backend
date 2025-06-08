@@ -13,6 +13,7 @@ import { SubscriptionRepository } from './infrastructure/subscription.repository
 import { DatabaseModule } from '../../database/database.module';
 import { RmqModule } from '../../core/rmq-connections/rmq.module';
 import { RmqService } from '../../core/rmq-connections/rmq.service';
+import { UpdateAutoRenewalSubscriptionUseCase } from './application/use-cases/subscriptions/update.auto-renewal.subscription.use-case';
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { RmqService } from '../../core/rmq-connections/rmq.service';
 		CreateStripePaymentUseCase,
 		CreateSubscriptionUseCase,
 		FinishSubscriptionUseCase,
+		UpdateAutoRenewalSubscriptionUseCase,
 		SubscriptionPaymentsRepository,
 		SubscriptionRepository,
 		PaymentsConfig,

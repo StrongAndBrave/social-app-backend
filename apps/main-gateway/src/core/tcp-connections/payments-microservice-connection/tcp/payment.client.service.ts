@@ -20,4 +20,18 @@ export class PaymentsTCPClientService {
 			return null;
 		}
 	}
+
+	async sendAutoRenewalInfoToMicroservice(data: {
+		userId: string;
+		autoRenewal: boolean;
+	}) {
+		try {
+			return await this.paymentsTCPProxyClient
+				.send({ cmd: 'autoRenewal' }, data)
+				.toPromise();
+		} catch (error) {
+			console.error('something wrong with update autoRenewal: ', error);
+			return null;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-import { IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
 
 export class PaymentInputModel {
 	@IsNotEmpty()
@@ -10,4 +10,10 @@ export class PaymentInputModel {
 	@IsLowercase()
 	@IsString()
 	paymentService: 'stripe' | 'paypal';
+}
+
+export class AutoRenewalInputModel {
+	@IsNotEmpty()
+	@IsBoolean()
+	autoRenewal: boolean;
 }

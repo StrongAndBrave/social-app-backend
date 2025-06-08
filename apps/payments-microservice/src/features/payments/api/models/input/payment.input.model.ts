@@ -5,6 +5,11 @@ export class PaymentInputModel {
 	paymentService: 'stripe' | 'paypal';
 }
 
+export class AutoRenewalInputModel {
+	userId: string;
+	autoRenewal: boolean;
+}
+
 export interface SubscriptionPaymentCreateModel extends PaymentInputModel {
 	price: number;
 	clientReferenceId: string;

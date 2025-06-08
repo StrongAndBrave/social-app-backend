@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Subscription } from '../domain/subscription.entity';
+import { AutoRenewalInputModel } from '../api/models/input/payment.input.model';
 
 @Injectable()
 export class SubscriptionRepository {
@@ -45,5 +46,17 @@ export class SubscriptionRepository {
 		subscription.expiredAt = data.expiredAt;
 		await subscription.save();
 		return subscription;
+	}
+
+	async updateSubscriptionAutoRenewal(data: AutoRenewalInputModel): Promise<boolean> {
+		const subscription = await this.subscriptionModel.findOne({
+			where: { userId: data.userId },
+		});
+		if (!subscription) {
+			return false;
+		}
+		subscription.autoRenewal = data.autoRenewal;
+		await subscription.save();
+		return true;
 	}
 }

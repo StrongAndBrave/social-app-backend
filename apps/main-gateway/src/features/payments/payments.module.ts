@@ -9,6 +9,7 @@ import { PaymentsTCPClientModule } from '../../core/tcp-connections/payments-mic
 import { PaymentsListenerController } from './api/payments.listener.controller';
 import { ProfileRepository } from '../profile/infrastructure/profile.repository';
 import { ProfileModule } from '../profile/profile.module';
+import { SendPaymentAutoRenewalInfoUseCase } from './application/send.auto-renewal.info.use-case';
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { ProfileModule } from '../profile/profile.module';
 		},
 		PaymentsTCPClientService,
 		SendPaymentInfoUseCase,
+		SendPaymentAutoRenewalInfoUseCase,
 	],
 	controllers: [PaymentsController, PaymentsListenerController],
 })

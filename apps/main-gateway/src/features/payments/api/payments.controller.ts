@@ -8,10 +8,11 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { PaymentInputModel } from './models/input/payment.input';
+import { AutoRenewalInputModel, PaymentInputModel } from './models/input/payment.input';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { SendPaymentInfoCommand } from '../application/send.payment.use-case';
+import { SendAutoRenewalInfoCommand } from '../application/send.auto-renewal.info.use-case';
 
 @Controller('subscriptions')
 export class PaymentsController {
@@ -41,5 +42,20 @@ export class PaymentsController {
 	@Get('failure')
 	failure(): string {
 		return 'Transaction failed, please try again';
+	}
+
+	@Post('auto-renewal')
+	@UseGuards(JwtAuthGuard)
+	@HttpCode(200)
+	async updateAutoRenewal(
+		@CurrentUserId() userId: string,
+		@Body() dto: AutoRenewalInputModel,
+	) {
+		const newAutoRenewalInfo = await this.commandBus.execute(
+			new SendAutoRenewalInfoCommand(userId, dto),
+		);
+		if (!newAutoRenewalInfo) {
+			throw new InternalServerErrorException();
+		}
 	}
 }
