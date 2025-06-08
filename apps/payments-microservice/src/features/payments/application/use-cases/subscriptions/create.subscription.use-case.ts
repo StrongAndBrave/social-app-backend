@@ -9,6 +9,7 @@ import { SubscriptionRepository } from '../../../infrastructure/subscription.rep
 
 export class CreateSubscriptionPaymentCommand {
 	constructor(
+		public sessionId: string,
 		public paymentData: PaymentInputModel,
 		public amount: number,
 		public clientReferenceId: string,
@@ -31,6 +32,7 @@ export class CreateSubscriptionUseCase
 
 		const subscriptionPaymentCreateData: Omit<SubscriptionPaymentCreateModel, 'status'> =
 			{
+				sessionId: command.sessionId,
 				...command.paymentData,
 				price: command.amount,
 				clientReferenceId: command.clientReferenceId,

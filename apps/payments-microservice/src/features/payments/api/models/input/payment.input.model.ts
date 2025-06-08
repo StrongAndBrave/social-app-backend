@@ -11,6 +11,7 @@ export class AutoRenewalInputModel {
 }
 
 export interface SubscriptionPaymentCreateModel extends PaymentInputModel {
+	sessionId: string;
 	price: number;
 	clientReferenceId: string;
 }

@@ -68,6 +68,7 @@ export class CreateStripePaymentUseCase
 
 			const newSubscriptionPayment = await this.commandBus.execute(
 				new CreateSubscriptionPaymentCommand(
+					session.id,
 					command.paymentData,
 					amount,
 					clientReferenceId,

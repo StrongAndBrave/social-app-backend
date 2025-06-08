@@ -29,6 +29,11 @@ export class SubscriptionPayment extends Model {
 	@Column({
 		allowNull: false,
 	})
+	sessionId: string;
+
+	@Column({
+		allowNull: false,
+	})
 	username: string;
 
 	@Column({
