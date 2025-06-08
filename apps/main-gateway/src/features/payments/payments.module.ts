@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { PaymentsClientService } from '../../core/tcp-connections/payments-microservice-connection/payment.client.service';
+import { PaymentsTCPClientService } from '../../core/tcp-connections/payments-microservice-connection/tcp/payment.client.service';
 import { UserRepository } from '../user/infrastructure/user.repository';
 import { PaymentsController } from './api/payments.controller';
 import { SendPaymentInfoUseCase } from './application/send.payment.use-case';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { PaymentsClientModule } from '../../core/tcp-connections/payments-microservice-connection/payment.client.module';
+import { PaymentsTCPClientModule } from '../../core/tcp-connections/payments-microservice-connection/tcp/payment.client.module';
 import { PaymentsListenerController } from './api/payments.listener.controller';
 import { ProfileRepository } from '../profile/infrastructure/profile.repository';
 import { ProfileModule } from '../profile/profile.module';
@@ -19,7 +19,7 @@ import { ProfileModule } from '../profile/profile.module';
 				limit: 5,
 			},
 		]),
-		PaymentsClientModule,
+		PaymentsTCPClientModule,
 		ProfileModule,
 	],
 	providers: [
@@ -31,7 +31,7 @@ import { ProfileModule } from '../profile/profile.module';
 			provide: ProfileRepository.name,
 			useClass: ProfileRepository,
 		},
-		PaymentsClientService,
+		PaymentsTCPClientService,
 		SendPaymentInfoUseCase,
 	],
 	controllers: [PaymentsController, PaymentsListenerController],

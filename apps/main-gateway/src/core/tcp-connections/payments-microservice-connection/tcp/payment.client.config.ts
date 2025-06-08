@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
-import { configValidationUtility } from '../../../config/config-validation.utility';
+import { configValidationUtility } from '../../../../config/config-validation.utility';
 
 @Injectable()
-export class PaymentClientConfig {
+export class PaymentTCPClientConfig {
 	@IsNotEmpty()
 	paymentsServiceHost: string = this.configService.get('PAYMENTS_SERVICE_HOST');
 

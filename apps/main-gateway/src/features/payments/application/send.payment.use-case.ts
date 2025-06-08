@@ -1,6 +1,6 @@
 import { PaymentInputModel } from '../api/models/input/payment.input';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PaymentsClientService } from '../../../core/tcp-connections/payments-microservice-connection/payment.client.service';
+import { PaymentsTCPClientService } from '../../../core/tcp-connections/payments-microservice-connection/tcp/payment.client.service';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../user/infrastructure/user.repository';
 
@@ -14,7 +14,7 @@ export class SendPaymentInfoCommand {
 @CommandHandler(SendPaymentInfoCommand)
 export class SendPaymentInfoUseCase implements ICommandHandler<SendPaymentInfoCommand> {
 	constructor(
-		private readonly paymentsClientService: PaymentsClientService,
+		private readonly paymentsClientService: PaymentsTCPClientService,
 		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
 	) {}
 

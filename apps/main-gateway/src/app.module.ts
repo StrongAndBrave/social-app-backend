@@ -12,7 +12,7 @@ import { ProfileModule } from './features/profile/profile.module';
 import { HomePageModule } from './features/home-page/home-page.module';
 import { PaymentsModule } from './features/payments/payments.module';
 import { FilesClientModule } from './core/tcp-connections/files-microservice-connection/files.client.module';
-import { PaymentsClientModule } from './core/tcp-connections/payments-microservice-connection/payment.client.module';
+import { PaymentsTCPClientModule } from './core/tcp-connections/payments-microservice-connection/tcp/payment.client.module';
 
 @Module({
 	imports: [
@@ -39,7 +39,7 @@ import { PaymentsClientModule } from './core/tcp-connections/payments-microservi
 		HomePageModule,
 		PaymentsModule,
 		FilesClientModule,
-		PaymentsClientModule,
+		PaymentsTCPClientModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
