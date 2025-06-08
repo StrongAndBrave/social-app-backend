@@ -32,6 +32,12 @@ export class CoreConfig {
 	})
 	env: string = this.configService.get('NODE_ENV');
 
+	@IsNotEmpty()
+	rmqUrl: string = this.configService.get('RMQ_URL');
+
+	@IsNotEmpty()
+	rmqQueue: string = this.configService.get('RMQ_QUEUE');
+
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
 	}
