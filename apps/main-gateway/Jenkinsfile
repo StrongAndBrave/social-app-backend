@@ -28,6 +28,8 @@ pipeline {
                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                        nvm use --lts
                        yarn install
+                       yarn add dotenv-cli
+                       yarn run generate:main
                        yarn test
                     '''
                 }
@@ -40,7 +42,7 @@ pipeline {
                        export NVM_DIR="$HOME/.nvm"
                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                        nvm use --lts
-                       yarn test:e2e
+                       yarn test:e2e:prod:main
                     '''
                 }
             }

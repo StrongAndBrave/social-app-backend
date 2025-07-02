@@ -1,0 +1,99 @@
+import { Injectable } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/sequelize';
+import { SubscriptionPayment } from '../domain/subscription.payment.entity';
+import { CreationAttributes, FindOptions, Sequelize } from 'sequelize';
+import { Subscription } from '../domain/subscription.entity';
+import { PaymentStatusEnum } from '../../../core/enums/payment.status.enum';
+
+@Injectable()
+export class SubscriptionPaymentsRepository {
+	constructor(
+		@InjectModel(SubscriptionPayment)
+		private readonly subscriptionPaymentModel: typeof SubscriptionPayment,
+		@InjectModel(Subscription) private readonly subscriptionModel: typeof Subscription,
+		@InjectConnection() private readonly sequelize: Sequelize,
+	) {}
+
+	async addNewSubscriptionPaymentData(
+		subscriptionPaymentData: CreationAttributes<SubscriptionPayment> &
+			FindOptions<SubscriptionPayment>,
+	): Promise<SubscriptionPayment | null> {
+		return this.subscriptionPaymentModel.create(subscriptionPaymentData);
+	}
+
+	async createSubscriptionPaymentWithSubscription(
+		subscriptionData: CreationAttributes<Subscription>,
+		subscriptionPaymentData: CreationAttributes<SubscriptionPayment>,
+	): Promise<boolean> {
+		try {
+			return await this.sequelize.transaction(async (t) => {
+				const newSubscription = await this.subscriptionModel.create(subscriptionData, {
+					transaction: t,
+				});
+
+				const newSubscriptionPayment = await this.subscriptionPaymentModel.create(
+					subscriptionPaymentData,
+					{ transaction: t },
+				);
+
+				return !!(newSubscription && newSubscriptionPayment);
+			});
+		} catch (e) {
+			console.error(e);
+			return false;
+		}
+	}
+
+	async findSubscriptionPaymentByClientReferenceIdAndAddStripeSubscriptionId(
+		clientReferenceId: string,
+		subscriptionId: string,
+	): Promise<SubscriptionPayment | null> {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { clientReferenceId: clientReferenceId },
+		});
+		if (!subscriptionPayment) {
+			return null;
+		}
+		subscriptionPayment.subscriptionId = subscriptionId;
+		await subscriptionPayment.save();
+		return subscriptionPayment;
+	}
+
+	async findSubscriptionPaymentStripeSubscriptionIdByUserId(
+		userId: string,
+	): Promise<string | null> {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { userId: userId },
+			order: [['createdAt', 'DESC']],
+		});
+
+		return subscriptionPayment?.subscriptionId || null;
+	}
+
+	async findSubscriptionPaymentBySubscriptionId(
+		subscriptionId: string,
+	): Promise<SubscriptionPayment | null> {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { subscriptionId: subscriptionId },
+		});
+
+		return subscriptionPayment ?? null;
+	}
+
+	async changeSubscriptionPaymentStatus(
+		id: string,
+		newStatus: PaymentStatusEnum,
+		updatedAt: string,
+	) {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { id: id },
+		});
+		if (!subscriptionPayment) {
+			return null;
+		}
+		subscriptionPayment.status = newStatus;
+		subscriptionPayment.updatedAt = updatedAt;
+		await subscriptionPayment.save();
+		return subscriptionPayment;
+	}
+}

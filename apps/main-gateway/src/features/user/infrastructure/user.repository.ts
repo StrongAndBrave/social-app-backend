@@ -1,0 +1,76 @@
+import { Injectable } from '@nestjs/common';
+import { Prisma, Provider, User } from '@prisma/client';
+import { PrismaService } from '../../../../../../libs/prisma/prisma.service';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { ProviderEntity } from '../domain/provider.entity';
+
+@Injectable()
+export class UserRepository {
+	constructor(private readonly prisma: PrismaService) {}
+
+	async create(data: Prisma.UserCreateInput): Promise<User> {
+		return this.prisma.user.create({
+			data,
+		});
+	}
+
+	async createWithOAuth(data: Prisma.UserCreateInput): Promise<User> {
+		return this.prisma.user.create({
+			data: {
+				...data,
+				confirmationCode: null,
+				codeExpirationDate: null,
+				isConfirmed: true,
+			},
+		});
+	}
+
+	async addProvider(data: ProviderEntity): Promise<Provider> {
+		return this.prisma.provider.create({ data });
+	}
+
+	async update(params: {
+		where: Prisma.UserWhereUniqueInput;
+		data: Prisma.UserUpdateInput;
+	}): Promise<User> {
+		const { where, data } = params;
+		return this.prisma.user.update({
+			data,
+			where: {
+				...where,
+				deletedAt: null,
+			},
+		});
+	}
+
+	async getByUnique(
+		dataWhereUniqueInput: Prisma.UserWhereUniqueInput,
+	): Promise<User | null> {
+		return this.prisma.user.findUnique({
+			where: {
+				...dataWhereUniqueInput,
+				deletedAt: null,
+			},
+		});
+	}
+
+	async getByUsernameOrEmail(loginOrEmail: string): Promise<User | null> {
+		return this.prisma.user.findFirst({
+			where: {
+				OR: [
+					{ username: loginOrEmail, deletedAt: null },
+					{ email: loginOrEmail, deletedAt: null },
+				],
+			},
+		});
+	}
+
+	async findOrNotFoundFail(id: string): Promise<User> {
+		const user = await this.prisma.user.findUnique({ where: { id, deletedAt: null } });
+
+		if (!user) {
+			throw NotFoundDomainException.create('User not found');
+		}
+		return user;
+	}
+}

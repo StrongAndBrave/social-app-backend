@@ -1,17 +1,23 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from "../../../src/app.module";
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-    transport: Transport.TCP,
-    options: {
-      host: '0.0.0.0',
-      port: 3630,
-    },
-  });
+import { MicroserviceFilesModule } from './object-storage/object.storage.module';
+import { CoreConfig } from './config/configuration';
 
-  await app.listen();
-  console.log('Files Microservice is listening on port 3630');
+async function bootstrap() {
+	const appContext = await NestFactory.createApplicationContext(MicroserviceFilesModule);
+	const coreConfig = appContext.get<CoreConfig>(CoreConfig);
+	const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+		MicroserviceFilesModule,
+		{
+			transport: Transport.TCP,
+			options: {
+				host: coreConfig.host,
+				port: coreConfig.port,
+			},
+		},
+	);
+	await app.listen();
+	console.log(`Files Microservice is listening on port ${coreConfig.port}`);
 }
 
 bootstrap();

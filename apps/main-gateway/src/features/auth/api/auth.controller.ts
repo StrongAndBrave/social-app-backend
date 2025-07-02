@@ -1,0 +1,246 @@
+import {
+	Body,
+	Controller,
+	Get,
+	HttpCode,
+	HttpException,
+	HttpStatus,
+	Inject,
+	Ip,
+	Post,
+	Res,
+	UseGuards,
+} from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { Response } from 'express';
+import { UserRegistrationCommand } from '../application/use-cases/registration-user.use-case';
+import { UserInputModel } from '../../user/api/models/input/user.input';
+import { AuthService } from '../application/auth.service';
+import { UserRepository } from '../../user/infrastructure/user.repository';
+import {
+	EmailResendingModel,
+	NewPasswordModel,
+	ValidationCodeModel,
+} from './models/input/auth.input.models';
+import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
+import { UserLoginCommand } from '../application/use-cases/login-user.use-case';
+import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
+import { SetNewPasswordCommand } from '../application/use-cases/set-new-password.use-case';
+import { RefreshTokensCommand } from '../application/use-cases/refresh-token.use-case';
+import { RefreshCookieInputModel } from '../../session/api/models/input/refresh.cookie.model';
+import { DeviceDeleteCommand } from '../../session/application/use-cases/delete.device.use-case';
+import { RecaptchaGuard } from '../../../core/guards/recaptcha.guard';
+import { GoogleOAuthGuard } from '../../../core/guards/google.oauth.guard';
+import { CurrentUserDataFromOAuth } from '../../../core/decorators/transform/user-data.from.oauth';
+import { OAuthUserInputModel } from '../../user/api/models/input/oauth.user.input';
+import { OAuthUserRegistrationOrLoginCommand } from '../application/use-cases/oauth-registration-user.use-case';
+import { GithubOauthGuard } from '../../../core/guards/github.oauth.guard';
+import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
+import { UserAgent } from '../../../core/decorators/transform/user-agent.from.headers.decorator';
+import { JwtCookieGuard } from '../../../core/guards/jwt-cookie.guard';
+import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
+import { UserAuthMeDTO } from '../../user/api/models/output/user.output';
+import { ApiTags } from '@nestjs/swagger';
+import {
+	AuthMeEndpoint,
+	GithubOAuthEndpoint,
+	GoogleOAuthEndpoint,
+	LoginUserEndpoint,
+	LogoutEndpoint,
+	NewPasswordEndpoint,
+	PasswordRecoveryEndpoint,
+	RefreshTokenEndpoint,
+	RegConfirmationEndpoint,
+	RegEmailResendingEndpoint,
+	RegistrationUserEndpoint,
+} from '../../../core/swagger/auth.swagger';
+
+@ApiTags('Auth')
+@Controller('auth')
+export class AuthController {
+	constructor(
+		private commandBus: CommandBus,
+		@Inject(AuthService.name) private readonly authService: AuthService,
+		@Inject(UserRepository.name) private readonly userRepository: UserRepository,
+	) {}
+
+	@AuthMeEndpoint()
+	@Get('me')
+	@UseGuards(JwtAuthGuard)
+	@HttpCode(200)
+	async getMe(@CurrentUserId() userId: string): Promise<UserAuthMeDTO> {
+		const user = await this.userRepository.getByUnique({ id: userId });
+		if (!user) throw new HttpException(`user do not exist`, HttpStatus.NOT_FOUND);
+		const outputUser = {
+			email: user.email,
+			username: user.username,
+			userId: user.id.toString(),
+		};
+		return outputUser;
+	}
+
+	@RegistrationUserEndpoint()
+	@Post('registration')
+	@HttpCode(204)
+	async registration(@Body() newUser: UserInputModel): Promise<void> {
+		const res = await this.commandBus.execute(new UserRegistrationCommand(newUser));
+		if (!res)
+			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+		return;
+	}
+
+	@RegConfirmationEndpoint()
+	@Post('registration-confirmation')
+	@HttpCode(204)
+	async registrationConfirmation(@Body() body: ValidationCodeModel): Promise<void> {
+		const res = await this.commandBus.execute(
+			new RegistrationConfirmationCommand(body.code),
+		);
+		if (!res)
+			throw new HttpException(
+				`The confirmation code is incorrect, expired or already been applied`,
+				HttpStatus.BAD_REQUEST,
+			);
+		return;
+	}
+
+	@RegEmailResendingEndpoint()
+	@Post('registration-email-resending')
+	@HttpCode(204)
+	async emailResend(@Body() body: EmailResendingModel): Promise<void> {
+		await this.authService.resendEmail(body.email);
+		return;
+	}
+
+	@LoginUserEndpoint()
+	@Post('login')
+	@UseGuards(LocalAuthGuard)
+	@HttpCode(200)
+	async login(
+		@CurrentUserId() userId: string,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response,
+	): Promise<{ accessToken: string }> {
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
+	}
+
+	@PasswordRecoveryEndpoint()
+	@UseGuards(RecaptchaGuard)
+	@Post('password-recovery')
+	@HttpCode(204)
+	async passwordRecovery(@Body() body: EmailResendingModel): Promise<void> {
+		console.log(body.email);
+		await this.commandBus.execute(new PasswordRecoveryCommand(body.email));
+		return;
+	}
+
+	@NewPasswordEndpoint()
+	@Post('new-password')
+	@HttpCode(204)
+	async setNewPassword(@Body() body: NewPasswordModel): Promise<void> {
+		await this.commandBus.execute(
+			new SetNewPasswordCommand(body.newPassword, body.recoveryCode),
+		);
+		return;
+	}
+
+	@LogoutEndpoint()
+	@Post('logout')
+	@UseGuards(JwtCookieGuard)
+	@HttpCode(204)
+	async logout(@CurrentUserId() cookie: RefreshCookieInputModel): Promise<void> {
+		await this.commandBus.execute(
+			new DeviceDeleteCommand(cookie.userId, cookie.deviceId),
+		);
+		return;
+	}
+
+	@RefreshTokenEndpoint()
+	@Post('update-tokens')
+	@UseGuards(JwtCookieGuard)
+	@HttpCode(200)
+	async refreshToken(
+		@Res({ passthrough: true }) res: Response,
+		@CurrentUserId() cookie: RefreshCookieInputModel,
+	): Promise<{ accessToken: string }> {
+		const result = await this.commandBus.execute(
+			new RefreshTokensCommand(cookie.deviceId),
+		);
+		res.cookie('refreshToken', result.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: result.accessToken };
+	}
+
+	@GithubOAuthEndpoint()
+	@Get('github/login')
+	@UseGuards(GithubOauthGuard)
+	@HttpCode(200)
+	async loginWithGithub() {}
+
+	@Get('github/callback')
+	@UseGuards(GithubOauthGuard)
+	@HttpCode(200)
+	async githubOAuthRedirect(
+		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response,
+	) {
+		if (!data) {
+			throw new HttpException('No user data from github', HttpStatus.BAD_REQUEST);
+		}
+		if (!data.email) {
+			throw new HttpException('Need user email to continue', HttpStatus.BAD_REQUEST);
+		}
+		const userId = await this.commandBus.execute(
+			new OAuthUserRegistrationOrLoginCommand(data),
+		);
+		if (!userId)
+			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
+	}
+
+	@GoogleOAuthEndpoint()
+	@Get('google/login')
+	@UseGuards(GoogleOAuthGuard)
+	@HttpCode(200)
+	async googleOAuth() {}
+
+	@Get('google/callback')
+	@UseGuards(GoogleOAuthGuard)
+	async googleOAuthRedirect(
+		@CurrentUserDataFromOAuth() data: OAuthUserInputModel,
+		@UserAgent() deviceName: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response,
+	) {
+		if (!data) {
+			throw new HttpException('No user data from google', HttpStatus.BAD_REQUEST);
+		}
+		if (!data.email) {
+			throw new HttpException(
+				'Need user public email to continue',
+				HttpStatus.BAD_REQUEST,
+			);
+		}
+		const userId = await this.commandBus.execute(
+			new OAuthUserRegistrationOrLoginCommand(data),
+		);
+		if (!userId)
+			throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+		const tokens = await this.commandBus.execute(
+			new UserLoginCommand(userId, deviceName, ip),
+		);
+		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+		return { accessToken: tokens.accessToken };
+	}
+}

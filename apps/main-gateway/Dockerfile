@@ -1,5 +1,5 @@
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM node:20.11-alpine
+FROM node:22.12-alpine
 ARG port
 ARG service
 ENV SERVICE=$service
@@ -27,6 +27,8 @@ RUN yarn install
 COPY --chown=node . .
 
 RUN yarn build:${SERVICE}
+RUN yarn 'generate:main'
+RUN yarn 'migrate:prod:main'
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 

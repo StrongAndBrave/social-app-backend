@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  username           String              @unique
+  passwordHash       String?
+  confirmationCode   String?             @unique
+  codeExpirationDate DateTime?
+  isConfirmed        Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+  sessions           Session[]
+  passwordResetData  PasswordResetData[]
+  providers          Provider[]
+  posts              Post[]
+  profile            Profile?
+}
+
+model Provider {
+  id           String    @id @default(uuid())
+  userId       String
+  providerId   String
+  providerName String
+  fullUserName String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id             String    @id @default(uuid())
+  userId         String
+  ip             String
+  deviceName     String
+  expirationDate DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetData {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  recoveryCode   String    @unique
+  expirationDate DateTime
+  isConfirmed    Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String       @id @default(uuid())
+  userId      String
+  description String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images      PostImages[]
+}
+
+model PostImages {
+  id        String   @id @default(uuid())
+  postId    String
+  imagesUrl String[]
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id                 String      @id @default(uuid())
+  userId             String      @unique
+  accountType        AccountType @default(Personal)
+  subscriptionPeriod DateTime?
+  firstName          String?
+  lastName           String?
+  city               String?
+  country            String?
+  region             String?
+  dateOfBirth        DateTime?
+  aboutMe            String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  deletedAt          DateTime?
+  user               User        @relation(fields: [userId], references: [id])
+  avatars            Avatar[]
+}
+
+model Avatar {
+  id        String    @id @default(uuid())
+  profileId String
+  url       String
+  width     Int
+  height    Int
+  fileSize  Int
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+  profile   Profile   @relation(fields: [profileId], references: [id])
+}
+
+enum AccountType {
+  Personal
+  Business
+}
