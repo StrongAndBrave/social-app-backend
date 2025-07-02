@@ -13,10 +13,14 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../../core/decorators/transform/current-user-id.param.decorator';
 import { SendPaymentInfoCommand } from '../application/send.payment.use-case';
 import { SendAutoRenewalInfoCommand } from '../application/send.auto-renewal.info.use-case';
+import { PaymentsTCPClientService } from '../../../core/tcp-connections/payments-microservice-connection/tcp/payment.client.service';
 
 @Controller('subscriptions')
 export class PaymentsController {
-	constructor(private commandBus: CommandBus) {}
+	constructor(
+		private commandBus: CommandBus,
+		private readonly paymentsTCPClientService: PaymentsTCPClientService,
+	) {}
 
 	@Post()
 	@UseGuards(JwtAuthGuard)
@@ -57,5 +61,12 @@ export class PaymentsController {
 		if (!newAutoRenewalInfo) {
 			throw new InternalServerErrorException();
 		}
+	}
+
+	@Get('my-payments')
+	@UseGuards(JwtAuthGuard)
+	@HttpCode(200)
+	async getPayments(@CurrentUserId() userId: string) {
+		return this.paymentsTCPClientService.getPayments(userId);
 	}
 }

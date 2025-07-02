@@ -27,10 +27,21 @@ export class PaymentsTCPClientService {
 	}) {
 		try {
 			return await this.paymentsTCPProxyClient
-				.send({ cmd: 'autoRenewal' }, data)
+				.send({ cmd: 'auto_renewal' }, data)
 				.toPromise();
 		} catch (error) {
 			console.error('something wrong with update autoRenewal: ', error);
+			return null;
+		}
+	}
+
+	async getPayments(userId: string) {
+		try {
+			return await this.paymentsTCPProxyClient
+				.send({ cmd: 'get_payments' }, userId)
+				.toPromise();
+		} catch (error) {
+			console.error('something wrong with getPayments: ', error);
 			return null;
 		}
 	}
