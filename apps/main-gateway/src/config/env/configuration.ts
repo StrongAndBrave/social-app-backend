@@ -33,15 +33,10 @@ export class CoreConfig {
 	env: string = this.configService.get('NODE_ENV');
 
 	@IsNotEmpty()
-	filesServiceHost: string = String(this.configService.get('FILES_SERVICE_HOST'));
+	rmqUrl: string = this.configService.get('RMQ_URL');
 
-	@IsNumber(
-		{},
-		{
-			message: 'Set Env variable FILES_SERVICE_PORT, example: 3630',
-		},
-	)
-	filesServicePort: number = Number(this.configService.get('FILES_SERVICE_PORT'));
+	@IsNotEmpty()
+	rmqQueue: string = this.configService.get('RMQ_QUEUE');
 
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);

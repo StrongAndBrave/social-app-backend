@@ -1,17 +1,19 @@
+/*
 import { Injectable } from '@nestjs/common';
 import { IsNotEmpty } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
-import { configValidationUtility } from '../../config/config-validation.utility';
+import { configValidationUtility } from '../../../../config/config-validation.utility';
 
 @Injectable()
-export class PostConfig {
+export class PaymentRMQClientConfig {
 	@IsNotEmpty()
-	filesServiceHost: string = this.configService.get('FILES_SERVICE_HOST');
+	rmqUrl: string = this.configService.get('RMQ_URL');
 
 	@IsNotEmpty()
-	filesServicePort: number = this.configService.get('FILES_SERVICE_PORT');
+	rmqQueue: string = this.configService.get('RMQ_QUEUE');
 
 	constructor(private configService: ConfigService<any, true>) {
 		configValidationUtility.validateConfig(this);
 	}
 }
+*/

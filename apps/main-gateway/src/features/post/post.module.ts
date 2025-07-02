@@ -6,13 +6,13 @@ import { PostController } from './api/post.controller';
 import { DeletePostUseCase } from './application/use-cases/delete.post.use-case';
 import { PostUpdateUseCase } from './application/use-cases/update.post.use-case';
 import { PostQueryRepository } from './infrastructure/posts/post.query.repository';
-import { FilesClientService } from './application/files-microservice-connection/client-service';
-import { PostConfig } from './post.config';
+import { FilesClientService } from '../../core/tcp-connections/files-microservice-connection/files.client.service';
 import { PostImagesRepository } from './infrastructure/posts-images/post-images.repository';
 import { PostImageSaveUseCase } from './application/use-cases/save.image.use-case';
+import { FilesClientModule } from '../../core/tcp-connections/files-microservice-connection/files.client.module';
 
 @Module({
-	imports: [JwtModule],
+	imports: [JwtModule, FilesClientModule],
 	providers: [
 		{
 			provide: PostImagesRepository.name,
@@ -25,10 +25,6 @@ import { PostImageSaveUseCase } from './application/use-cases/save.image.use-cas
 		{
 			provide: PostQueryRepository.name,
 			useClass: PostQueryRepository,
-		},
-		{
-			provide: PostConfig.name,
-			useClass: PostConfig,
 		},
 		CreatePostUseCase,
 		PostUpdateUseCase,

@@ -4,34 +4,33 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UserInputModel {
 	@ApiProperty({
-	  required: true,
-	  description: 'User name',
-	  minLength: 6,
-	  maxLength: 15,
-	  pattern: '^[a-zA-Z0-9_-]*$',
+		required: true,
+		description: 'User name',
+		minLength: 6,
+		maxLength: 30,
+		pattern: '^[a-zA-Z0-9_-]*$',
 	})
 	@Trim()
 	@Length(6, 30)
 	@Matches(/^[a-zA-Z0-9_-]*$/)
 	username: string;
 	@ApiProperty({
-	  required: true,
-	  description: 'Password',
-	  minLength: 6,
-	  maxLength: 20,
-	  example: 'string',
-	  pattern:
-	    '^(?=.*[0-9])(?=.*[A-Z])(?=.*[! "#$%&\'()*+,-./:;<=>?@[\\\\\\]^_`{|}~]).*$',
+		required: true,
+		description: 'Password',
+		minLength: 6,
+		maxLength: 20,
+		example: 'string',
+		pattern: '^(?=.*[0-9])(?=.*[A-Z])(?=.*[! "#$%&\'()*+,-./:;<=>?@[\\\\\\]^_`{|}~]).*$',
 	})
 	@Trim()
 	@Length(6, 20)
 	password: string;
 
 	@ApiProperty({
-	  required: true,
-	  description: 'Email',
-	  example: 'example@example.com',
-	  pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+		required: true,
+		description: 'Email',
+		example: 'example@example.com',
+		pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
 	})
 	@Trim()
 	@IsString()
@@ -40,14 +39,14 @@ export class UserInputModel {
 }
 
 export class LoginInputModelType {
-  @ApiProperty({ required: true, example: 'string' })
-  @IsNotEmpty()
-  @IsString()
-  loginOrEmail: string;
-  @ApiProperty({ required: true, example: 'string' })
-  @IsNotEmpty()
-  @IsString()
-  password: string;
+	@ApiProperty({ required: true, example: 'string' })
+	@IsNotEmpty()
+	@IsString()
+	loginOrEmail: string;
+	@ApiProperty({ required: true, example: 'string' })
+	@IsNotEmpty()
+	@IsString()
+	password: string;
 }
 
 export interface UserCreateModel extends UserInputModel {

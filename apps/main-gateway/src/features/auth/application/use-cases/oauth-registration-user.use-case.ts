@@ -4,6 +4,7 @@ import { UserRepository } from '../../../user/infrastructure/user.repository';
 import { MailService } from '../../../../core/adapters/mailer/mail.service';
 import { OAuthUserInputModel } from '../../../user/api/models/input/oauth.user.input';
 import { OAuthUserCreateCommand } from '../../../user/application/use-cases/oauth.user.cereate.use-case';
+import { ProfileCreateCommand } from '../../../profile/application/profile/create-profile.use-case';
 
 export class OAuthUserRegistrationOrLoginCommand {
 	constructor(public userData: OAuthUserInputModel) {}
@@ -28,6 +29,7 @@ export class OAuthUserRegistrationOrLoginUseCase
 			const addedUserId = await this.commandBus.execute(
 				new OAuthUserCreateCommand(command.userData),
 			);
+			await this.commandBus.execute(new ProfileCreateCommand(addedUserId));
 			if (!addedUserId) return null;
 
 			const user = await this.userRepository.getByUnique({ id: addedUserId });
