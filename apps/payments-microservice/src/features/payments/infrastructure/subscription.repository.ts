@@ -25,8 +25,8 @@ export class SubscriptionRepository {
 		}
 		const currentExpDate = new Date(subscription.expiredAt!);
 		const newExpDate = new Date(currentExpDate.getTime() + msToAdd);
-		console.log('newExpDate: ', newExpDate);
 		subscription.expiredAt = newExpDate.toISOString();
+		subscription.autoRenewal = true;
 		await subscription.save();
 		return subscription;
 	}

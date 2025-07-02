@@ -1,10 +1,12 @@
-import { AutoRenewalInputModel } from '../../../api/models/input/payment.input.model';
-import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubscriptionRepository } from '../../../infrastructure/subscription.repository';
-import { UpdateStripeAutoRenewalSubscriptionCommand } from '../payments/stripe/update.stripe.auto-renewal.subsctiption.use-case';
+import { SubscriptionPaymentsRepository } from '../../../infrastructure/subscription.payment.repository';
 
 export class UpdateAutoRenewalSubscriptionCommand {
-	constructor(public data: AutoRenewalInputModel) {}
+	constructor(
+		public subscriptionId: string,
+		public autoRenewal: boolean,
+	) {}
 }
 
 @CommandHandler(UpdateAutoRenewalSubscriptionCommand)
@@ -13,26 +15,30 @@ export class UpdateAutoRenewalSubscriptionUseCase
 {
 	constructor(
 		public readonly subscriptionRepository: SubscriptionRepository,
-		private readonly commandBus: CommandBus,
+		public readonly subscriptionPaymentsRepository: SubscriptionPaymentsRepository,
 	) {}
 
 	async execute(command: UpdateAutoRenewalSubscriptionCommand): Promise<boolean> {
+		const subscriptionPayment =
+			await this.subscriptionPaymentsRepository.findSubscriptionPaymentBySubscriptionId(
+				command.subscriptionId,
+			);
+		if (!subscriptionPayment) {
+			return false;
+		}
 		const subscription = await this.subscriptionRepository.findSubscription(
-			command.data.userId,
+			subscriptionPayment.userId,
 		);
 		if (!subscription) {
 			return false;
 		}
 		try {
-			const isSubscriptionUpdated =
-				await this.subscriptionRepository.updateSubscriptionAutoRenewal(command.data);
-			const isPaymentSubscriptionUpdated = await this.commandBus.execute(
-				new UpdateStripeAutoRenewalSubscriptionCommand(
-					command.data.userId,
-					command.data.autoRenewal,
-				),
-			);
-			return !!(isSubscriptionUpdated && isPaymentSubscriptionUpdated);
+			const isAutoRenewalUpdated =
+				await this.subscriptionRepository.updateSubscriptionAutoRenewal({
+					userId: subscription.userId,
+					autoRenewal: !command.autoRenewal,
+				});
+			return isAutoRenewalUpdated ?? null;
 		} catch (error) {
 			console.error(error);
 			return false;

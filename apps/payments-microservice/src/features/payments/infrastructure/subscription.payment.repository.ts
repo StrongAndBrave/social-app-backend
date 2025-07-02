@@ -44,22 +44,40 @@ export class SubscriptionPaymentsRepository {
 		}
 	}
 
-	async findSubscriptionPaymentByClientReferenceId(
+	async findSubscriptionPaymentByClientReferenceIdAndAddStripeSubscriptionId(
 		clientReferenceId: string,
+		subscriptionId: string,
 	): Promise<SubscriptionPayment | null> {
 		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
 			where: { clientReferenceId: clientReferenceId },
 		});
-		return subscriptionPayment ?? null;
+		if (!subscriptionPayment) {
+			return null;
+		}
+		subscriptionPayment.subscriptionId = subscriptionId;
+		await subscriptionPayment.save();
+		return subscriptionPayment;
 	}
 
-	async findSubscriptionPaymentSessionIdByUserId(userId: string): Promise<string | null> {
+	async findSubscriptionPaymentStripeSubscriptionIdByUserId(
+		userId: string,
+	): Promise<string | null> {
 		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
 			where: { userId: userId },
 			order: [['createdAt', 'DESC']],
 		});
 
-		return subscriptionPayment?.sessionId || null;
+		return subscriptionPayment?.subscriptionId || null;
+	}
+
+	async findSubscriptionPaymentBySubscriptionId(
+		subscriptionId: string,
+	): Promise<SubscriptionPayment | null> {
+		const subscriptionPayment = await this.subscriptionPaymentModel.findOne({
+			where: { subscriptionId: subscriptionId },
+		});
+
+		return subscriptionPayment ?? null;
 	}
 
 	async changeSubscriptionPaymentStatus(

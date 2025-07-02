@@ -31,5 +31,8 @@ export class PaymentsConfig {
 	@IsNotEmpty()
 	stripeWebhookSecretKey: string = this.configService.get('STRIPE_WEBHOOK_SECRET_KEY');
 
+	@IsNotEmpty()
+	stripeAutoRenewalSecretKey: string = this.configService.get('STRIPE_AUTO_RENEWAL_SK');
+
 	constructor(private configService: ConfigService<any, true>) {}
 }

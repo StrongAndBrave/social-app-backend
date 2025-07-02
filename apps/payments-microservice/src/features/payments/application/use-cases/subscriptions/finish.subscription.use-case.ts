@@ -5,7 +5,10 @@ import { PaymentStatusEnum } from '../../../../../core/enums/payment.status.enum
 import { RmqService } from '../../../../../core/rmq-connections/rmq.service';
 
 export class FinishSubscriptionCommand {
-	constructor(public clientReferenceId: string) {}
+	constructor(
+		public clientReferenceId: string,
+		public subscriptionId: string,
+	) {}
 }
 
 @CommandHandler(FinishSubscriptionCommand)
@@ -21,8 +24,9 @@ export class FinishSubscriptionUseCase
 	async execute(command: FinishSubscriptionCommand): Promise<string | null> {
 		try {
 			const subscriptionPayment =
-				await this.subscriptionPaymentsRepository.findSubscriptionPaymentByClientReferenceId(
+				await this.subscriptionPaymentsRepository.findSubscriptionPaymentByClientReferenceIdAndAddStripeSubscriptionId(
 					command.clientReferenceId,
+					command.subscriptionId,
 				);
 			if (!subscriptionPayment) {
 				return null;
